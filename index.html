@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluentify - Modern AI Translator</title>
+
+    <meta name="theme-color" content="#1e293b">
+    <meta name="description"
+        content="Translate text, images, and PDF documents with a modern, fast, and user-friendly interface powered by Google AI.">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style type="text/css">
+        body,
+        .bg-card,
+        .bg-input {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        textarea::-webkit-scrollbar,
+        .scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track,
+        .scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        textarea::-webkit-scrollbar-thumb,
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: rgba(100, 116, 139, 0.5);
+            border-radius: 20px;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        .page-thumb.selected {
+            box-shadow: 0 0 0 3px #0ea5e9;
+            border-color: #0ea5e9;
+        }
+
+        .page-thumb.active-page {
+            box-shadow: 0 0 0 3px #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        .page-thumb.selected::after {
+            content: '✔';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: #0ea5e9;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        #enhancements-toolbar {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 font-sans antialiased flex items-center justify-center min-h-screen p-4">
+
+    <main class="w-full max-w-4xl mx-auto">
+        <div id="app-container"
+            class="bg-white dark:bg-slate-800 bg-card rounded-2xl shadow-lg dark:shadow-2xl dark:shadow-black/30 p-6 md:p-8 relative overflow-hidden">
+
+            <header class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Fluentify</h1>
+                <button id="theme-toggle"
+                    class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                    aria-label="Toggle theme">
+                    <svg id="theme-icon-light" class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    <svg id="theme-icon-dark" class="w-5 h-5 text-slate-400 hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                        </path>
+                    </svg>
+                </button>
+            </header>
+
+            <form id="translate-form" onsubmit="return false;">
+                <div class="flex items-center space-x-2 mb-4 bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                    <label
+                        class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
+                        <input type="radio" name="input_type" value="text" class="sr-only" checked> Text
+                    </label>
+                    <label
+                        class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
+                        <input type="radio" name="input_type" value="image" class="sr-only"> Image
+                    </label>
+                    <label
+                        class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
+                        <input type="radio" name="input_type" value="pdf" class="sr-only"> PDF
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
+                    <select id="source_lang" name="source_lang"
+                        class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
+                    <button type="button" id="swap-btn"
+                        class="p-3 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed md:mx-0 mx-auto"
+                        aria-label="Swap languages">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                        </svg>
+                    </button>
+                    <select id="target_lang" name="target_lang"
+                        class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
+                </div>
+
+                <div class="relative mb-4">
+                    <div id="text-input-container">
+                        <textarea id="text-input" name="text" maxlength="5000" placeholder="Enter text to translate..."
+                            class="w-full h-40 p-4 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 resize-none"></textarea>
+                        <span id="char-counter"
+                            class="absolute bottom-2 right-3 text-xs text-slate-500 dark:text-slate-400">0 / 5000</span>
+                    </div>
+
+                    <div id="file-input-section" class="hidden">
+                        <div id="dropzone-container"
+                            class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                            <div class="flex flex-col items-center justify-center text-center p-4">
+                                <svg class="w-8 h-8 mb-4 text-slate-500 dark:text-slate-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                </svg>
+                                <p id="file-upload-prompt" class="mb-2 text-sm text-slate-500 dark:text-slate-400"><span
+                                        class="font-semibold">Drag & drop a file</span> or</p>
+                                <button type="button" id="choose-file-btn"
+                                    class="px-4 py-2 bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Choose
+                                    File</button>
+                                <p id="file-upload-hint" class="text-xs text-slate-500 mt-2">PNG, JPG, PDF etc.</p>
+                            </div>
+                        </div>
+                        <input id="file-upload" name="file" type="file" class="hidden" />
+                        <div id="file-feedback-container"
+                            class="hidden mt-4 p-4 bg-sky-50 dark:bg-sky-900/50 border border-sky-200 dark:border-sky-700 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center min-w-0">
+                                <svg class="w-6 h-6 text-sky-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="min-w-0">
+                                    <span class="font-semibold block text-sm text-slate-800 dark:text-slate-200">File
+                                        selected:</span>
+                                    <span id="file-name-span"
+                                        class="ms-1 text-slate-600 dark:text-slate-400 text-sm truncate block"></span>
+                                </div>
+                            </div>
+                            <button type="button" id="remove-file-btn"
+                                class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 text-lg p-1"
+                                aria-label="Remove file">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pdf-viewer-section" class="hidden mb-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-1">
+                            <div
+                                class="sticky top-0 bg-slate-200/50 dark:bg-slate-900/50 z-10 pb-2 mb-2 border-b border-slate-300 dark:border-slate-700">
+                                <div class="flex flex-wrap gap-2 justify-between items-center">
+                                    <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">Pages</h3>
+                                    <select id="pdf-view-size-select"
+                                        class="text-xs bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 rounded-md focus:ring-sky-500 focus:border-sky-500">
+                                        <option value="grid-cols-2">Large</option>
+                                        <option value="grid-cols-3" selected>Medium</option>
+                                        <option value="grid-cols-4">Small</option>
+                                        <option value="grid-cols-1">List</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <button type="button" id="select-all-pages-btn"
+                                        class="px-3 py-1 text-xs font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Select
+                                        All</button>
+                                    <button type="button" id="deselect-all-pages-btn"
+                                        class="px-3 py-1 text-xs font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Deselect
+                                        All</button>
+                                </div>
+                            </div>
+                            <div id="pdf-page-viewer"
+                                class="scroll-container max-h-96 overflow-y-auto grid grid-cols-3 gap-2 p-1"></div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <div id="pdf-active-page-container"
+                                class="sticky top-0 h-[30rem] bg-slate-200 dark:bg-slate-900 rounded-lg flex items-center justify-center p-2">
+                                <p class="text-slate-500">Click a page thumbnail to view it here</p>
+                            </div>
+                            <div id="pdf-active-page-actions" class="text-center mt-2 hidden">
+                                <span id="active-page-number" class="font-bold text-lg"></span>
+                                <button type="button" id="select-active-page-btn"
+                                    class="ml-4 px-4 py-2 rounded-lg text-sm font-medium">Select this page</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-x-4 gap-y-2 justify-between items-center">
+                        <span id="page-selection-counter"
+                            class="text-sm font-medium text-slate-600 dark:text-slate-400">0 / 30 selected</span>
+                        <div class="flex items-center">
+                            <input id="combine-pages-checkbox" name="combine_pages" type="checkbox"
+                                class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
+                            <label for="combine-pages-checkbox"
+                                class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Combine
+                                selected pages before translation</label>
+                        </div>
+                    </div>
+                    <p id="batch-warning" class="text-xs text-amber-600 dark:text-amber-400 text-center mt-2 h-4"></p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <button type="button" id="settings-toggle-btn"
+                        class="w-full text-center py-3 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors font-medium">Advanced
+                        Settings</button>
+                    <button type="submit" id="translate-btn"
+                        class="w-full text-center py-3 px-4 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        disabled>
+                        <span id="translate-btn-text">Translate</span>
+                        <svg id="translate-btn-spinner" class="spinner w-5 h-5 ml-2 hidden"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="settings-panel"
+                    class="hidden space-y-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg mb-4">
+                    <div>
+                        <label for="model" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">AI
+                            Model</label>
+                        <select id="model" name="model"
+                            class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
+                    </div>
+                    <div>
+                        <label for="job_field"
+                            class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Translation
+                            Specialization</label>
+                        <select id="job_field" name="job_field"
+                            class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
+                    </div>
+                    <div>
+                        <label for="api_key"
+                            class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Google AI API
+                            Key</label>
+                        <div class="relative">
+                            <input type="password" id="api_key" name="api_key" placeholder="Enter your API Key"
+                                class="w-full p-3 pr-10 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500">
+                            <button type="button" id="toggle-api-key-visibility"
+                                class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
+                                aria-label="Toggle API Key visibility">
+                                <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-2 pt-2 border-t border-slate-300 dark:border-slate-700">
+                        <div class="flex items-center">
+                            <input id="use-proxy-checkbox" name="use_proxy" type="checkbox"
+                                class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
+                            <label for="use-proxy-checkbox"
+                                class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Use
+                                Proxy</label>
+                        </div>
+                        <div id="custom-proxy-container" class="hidden">
+                            <label for="custom-proxy-input"
+                                class="block text-sm font-medium text-slate-600 dark:text-slate-400">Custom Proxy URL
+                                (Optional)</label>
+                            <input type="url" id="custom-proxy-input" name="custom_proxy_url"
+                                placeholder="https://your-proxy.workers.dev/"
+                                class="mt-1 w-full p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500">
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Deploy your own proxy using <a
+                                    href="https://github.com/yebekhe/middleman" target="_blank"
+                                    rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a>.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center pt-2 border-t border-slate-300 dark:border-slate-700">
+                        <input id="save-settings-checkbox" type="checkbox"
+                            class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
+                        <label for="save-settings-checkbox"
+                            class="ml-2 block text-sm text-slate-600 dark:text-slate-400">Save all settings in this
+                            browser</label>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <textarea id="output" placeholder="Translation will appear here..." readonly
+                        class="w-full min-h-[10rem] p-4 bg-slate-200 dark:bg-slate-900 bg-input rounded-lg border-slate-300 dark:border-transparent resize-y"></textarea>
+                    <div class="absolute top-3 right-3 flex items-center gap-2">
+                        <button type="button" id="export-btn"
+                            class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled title="Export as .txt" aria-label="Export as .txt">
+                            <svg id="export-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                        </button>
+                        <button type="button" id="copy-btn"
+                            class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled title="Copy output" aria-label="Copy output">
+                            <svg id="copy-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                            </svg>
+                            <svg id="copy-icon-success" class="w-5 h-5 text-green-600 dark:text-green-400 hidden"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="enhancements-toolbar"
+                    class="mt-4 p-2 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg hidden opacity-0 -translate-y-2">
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Enhance:</span>
+                        <button type="button" data-action="shorten"
+                            class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Make
+                            Shorter</button>
+                        <button type="button" data-action="expand"
+                            class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Expand</button>
+                        <button type="button" data-action="summarize"
+                            class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Summarize</button>
+                    </div>
+                </div>
+
+
+                <div id="error-display" role="alert"
+                    class="mt-4 text-center text-red-600 dark:text-red-400 font-medium h-5"></div>
+            </form>
+
+        </div><!-- Find and replace your old <footer> with this one -->
+        <footer class="max-w-4xl mx-auto py-8 px-4">
+            <div class="flex flex-col items-center justify-center text-center gap-4">
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE
+                </p>
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/itsyebekhe/subtitle-translate" target="_blank" rel="noopener noreferrer"
+                        title="GitHub Repository"
+                        class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fab fa-github fa-lg"></i>
+                    </a>
+                    <a href="https://x.com/yebekhe" target="_blank" rel="noopener noreferrer" title="X (Twitter)"
+                        class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fab fa-twitter fa-lg"></i>
+                    </a>
+                    <a href="https://t.me/yebekhe" target="_blank" rel="noopener noreferrer" title="Telegram"
+                        class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fab fa-telegram fa-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+
+    <script>
+            (() => {
+                // --- START: CONFIGURATION ---
+                const DEFAULT_WEB_MODEL = "gemini-2.5-flash";
+                const DEFAULT_PROXY_URL = "https://middleman.yebekhe.workers.dev";
+                const MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
+                const LANGUAGES = [{ value: "auto", text: "Auto-detect Language" }, { value: "Afrikaans", text: "Afrikaans" }, { value: "Albanian", text: "Albanian" }, { value: "Amharic", text: "Amharic" }, { value: "Arabic", text: "Arabic" }, { value: "Armenian", text: "Armenian" }, { value: "Assamese", text: "Assamese" }, { value: "Aymara", text: "Aymara" }, { value: "Azerbaijani", text: "Azerbaijani" }, { value: "Bambara", text: "Bambara" }, { value: "Basque", text: "Basque" }, { value: "Belarusian", text: "Belarusian" }, { value: "Bengali", text: "Bengali" }, { value: "Bhojpuri", text: "Bhojpuri" }, { value: "Bosnian", text: "Bosnian" }, { value: "Bulgarian", text: "Bulgarian" }, { value: "Catalan", text: "Catalan" }, { value: "Cebuano", text: "Cebuano" }, { value: "Chichewa", text: "Chichewa (Nyanja)" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)" }, { value: "Corsican", text: "Corsican" }, { value: "Croatian", text: "Croatian" }, { value: "Czech", text: "Czech" }, { value: "Danish", text: "Danish" }, { value: "Dhivehi", text: "Dhivehi" }, { value: "Dogri", text: "Dogri" }, { value: "Dutch", text: "Dutch" }, { value: "English", text: "English" }, { value: "Esperanto", text: "Esperanto" }, { value: "Estonian", text: "Estonian" }, { value: "Ewe", text: "Ewe" }, { value: "Filipino", text: "Filipino (Tagalog)" }, { value: "Finnish", text: "Finnish" }, { value: "French", text: "French" }, { value: "Frisian", text: "Frisian" }, { value: "Galician", text: "Galician" }, { value: "Georgian", text: "Georgian" }, { value: "German", text: "German" }, { value: "Greek", text: "Greek" }, { value: "Guarani", text: "Guarani" }, { value: "Gujarati", text: "Gujarati" }, { value: "Haitian Creole", text: "Haitian Creole" }, { value: "Hausa", text: "Hausa" }, { value: "Hawaiian", text: "Hawaiian" }, { value: "Hebrew", text: "Hebrew" }, { value: "Hindi", text: "Hindi" }, { value: "Hmong", text: "Hmong" }, { value: "Hungarian", text: "Hungarian" }, { value: "Icelandic", text: "Icelandic" }, { value: "Igbo", text: "Igbo" }, { value: "Ilocano", text: "Ilocano" }, { value: "Indonesian", text: "Indonesian" }, { value: "Irish", text: "Irish" }, { value: "Italian", text: "Italian" }, { value: "Japanese", text: "Japanese" }, { value: "Javanese", text: "Javanese" }, { value: "Kannada", text: "Kannada" }, { value: "Kazakh", text: "Kazakh" }, { value: "Khmer", text: "Khmer" }, { value: "Kinyarwanda", text: "Kinyarwanda" }, { value: "Konkani", text: "Konkani" }, { value: "Korean", text: "Korean" }, { value: "Krio", text: "Krio" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)" }, { value: "Kyrgyz", text: "Kyrgyz" }, { value: "Lao", text: "Lao" }, { value: "Latin", text: "Latin" }, { value: "Latvian", text: "Latvian" }, { value: "Lingala", text: "Lingala" }, { value: "Lithuanian", text: "Lithuanian" }, { value: "Luganda", text: "Luganda" }, { value: "Luxembourgish", text: "Luxembourgish" }, { value: "Macedonian", text: "Macedonian" }, { value: "Maithili", text: "Maithili" }, { value: "Malagasy", text: "Malagasy" }, { value: "Malay", text: "Malay" }, { value: "Malayalam", text: "Malayalam" }, { value: "Maltese", text: "Maltese" }, { value: "Maori", text: "Maori" }, { value: "Marathi", text: "Marathi" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)" }, { value: "Mizo", text: "Mizo" }, { value: "Mongolian", text: "Mongolian" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)" }, { value: "Nepali", text: "Nepali" }, { value: "Norwegian", text: "Norwegian" }, { value: "Odia (Oriya)", text: "Odia (Oriya)" }, { value: "Oromo", text: "Oromo" }, { value: "Pashto", text: "Pashto" }, { value: "Persian", text: "Persian (Farsi)" }, { value: "Polish", text: "Polish" }, { value: "Portuguese", text: "Portuguese" }, { value: "Punjabi", text: "Punjabi" }, { value: "Quechua", text: "Quechua" }, { value: "Romanian", text: "Romanian" }, { value: "Russian", text: "Russian" }, { value: "Samoan", text: "Samoan" }, { value: "Sanskrit", text: "Sanskrit" }, { value: "Scots Gaelic", text: "Scots Gaelic" }, { value: "Sepedi", text: "Sepedi" }, { value: "Serbian", text: "Serbian" }, { value: "Sesotho", text: "Sesotho" }, { value: "Shona", text: "Shona" }, { value: "Sindhi", text: "Sindhi" }, { value: "Sinhala", text: "Sinhala" }, { value: "Slovak", text: "Slovak" }, { value: "Slovenian", text: "Slovenian" }, { value: "Somali", text: "Somali" }, { value: "Spanish", text: "Spanish" }, { value: "Sundanese", text: "Sundanese" }, { value: "Swahili", text: "Swahili" }, { value: "Swedish", text: "Swedish" }, { value: "Tajik", text: "Tajik" }, { value: "Tamil", text: "Tamil" }, { value: "Tatar", text: "Tatar" }, { value: "Telugu", text: "Telugu" }, { value: "Thai", text: "Thai" }, { value: "Tigrinya", text: "Tigrinya" }, { value: "Tsonga", text: "Tsonga" }, { value: "Turkish", text: "Turkish" }, { value: "Turkmen", text: "Turkmen" }, { value: "Twi", text: "Twi (Akan)" }, { value: "Ukrainian", text: "Ukrainian" }, { value: "Urdu", text: "Urdu" }, { value: "Uyghur", text: "Uyghur" }, { value: "Uzbek", text: "Uzbek" }, { value: "Vietnamese", text: "Vietnamese" }, { value: "Welsh", text: "Welsh" }, { value: "Xhosa", text: "Xhosa" }, { value: "Yiddish", text: "Yiddish" }, { value: "Yoruba", text: "Yoruba" }, { value: "Zulu", text: "Zulu" }];
+                const JOB_FIELDS = [{ value: "None", text: "None (General)" }, { value: "Medical", text: "Medical / Healthcare" }, { value: "Legal", text: "Legal / Law" }, { value: "Engineering", text: "Engineering (General)" }, { value: "IT", text: "Information Technology / Software" }, { value: "Finance", text: "Finance / Banking" }, { value: "Academic", text: "Academic / Research" }, { value: "Marketing", text: "Marketing / Business" }];
+                const RTL_LANGUAGES = new Set(['Arabic', 'Hebrew', 'Persian', 'Urdu', 'Yiddish', 'Dhivehi', 'Sindhi', 'Pashto', 'Uyghur', 'Kurdish (Sorani)']);
+                const PDF_PAGE_SELECTION_LIMIT = 30;
+                const BATCH_DELAY_MS = 4000;
+                // --- END: CONFIGURATION ---
+
+
+                // --- START: DOM Element Selection ---
+                const dom = {
+                    html: document.documentElement,
+                    form: document.getElementById('translate-form'),
+                    inputTypeRadios: document.querySelectorAll('input[name="input_type"]'),
+                    textInputContainer: document.getElementById('text-input-container'),
+                    fileInputSection: document.getElementById('file-input-section'),
+                    dropzoneContainer: document.getElementById('dropzone-container'),
+                    fileFeedbackContainer: document.getElementById('file-feedback-container'),
+                    fileNameSpan: document.getElementById('file-name-span'),
+                    removeFileBtn: document.getElementById('remove-file-btn'),
+                    chooseFileBtn: document.getElementById('choose-file-btn'),
+                    fileUpload: document.getElementById('file-upload'),
+                    fileUploadHint: document.getElementById('file-upload-hint'),
+                    pdfViewerSection: document.getElementById('pdf-viewer-section'),
+                    pdfPageViewer: document.getElementById('pdf-page-viewer'),
+                    pdfViewSizeSelect: document.getElementById('pdf-view-size-select'),
+                    pdfActivePageContainer: document.getElementById('pdf-active-page-container'),
+                    pdfActivePageActions: document.getElementById('pdf-active-page-actions'),
+                    activePageNumber: document.getElementById('active-page-number'),
+                    selectActivePageBtn: document.getElementById('select-active-page-btn'),
+                    pageSelectionCounter: document.getElementById('page-selection-counter'),
+                    batchWarning: document.getElementById('batch-warning'),
+                    combinePagesCheckbox: document.getElementById('combine-pages-checkbox'),
+                    selectAllPagesBtn: document.getElementById('select-all-pages-btn'),
+                    deselectAllPagesBtn: document.getElementById('deselect-all-pages-btn'),
+                    textInput: document.getElementById('text-input'),
+                    sourceLangSelect: document.getElementById('source_lang'),
+                    targetLangSelect: document.getElementById('target_lang'),
+                    swapBtn: document.getElementById('swap-btn'),
+                    charCounter: document.getElementById('char-counter'),
+                    output: document.getElementById('output'),
+                    copyBtn: document.getElementById('copy-btn'),
+                    exportBtn: document.getElementById('export-btn'),
+                    copyIconDefault: document.getElementById('copy-icon-default'),
+                    copyIconSuccess: document.getElementById('copy-icon-success'),
+                    enhancementsToolbar: document.getElementById('enhancements-toolbar'),
+                    translateBtn: document.getElementById('translate-btn'),
+                    translateBtnText: document.getElementById('translate-btn-text'),
+                    translateBtnSpinner: document.getElementById('translate-btn-spinner'),
+                    errorDisplay: document.getElementById('error-display'),
+                    settingsToggleBtn: document.getElementById('settings-toggle-btn'),
+                    settingsPanel: document.getElementById('settings-panel'),
+                    modelSelect: document.getElementById('model'),
+                    jobFieldSelect: document.getElementById('job_field'),
+                    apiKeyInput: document.getElementById('api_key'),
+                    toggleApiKeyBtn: document.getElementById('toggle-api-key-visibility'),
+                    eyeOpenIcon: document.getElementById('eye-open-icon'),
+                    eyeClosedIcon: document.getElementById('eye-closed-icon'),
+                    saveSettingsCheckbox: document.getElementById('save-settings-checkbox'),
+                    themeToggleBtn: document.getElementById('theme-toggle'),
+                    themeIconLight: document.getElementById('theme-icon-light'),
+                    themeIconDark: document.getElementById('theme-icon-dark'),
+                    useProxyCheckbox: document.getElementById('use-proxy-checkbox'),
+                    customProxyContainer: document.getElementById('custom-proxy-container'),
+                    customProxyInput: document.getElementById('custom-proxy-input'),
+                };
+
+                // --- START: State Management ---
+                let pdfDoc = null;
+                let selectedPages = new Set();
+                let activePage = null;
+                // --- END: State Management ---
+
+                // --- START: Core Translation Logic ---
+                async function callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl) { const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`; const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl; let payload = { contents: [{ parts: [{ text: prompt }] }], safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }], generationConfig: { response_mime_type: "text/plain" } }; if (useProxy) { payload = { endpoint: directUrl, ...payload }; } const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const responseBody = await response.json(); if (!response.ok) { const errorDetails = responseBody?.error || { message: 'Unknown API error' }; console.error(`Google AI API Error (${response.status})`, errorDetails); let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`; if (response.status === 429) userMessage = "API rate limit exceeded. Please try again later."; throw new Error(userMessage); } const candidate = responseBody.candidates?.[0]; if (!candidate) { const blockReason = responseBody.promptFeedback?.blockReason; if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`); throw new Error("Invalid response structure from AI."); } if (candidate.finishReason && !["STOP", "MAX_TOKENS"].includes(candidate.finishReason)) { if (candidate.finishReason === "SAFETY") throw new Error(`Translation blocked for safety reasons.`); console.warn("AI processing stopped unexpectedly:", candidate.finishReason); } return candidate.content?.parts?.[0]?.text?.trim() ?? ""; }
+                async function performOcr(base64Image, mimeType, apiKey, model, useProxy, customProxyUrl) { const prompt = "Extract all text content from this image. Output ONLY the text found, preserving line breaks as accurately as possible. If no text is found, output nothing."; const promptParts = [{ text: prompt }, { inline_data: { mime_type: mimeType, data: base64Image } }]; const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`; const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl; let payload = { contents: [{ parts: promptParts }], safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }], generationConfig: { response_mime_type: "text/plain" } }; if (useProxy) { payload = { endpoint: directUrl, ...payload }; } const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const responseBody = await response.json(); if (!response.ok) { const errorDetails = responseBody?.error || { message: 'Unknown API error' }; console.error(`Google AI API Error (${response.status})`, errorDetails); let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`; if (response.status === 429) userMessage = "API rate limit exceeded. Please try again later."; throw new Error(userMessage); } const candidate = responseBody.candidates?.[0]; if (!candidate) { const blockReason = responseBody.promptFeedback?.blockReason; if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`); throw new Error("Invalid response structure from AI."); } if (candidate.finishReason && !["STOP", "MAX_TOKENS"].includes(candidate.finishReason)) { if (candidate.finishReason === "SAFETY") throw new Error(`Translation blocked for safety reasons.`); console.warn("AI processing stopped unexpectedly:", candidate.finishReason); } return candidate.content?.parts?.[0]?.text?.trim() ?? ""; }
+                async function extractTextFromPdfPage(pageNumber) { if (!pdfDoc) return null; const page = await pdfDoc.getPage(pageNumber); const textContent = await page.getTextContent(); return textContent.items.map(item => item.str).join(' '); }
+                async function translateText(text, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl) {
+                    const jobFieldText = JOB_FIELDS.find(f => f.value === jobField)?.text || 'General'; const specializationContext = (jobField && jobField !== "None") ? `Pay close attention to specialized terms in the field of **${jobFieldText}**.` : ""; const prompt = `
+You are an expert translator. Your task is to accurately translate the given text.
+- Maintain a natural, conversational tone suitable for the target language.
+- Ensure grammatical correctness and proper sentence structure.
+- Preserve the original context and meaning.
+- Use consistent terminology if technical terms are present.
+- Avoid literal, word-for-word translations that sound unnatural.
+- Return ONLY the translated text, with no extra commentary or explanations.
+${specializationContext}
+Translate the following text from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} into **${targetLang}**:
+---
+${text}
+---`; return callGoogleAI(prompt.trim(), apiKey, model, useProxy, customProxyUrl);
+                }
+                async function enhanceText(text, action, apiKey, model, useProxy, customProxyUrl) { let actionInstruction = ''; switch (action) { case 'shorten': actionInstruction = 'Make the following text more concise and to the point. Remove filler words but preserve the core meaning.'; break; case 'expand': actionInstruction = 'Expand on the following text. Add more detail, examples, or elaborate on the ideas to make it more comprehensive.'; break; case 'summarize': actionInstruction = 'Provide a concise summary of the following text, capturing the main points.'; break; default: return text; } const prompt = `${actionInstruction}\n\n---\n${text}\n---`; return callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl); }
+
+                // --- START: UI and Event Handlers ---
+                function populateSelect(selectElement, options, defaultValue, filter = () => true) { selectElement.innerHTML = options.filter(filter).map(opt => `<option value="${opt.value}" ${opt.value === defaultValue ? 'selected' : ''}>${opt.text}</option>`).join(''); }
+                function handleInputTypeChange() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; const isTextMode = selectedType === 'text'; const isImageMode = selectedType === 'image'; const isPdfMode = selectedType === 'pdf'; dom.textInputContainer.classList.toggle('hidden', !isTextMode); dom.fileInputSection.classList.toggle('hidden', isTextMode); dom.pdfViewerSection.classList.toggle('hidden', !isPdfMode); dom.sourceLangSelect.disabled = !isTextMode; if (!isTextMode) dom.sourceLangSelect.value = 'auto'; if (isImageMode) { dom.fileUpload.accept = "image/png, image/jpeg, image/webp, image/gif"; dom.fileUploadHint.textContent = "PNG, JPG, WEBP, GIF (MAX. 20MB)"; } else if (isPdfMode) { dom.fileUpload.accept = "application/pdf"; dom.fileUploadHint.textContent = "PDF (MAX. 20MB)"; } resetFileInput(); }
+                function resetFileInput() { dom.fileUpload.value = ''; dom.dropzoneContainer.classList.remove('hidden'); dom.fileFeedbackContainer.classList.add('hidden'); dom.fileNameSpan.textContent = ''; dom.pdfViewerSection.classList.add('hidden'); dom.pdfPageViewer.innerHTML = ''; pdfDoc = null; selectedPages.clear(); activePage = null; dom.pdfActivePageContainer.innerHTML = '<p class="text-slate-500">Click a page thumbnail to view it here</p>'; dom.pdfActivePageActions.classList.add('hidden'); updatePageSelectionCounter(); validateForm(); clearOutput(); }
+                function swapLanguages() { const sourceVal = dom.sourceLangSelect.value; const targetVal = dom.targetLangSelect.value; if (sourceVal === 'auto') return; dom.sourceLangSelect.value = targetVal; dom.targetLangSelect.value = sourceVal; validateForm(); if (dom.output.value) dom.output.dir = RTL_LANGUAGES.has(dom.targetLangSelect.value) ? 'rtl' : 'ltr'; }
+                function validateForm() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; let hasInput = false; if (selectedType === 'text') { hasInput = dom.textInput.value.trim().length > 0 && dom.textInput.value.length <= 5000; } else if (selectedType === 'image') { hasInput = dom.fileUpload.files.length > 0; } else if (selectedType === 'pdf') { hasInput = selectedPages.size > 0; } const isApiKeyValid = dom.apiKeyInput.value.trim().length > 0; dom.translateBtn.disabled = !hasInput || !isApiKeyValid; dom.swapBtn.disabled = dom.sourceLangSelect.value === 'auto' || selectedType !== 'text'; }
+                function updateCharCounter() { const isTextMode = document.querySelector('input[name="input_type"]:checked').value === 'text'; if (isTextMode) { const len = dom.textInput.value.length; dom.charCounter.textContent = `${len} / 5000`; dom.charCounter.classList.toggle('text-red-500', len > 5000); dom.charCounter.classList.toggle('dark:text-red-400', len > 5000); } else { dom.charCounter.textContent = ''; } }
+                function showError(message) { dom.errorDisplay.textContent = message; }
+                function clearOutput() { dom.output.value = ''; dom.copyBtn.disabled = true; dom.exportBtn.disabled = true; dom.enhancementsToolbar.classList.add('hidden', 'opacity-0', '-translate-y-2'); showError(''); }
+                async function handleFileChange(event) { const file = event.target.files[0]; if (!file) { resetFileInput(); return; } dom.dropzoneContainer.classList.add('hidden'); dom.fileFeedbackContainer.classList.remove('hidden'); dom.fileNameSpan.textContent = file.name; const selectedType = document.querySelector('input[name="input_type"]:checked').value; if (file.size > 20 * 1024 * 1024) { showError("File size exceeds 20MB limit."); resetFileInput(); return; } if (selectedType === 'pdf') { dom.pdfViewerSection.classList.remove('hidden'); await renderPdf(file); } validateForm(); }
+                async function renderPdf(file) { const fileReader = new FileReader(); fileReader.onload = async (e) => { try { dom.pdfPageViewer.innerHTML = '<div class="spinner w-8 h-8 text-sky-500 mx-auto col-span-full"></div>'; const typedarray = new Uint8Array(e.target.result); pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`; pdfDoc = await pdfjsLib.getDocument({ data: typedarray }).promise; dom.pdfPageViewer.innerHTML = ''; for (let i = 1; i <= pdfDoc.numPages; i++) { const thumb = await createPdfThumb(i); dom.pdfPageViewer.appendChild(thumb); } if (pdfDoc.numPages > 0) { await viewPdfPage(1); } } catch (error) { console.error("Error rendering PDF:", error); showError("Could not load or render the PDF file."); dom.pdfPageViewer.innerHTML = '<p class="text-center text-red-500 col-span-full">Failed to load PDF</p>'; } }; fileReader.readAsArrayBuffer(file); }
+                async function createPdfThumb(pageNum) { const page = await pdfDoc.getPage(pageNum); const viewport = page.getViewport({ scale: 0.4 }); const canvas = document.createElement('canvas'); canvas.height = viewport.height; canvas.width = viewport.width; await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise; const thumbContainer = document.createElement('div'); thumbContainer.className = "page-thumb relative cursor-pointer border-2 border-slate-400 dark:border-slate-600 rounded-md overflow-hidden"; thumbContainer.dataset.pageNumber = pageNum; thumbContainer.title = `Page ${pageNum}`; thumbContainer.appendChild(canvas); thumbContainer.addEventListener('click', () => viewPdfPage(pageNum)); return thumbContainer; }
+                async function viewPdfPage(pageNum) { if (!pdfDoc || pageNum < 1 || pageNum > pdfDoc.numPages) return; activePage = pageNum; dom.pdfActivePageContainer.innerHTML = '<div class="spinner w-10 h-10 text-sky-500"></div>'; const page = await pdfDoc.getPage(pageNum); const viewport = page.getViewport({ scale: 1.5 }); const canvas = document.createElement('canvas'); canvas.className = "max-w-full max-h-full object-contain"; const context = canvas.getContext('2d'); canvas.height = viewport.height; canvas.width = viewport.width; await page.render({ canvasContext: context, viewport: viewport }).promise; dom.pdfActivePageContainer.innerHTML = ''; dom.pdfActivePageContainer.appendChild(canvas); dom.activePageNumber.textContent = `Page ${pageNum}`; dom.pdfActivePageActions.classList.remove('hidden'); dom.pdfPageViewer.querySelectorAll('.page-thumb').forEach(thumb => { thumb.classList.toggle('active-page', parseInt(thumb.dataset.pageNumber) === pageNum); }); updateSelectActivePageButton(); }
+                function updateSelectActivePageButton() { if (!activePage) return; const isSelected = selectedPages.has(activePage); dom.selectActivePageBtn.textContent = isSelected ? 'Deselect this page' : 'Select this page'; dom.selectActivePageBtn.classList.toggle('bg-red-500', isSelected); dom.selectActivePageBtn.classList.toggle('hover:bg-red-600', isSelected); dom.selectActivePageBtn.classList.toggle('bg-sky-500', !isSelected); dom.selectActivePageBtn.classList.toggle('hover:bg-sky-600', !isSelected); }
+                function togglePageSelection(pageNumber) { const thumbElement = dom.pdfPageViewer.querySelector(`.page-thumb[data-page-number="${pageNumber}"]`); if (selectedPages.has(pageNumber)) { selectedPages.delete(pageNumber); thumbElement?.classList.remove('selected'); } else { if (selectedPages.size >= PDF_PAGE_SELECTION_LIMIT) { showError(`You can select a maximum of ${PDF_PAGE_SELECTION_LIMIT} pages.`); setTimeout(() => showError(''), 3000); return; } selectedPages.add(pageNumber); thumbElement?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); if (pageNumber === activePage) { updateSelectActivePageButton(); } }
+                function updatePageSelectionCounter() { dom.pageSelectionCounter.textContent = `${selectedPages.size} / ${PDF_PAGE_SELECTION_LIMIT} selected`; const timeEstimate = Math.round(selectedPages.size * (BATCH_DELAY_MS / 1000)); dom.batchWarning.textContent = selectedPages.size > 1 && !dom.combinePagesCheckbox.checked ? `This may take up to ${timeEstimate} seconds to complete.` : ''; }
+                async function handleFormSubmit(event) { event.preventDefault(); if (dom.translateBtn.disabled) return; showError(''); clearOutput(); dom.translateBtn.disabled = true; dom.translateBtnText.classList.add('hidden'); dom.translateBtnSpinner.classList.remove('hidden'); const formData = new FormData(dom.form); const apiKey = formData.get('api_key').trim(); const model = formData.get('model'); const targetLang = formData.get('target_lang'); const sourceLang = formData.get('source_lang'); const jobField = formData.get('job_field'); const inputType = formData.get('input_type'); const useProxy = formData.get('use_proxy') === 'on'; const customProxyUrl = formData.get('custom_proxy_url'); const combinePages = formData.get('combine_pages') === 'on'; try { if (inputType === 'text') { dom.output.value = 'Translating...'; const textToTranslate = formData.get('text').trim(); const translatedText = await translateText(textToTranslate, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl); dom.output.value = translatedText; } else if (inputType === 'image') { const imageFile = formData.get('file'); if (!imageFile || imageFile.size === 0) throw new Error("Please select an image file."); dom.output.value = 'Extracting text from image...'; const base64Image = await fileToBase64(imageFile); const textToTranslate = await performOcr(base64Image, imageFile.type, apiKey, model, useProxy, customProxyUrl); if (!textToTranslate) { dom.output.value = "(No text detected in image)"; return; } dom.output.value = 'Translating extracted text...'; const translatedText = await translateText(textToTranslate, 'auto', targetLang, jobField, apiKey, model, useProxy, customProxyUrl); dom.output.value = translatedText; } else if (inputType === 'pdf') { const sortedPages = Array.from(selectedPages).sort((a, b) => a - b); if (combinePages) { dom.output.value = `Extracting text from ${sortedPages.length} pages...`; let combinedText = ""; for (const pageNum of sortedPages) { const pageText = await extractTextFromPdfPage(pageNum); if (pageText && pageText.trim()) combinedText += pageText + "\n\n"; } dom.output.value = `Translating combined text...`; const translatedText = await translateText(combinedText, 'auto', targetLang, jobField, apiKey, model, useProxy, customProxyUrl); dom.output.value = translatedText; } else { let finalTranslation = []; let count = 0; for (const pageNum of sortedPages) { count++; dom.output.value = `Translating page ${count} of ${sortedPages.length}...`; const pageText = await extractTextFromPdfPage(pageNum); if (pageText && pageText.trim()) { const translatedText = await translateText(pageText, 'auto', targetLang, jobField, apiKey, model, useProxy, customProxyUrl); finalTranslation.push(`--- PAGE ${pageNum} ---\n${translatedText}`); } else { finalTranslation.push(`--- PAGE ${pageNum} ---\n(No text found or page is empty)`); } if (count < sortedPages.length) { await new Promise(resolve => setTimeout(resolve, BATCH_DELAY_MS)); } } dom.output.value = finalTranslation.join('\n\n'); } } dom.output.dir = RTL_LANGUAGES.has(targetLang) ? 'rtl' : 'ltr'; if (dom.output.value) { dom.copyBtn.disabled = false; dom.exportBtn.disabled = false; dom.enhancementsToolbar.classList.remove('hidden'); setTimeout(() => dom.enhancementsToolbar.classList.remove('opacity-0', '-translate-y-2'), 10); } } catch (error) { console.error("Translation failed:", error); showError(error.message); dom.output.value = ''; } finally { dom.translateBtnText.classList.remove('hidden'); dom.translateBtnSpinner.classList.add('hidden'); validateForm(); } }
+                async function handleEnhancement(action) { const currentText = dom.output.value; if (!currentText) { showError("Nothing to enhance."); return; } showError(''); const originalBtnText = {}; dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => { originalBtnText[btn.dataset.action] = btn.textContent; btn.disabled = true; if (btn.dataset.action === action) { btn.innerHTML = '<div class="spinner w-4 h-4 mx-auto"></div>'; } }); const apiKey = dom.apiKeyInput.value.trim(); const model = dom.modelSelect.value; const useProxy = dom.useProxyCheckbox.checked; const customProxyUrl = dom.customProxyInput.value; try { const enhancedText = await enhanceText(currentText, action, apiKey, model, useProxy, customProxyUrl); dom.output.value = enhancedText; } catch (error) { console.error(`Enhancement failed:`, error); showError(error.message); } finally { dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => { btn.disabled = false; btn.textContent = originalBtnText[btn.dataset.action]; }); } }
+
+                // --- START: Local Storage and Settings ---
+                const LS_SETTINGS_KEY = 'fluentify_settings_v4';
+                function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
+                function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.saveSettingsCheckbox.checked = true; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
+
+                // --- START: Theme Management ---
+                function applyTheme(theme) { dom.html.classList.toggle('dark', theme === 'dark'); dom.themeIconLight.classList.toggle('hidden', theme === 'dark'); dom.themeIconDark.classList.toggle('hidden', theme !== 'dark'); }
+                function toggleTheme() { const newTheme = dom.html.classList.contains('dark') ? 'light' : 'dark'; applyTheme(newTheme); saveSettings(); }
+
+                // --- START: Helper Functions ---
+                function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = (error) => reject(error); }); }
+                function copyToClipboard() { if (!dom.output.value) return; navigator.clipboard.writeText(dom.output.value).then(() => { dom.copyIconDefault.classList.add('hidden'); dom.copyIconSuccess.classList.remove('hidden'); setTimeout(() => { dom.copyIconDefault.classList.remove('hidden'); dom.copyIconSuccess.classList.add('hidden'); }, 2000); }).catch(err => { console.error('Failed to copy text:', err); showError('Could not copy text.'); }); }
+                function exportToTxt() { if (!dom.output.value) return; const blob = new Blob([dom.output.value], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'translation.txt'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
+
+                // --- START: Initialization ---
+                function initialize() {
+                    populateSelect(dom.sourceLangSelect, LANGUAGES, 'auto');
+                    populateSelect(dom.targetLangSelect, LANGUAGES, 'English', opt => opt.value !== 'auto');
+                    populateSelect(dom.modelSelect, MODELS.map(m => ({ value: m, text: m })), DEFAULT_WEB_MODEL);
+                    populateSelect(dom.jobFieldSelect, JOB_FIELDS, 'None');
+                    loadSettings();
+                    handleInputTypeChange();
+                    dom.customProxyContainer.classList.toggle('hidden', !dom.useProxyCheckbox.checked);
+                    dom.form.addEventListener('submit', handleFormSubmit);
+                    dom.inputTypeRadios.forEach(radio => radio.addEventListener('change', handleInputTypeChange));
+                    dom.swapBtn.addEventListener('click', swapLanguages);
+                    dom.copyBtn.addEventListener('click', copyToClipboard);
+                    dom.exportBtn.addEventListener('click', exportToTxt);
+                    dom.themeToggleBtn.addEventListener('click', toggleTheme);
+                    dom.chooseFileBtn.addEventListener('click', () => dom.fileUpload.click());
+                    dom.removeFileBtn.addEventListener('click', resetFileInput);
+                    dom.fileUpload.addEventListener('change', handleFileChange);
+                    ['dragover', 'drop'].forEach(eventName => dom.dropzoneContainer.addEventListener(eventName, e => e.preventDefault()));
+                    dom.dropzoneContainer.addEventListener('dragenter', () => dom.dropzoneContainer.classList.add('border-sky-500'));
+                    dom.dropzoneContainer.addEventListener('dragleave', () => dom.dropzoneContainer.classList.remove('border-sky-500'));
+                    dom.dropzoneContainer.addEventListener('drop', (e) => { dom.dropzoneContainer.classList.remove('border-sky-500'); if (e.dataTransfer.files.length) { dom.fileUpload.files = e.dataTransfer.files; dom.fileUpload.dispatchEvent(new Event('change')); } });
+                    dom.selectAllPagesBtn.addEventListener('click', () => { if (!pdfDoc) return; const allThumbs = dom.pdfPageViewer.querySelectorAll('.page-thumb'); for (let i = 1; i <= pdfDoc.numPages; i++) { if (selectedPages.size >= PDF_PAGE_SELECTION_LIMIT) { showError(`Selection limit of ${PDF_PAGE_SELECTION_LIMIT} reached.`); setTimeout(() => showError(''), 3000); break; } selectedPages.add(i); allThumbs[i - 1]?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); updateSelectActivePageButton(); });
+                    dom.deselectAllPagesBtn.addEventListener('click', () => { selectedPages.clear(); dom.pdfPageViewer.querySelectorAll('.page-thumb').forEach(thumb => thumb.classList.remove('selected')); updatePageSelectionCounter(); validateForm(); updateSelectActivePageButton(); });
+                    dom.selectActivePageBtn.addEventListener('click', () => { if (activePage) togglePageSelection(activePage); });
+                    dom.pdfViewSizeSelect.addEventListener('change', (e) => { const currentClasses = Array.from(dom.pdfPageViewer.classList); const classToRemove = currentClasses.find(c => c.startsWith('grid-cols-')); if (classToRemove) dom.pdfPageViewer.classList.remove(classToRemove); dom.pdfPageViewer.classList.add(e.target.value); });
+                    dom.combinePagesCheckbox.addEventListener('change', updatePageSelectionCounter);
+                    dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => btn.addEventListener('click', () => handleEnhancement(btn.dataset.action)));
+                    [dom.textInput, dom.apiKeyInput, dom.sourceLangSelect, dom.targetLangSelect, dom.customProxyInput].forEach(el => el.addEventListener('input', validateForm));
+                    dom.textInput.addEventListener('input', updateCharCounter);
+                    dom.settingsToggleBtn.addEventListener('click', () => dom.settingsPanel.classList.toggle('hidden'));
+                    dom.toggleApiKeyBtn.addEventListener('click', () => { const isPassword = dom.apiKeyInput.type === 'password'; dom.apiKeyInput.type = isPassword ? 'text' : 'password'; dom.eyeOpenIcon.classList.toggle('hidden', isPassword); dom.eyeClosedIcon.classList.toggle('hidden', !isPassword); });
+                    dom.useProxyCheckbox.addEventListener('change', (e) => dom.customProxyContainer.classList.toggle('hidden', !e.target.checked));
+                    [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput].forEach(el => el.addEventListener('change', saveSettings));
+                    console.log("Fluentify App Initialized.");
+                }
+
+                document.addEventListener('DOMContentLoaded', initialize);
+            })();
+    </script>
+
+</body>
+
+</html>
