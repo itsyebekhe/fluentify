@@ -45,6 +45,30 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
         #enhancements-toolbar { transition: opacity 0.3s ease, transform 0.3s ease; }
+        
+        /* New Styles */
+        .progress-bar { height: 8px; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden; }
+        .dark .progress-bar { background-color: #374151; }
+        .progress-bar-inner { height: 100%; background-color: #0ea5e9; border-radius: 9999px; transition: width 0.3s ease; }
+
+        #log-viewer { transition: max-height 0.5s ease-in-out; }
+        #log-output { white-space: pre-wrap; word-break: break-all; }
+        .log-entry { display: flex; gap: 0.75rem; }
+        .log-timestamp { flex-shrink: 0; color: #64748b; }
+        .dark .log-timestamp { color: #94a3b8; }
+        .log-message.error { color: #ef4444; }
+        .dark .log-message.error { color: #f87171; }
+        .log-message.success { color: #22c55e; }
+        .dark .log-message.success { color: #4ade80; }
+
+        #subtitle-editor-section table { width: 100%; border-collapse: collapse; }
+        #subtitle-editor-section th, #subtitle-editor-section td { padding: 8px 12px; border: 1px solid #d1d5db; text-align: left; vertical-align: middle;}
+        .dark #subtitle-editor-section th, .dark #subtitle-editor-section td { border-color: #4b5563; }
+        #subtitle-editor-section th { background-color: #f3f4f6; }
+        .dark #subtitle-editor-section th { background-color: #374151; }
+        #subtitle-editor-section td:nth-child(3), #subtitle-editor-section td:nth-child(4) { font-size: 0.9rem; }
+        #subtitle-editor-section .translated-text { background-color: #f0f9ff; }
+        .dark #subtitle-editor-section .translated-text { background-color: #1e293b; }
     </style>
 </head>
 
@@ -72,6 +96,9 @@
                     <label class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
                         <input type="radio" name="input_type" value="pdf" class="sr-only"> PDF
                     </label>
+                    <label class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
+                        <input type="radio" name="input_type" value="subtitle" class="sr-only"> Subtitle
+                    </label>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
@@ -87,6 +114,18 @@
                         <textarea id="text-input" name="text" maxlength="5000" placeholder="Enter text to translate..." class="w-full h-40 p-4 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 resize-none"></textarea>
                         <span id="char-counter" class="absolute bottom-2 right-3 text-xs text-slate-500 dark:text-slate-400">0 / 5000</span>
                     </div>
+
+                    <div id="youtube-input-section" class="hidden mb-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg space-y-3">
+                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Load from YouTube URL</label>
+                         <div class="flex flex-col sm:flex-row gap-2">
+                             <input type="text" id="youtube-url-input" placeholder="Enter YouTube Video URL..." class="w-full flex-grow bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-3 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                             <input type="text" id="youtube-lang-input" value="en" placeholder="lang" class="sm:w-20 bg-slate-100 dark:bg-slate-700 bg-input text-center rounded-lg p-3 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                             <button type="button" id="fetch-youtube-subs-btn" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors flex items-center justify-center">
+                                <span id="fetch-youtube-btn-text">Fetch</span>
+                                <svg id="fetch-youtube-btn-spinner" class="spinner w-5 h-5 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                             </button>
+                         </div>
+                    </div>
                     
                     <div id="file-input-section" class="hidden">
                         <div id="dropzone-container" class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors p-2">
@@ -96,8 +135,14 @@
                                 <button type="button" id="choose-file-btn" class="px-4 py-2 bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Choose File</button>
                                 <p id="file-upload-hint" class="text-xs text-slate-500 mt-2">PNG, JPG, PDF etc.</p>
                             </div>
-                            <div id="image-preview-container" class="hidden relative w-full h-full flex items-center justify-center">
+                            <div id="file-preview-container" class="hidden relative w-full h-full flex items-center justify-center">
                                 <img id="image-preview" class="max-w-full max-h-full object-contain rounded-md" alt="Image preview">
+                                <div id="subtitle-preview" class="hidden text-center p-4">
+                                    <svg class="w-12 h-12 mx-auto text-slate-500 dark:text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                    </svg>
+                                    <p id="subtitle-filename" class="mt-2 font-semibold text-slate-700 dark:text-slate-300 truncate"></p>
+                                </div>
                                 <button type="button" id="remove-file-btn" class="absolute top-1 right-1 p-1.5 rounded-full bg-black/50 hover:bg-red-600 text-white transition-colors" aria-label="Remove file">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
@@ -127,10 +172,56 @@
                     </div>
                      <p id="batch-warning" class="text-xs text-amber-600 dark:text-amber-400 text-center mt-2 h-4"></p>
                 </div>
+                
+                <div id="subtitle-editor-section" class="hidden mb-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg p-4 space-y-4">
+                    <div class="flex flex-wrap gap-4 justify-between items-center pb-3 border-b border-slate-300 dark:border-slate-700">
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">Subtitle Editor</h3>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                            <div class="flex items-center gap-2">
+                                <label for="subtitle-batch-size" class="text-sm font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Lines / Request</label>
+                                <input type="number" id="subtitle-batch-size" value="250" min="1" step="1" class="w-20 p-2 text-center bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                 <button type="button" id="export-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Export as subtitle file" aria-label="Export as subtitle file">
+                                   <svg id="export-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                                </button>
+                                <button type="button" id="translate-all-subs-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors">Translate All</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scroll-container max-h-[30rem] overflow-auto">
+                        <table id="subtitle-table">
+                            <thead class="sticky top-0 bg-slate-200 dark:bg-slate-700">
+                                <tr>
+                                    <th class="w-12">#</th>
+                                    <th class="w-40">Timestamp</th>
+                                    <th>Original Text</th>
+                                    <th>Translated Text</th>
+                                    <th class="w-24">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subtitle-table-body">
+                                <!-- Subtitle rows will be rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="progress-container" class="hidden my-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg space-y-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <span id="progress-label" class="text-sm font-medium text-slate-700 dark:text-slate-300">Translating...</span>
+                        <span id="progress-percentage" class="text-sm font-bold text-sky-600 dark:text-sky-400">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-bar-inner" class="progress-bar-inner" style="width: 0%;"></div>
+                    </div>
+                    <button type="button" id="cancel-translation-btn" class="w-full mt-2 px-4 py-2 text-sm font-medium rounded-md bg-red-500 hover:bg-red-600 text-white transition-colors">Cancel</button>
+                </div>
+
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                     <button type="button" id="settings-toggle-btn" class="w-full text-center py-3 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors font-medium">Advanced Settings</button>
-                    <button type="submit" id="translate-btn" class="w-full text-center py-3 px-4 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
+                    <button type="submit" id="translate-btn" class="w-full text-center py-3 px-4 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
                         <span id="translate-btn-text">Translate</span>
                         <svg id="translate-btn-spinner" class="spinner w-5 h-5 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </button>
@@ -144,6 +235,25 @@
                     <div>
                         <label for="job_field" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Translation Specialization</label>
                         <select id="job_field" name="job_field" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
+                    </div>
+                    <div>
+                        <label for="translation_tone" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Translation Tone</label>
+                        <select id="translation_tone" name="translation_tone" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
+                    </div>
+                    <div id="custom-tone-container" class="hidden">
+                         <label for="custom-tone-input" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Custom Tone Instruction</label>
+                         <textarea id="custom-tone-input" placeholder="e.g., 'Translate this in the style of a pirate.'" class="w-full h-20 p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="temperature" class="flex justify-between text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                            <span>Creativity (Temperature)</span>
+                            <span id="temperature-value">0.7</span>
+                        </label>
+                        <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.1" value="0.7" class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer dark:bg-slate-600">
+                    </div>
+                     <div>
+                        <label for="request_delay" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Request Delay (seconds)</label>
+                        <input type="number" id="request_delay" name="request_delay" min="0" step="0.1" value="4" class="w-full p-2.5 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
                     </div>
                     <div>
                         <label for="api_key" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Google AI API Key</label>
@@ -166,591 +276,1062 @@
                             <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Deploy your own proxy using <a href="https://github.com/yebekhe/middleman" target="_blank" rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a>.</p>
                         </div>
                     </div>
+                    <div class="space-y-2 pt-2 border-t border-slate-300 dark:border-slate-700">
+                        <div class="flex items-center">
+                            <input id="use-custom-prompt-checkbox" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
+                            <label for="use-custom-prompt-checkbox" class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Use Custom Prompt</label>
+                        </div>
+                        <div id="custom-prompt-container" class="hidden space-y-2">
+                            <textarea id="custom-prompt-input" placeholder="Enter your custom prompt. Use {text}, {source_lang}, and {target_lang} as placeholders." class="w-full h-28 p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500"></textarea>
+                            <button type="button" id="optimize-prompt-btn" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i class="fas fa-magic mr-2"></i>
+                                <span id="optimize-prompt-btn-text">Optimize</span>
+                                <svg id="optimize-prompt-spinner" class="spinner w-4 h-4 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
                     <div class="flex items-center pt-2 border-t border-slate-300 dark:border-slate-700">
                         <input id="save-settings-checkbox" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
                         <label for="save-settings-checkbox" class="ml-2 block text-sm text-slate-600 dark:text-slate-400">Save all settings in this browser</label>
                     </div>
                 </div>
 
-                <div class="relative">
-                    <textarea id="output" placeholder="Translation will appear here..." readonly class="w-full min-h-[10rem] p-4 bg-slate-200 dark:bg-slate-900 bg-input rounded-lg border-slate-300 dark:border-transparent resize-y"></textarea>
-                    <div class="absolute top-3 right-3 flex items-center gap-2">
-                        <button type="button" id="export-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Export as .txt" aria-label="Export as .txt">
-                           <svg id="export-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                        </button>
-                        <button type="button" id="copy-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Copy output" aria-label="Copy output">
-                            <svg id="copy-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg>
-                            <svg id="copy-icon-success" class="w-5 h-5 text-green-600 dark:text-green-400 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-                        </button>
+                <div id="main-output-section">
+                    <div class="relative">
+                        <textarea id="output" placeholder="Translation will appear here..." readonly class="w-full min-h-[10rem] p-4 pr-32 bg-slate-200 dark:bg-slate-900 bg-input rounded-lg border-slate-300 dark:border-transparent resize-y"></textarea>
+                        <div class="absolute top-3 right-3 flex items-center gap-2">
+                            <button type="button" id="copy-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Copy output" aria-label="Copy output">
+                                <svg id="copy-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg>
+                                <svg id="copy-icon-success" class="w-5 h-5 text-green-600 dark:text-green-400 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                            </button>
+                             <button type="button" id="export-text-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Export as TXT file" aria-label="Export as TXT file">
+                               <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="enhancements-toolbar" class="mt-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg hidden opacity-0 -translate-y-2 space-y-4">
+                        <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+                            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Refine:</span>
+                            <button type="button" data-action="shorten" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Make Shorter</button>
+                            <button type="button" data-action="expand" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Expand</button>
+                            <button type="button" data-action="summarize" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Summarize</button>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-t border-slate-300 dark:border-slate-700 pt-4">
+                            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Change Style:</span>
+                            <button type="button" data-action="formal" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
+                                <i class="fas fa-user-tie mr-1.5"></i>Formal
+                            </button>
+                            <button type="button" data-action="informal" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
+                                <i class="fas fa-comments mr-1.5"></i>Informal
+                            </button>
+                            <button type="button" data-action="poetic" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
+                                <i class="fas fa-feather-alt mr-1.5"></i>Poetic
+                            </button>
+                            <button type="button" data-action="simplify" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
+                                <i class="fas fa-child mr-1.5"></i>Simplify
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <div id="enhancements-toolbar" class="mt-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg hidden opacity-0 -translate-y-2 space-y-4">
-                    <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Refine:</span>
-                        <button type="button" data-action="shorten" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Make Shorter</button>
-                        <button type="button" data-action="expand" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Expand</button>
-                        <button type="button" data-action="summarize" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Summarize</button>
-                    </div>
-                    <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-t border-slate-300 dark:border-slate-700 pt-4">
-                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Change Style:</span>
-                        <button type="button" data-action="formal" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                            <i class="fas fa-user-tie mr-1.5"></i>Formal
-                        </button>
-                        <button type="button" data-action="informal" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                            <i class="fas fa-comments mr-1.5"></i>Informal
-                        </button>
-                        <button type="button" data-action="poetic" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                            <i class="fas fa-feather-alt mr-1.5"></i>Poetic
-                        </button>
-                        <button type="button" data-action="simplify" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                            <i class="fas fa-child mr-1.5"></i>Simplify
-                        </button>
-                    </div>
-                </div>
-
 
                 <div id="error-display" role="alert" class="mt-4 text-center text-red-600 dark:text-red-400 font-medium h-5"></div>
             </form>
 
-        </div><!-- Find and replace your old <footer> with this one -->
-            <footer class="max-w-4xl mx-auto py-8 px-4">
-                <div class="flex flex-col items-center justify-center text-center gap-4">
-                    <p class="text-sm text-slate-600 dark:text-slate-400">
-                        Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE
-                    </p>
-                    <div class="flex items-center space-x-6">
-                        <a href="https://github.com/itsyebekhe/fluentify" target="_blank" rel="noopener noreferrer"
-                            title="GitHub Repository" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
-                            <i class="fab fa-github fa-lg"></i>
-                        </a>
-                        <a href="https://x.com/yebekhe" target="_blank" rel="noopener noreferrer" title="X (Twitter)"
-                            class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
-                            <i class="fab fa-twitter fa-lg"></i>
-                        </a>
-                        <a href="https://t.me/yebekhe" target="_blank" rel="noopener noreferrer" title="Telegram"
-                            class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
-                            <i class="fab fa-telegram fa-lg"></i>
-                        </a>
-                    </div>
+        </div>
+        
+        <div id="log-viewer" class="w-full max-w-4xl mx-auto mt-4 bg-white dark:bg-slate-800 bg-card rounded-lg shadow-md dark:shadow-lg dark:shadow-black/30 overflow-hidden max-h-0">
+            <button id="log-toggle" class="w-full p-3 text-left font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                Live Activity Log
+            </button>
+            <div id="log-content" class="p-4 text-xs font-mono text-slate-600 dark:text-slate-400 max-h-64 overflow-y-auto scroll-container">
+                <div id="log-output"></div>
+            </div>
+        </div>
+
+        <footer class="max-w-4xl mx-auto py-8 px-4">
+            <div class="flex flex-col items-center justify-center text-center gap-4">
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE
+                </p>
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/itsyebekhe/fluentify" target="_blank" rel="noopener noreferrer"
+                        title="GitHub Repository" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fab fa-github fa-lg"></i>
+                    </a>
+                    <a href="https://x.com/yebekhe" target="_blank" rel="noopener noreferrer" title="X (Twitter)"
+                        class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fab fa-twitter fa-lg"></i>
+                    </a>
+                    <a href="https://t.me/yebekhe" target="_blank" rel="noopener noreferrer" title="Telegram"
+                        class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+                        <i class="fab fa-telegram fa-lg"></i>
+                    </a>
                 </div>
-            </footer>
+            </div>
+        </footer>
     </main>
     
 
-<script>
-(() => {
-    // --- START: CONFIGURATION ---
-    const DEFAULT_WEB_MODEL = "gemini-2.5-flash";
-    const DEFAULT_PROXY_URL = "https://middleman.yebekhe.workers.dev";
-    const MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
-    const LANGUAGES = [ { value: "auto", text: "Auto-detect Language" }, { value: "Afrikaans", text: "Afrikaans" }, { value: "Albanian", text: "Albanian" }, { value: "Amharic", text: "Amharic" }, { value: "Arabic", text: "Arabic" }, { value: "Armenian", text: "Armenian" }, { value: "Assamese", text: "Assamese" }, { value: "Aymara", text: "Aymara" }, { value: "Azerbaijani", text: "Azerbaijani" }, { value: "Bambara", text: "Bambara" }, { value: "Basque", text: "Basque" }, { value: "Belarusian", text: "Belarusian" }, { value: "Bengali", text: "Bengali" }, { value: "Bhojpuri", text: "Bhojpuri" }, { value: "Bosnian", text: "Bosnian" }, { value: "Bulgarian", text: "Bulgarian" }, { value: "Catalan", text: "Catalan" }, { value: "Cebuano", text: "Cebuano" }, { value: "Chichewa", text: "Chichewa (Nyanja)" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)" }, { value: "Corsican", text: "Corsican" }, { value: "Croatian", text: "Croatian" }, { value: "Czech", text: "Czech" }, { value: "Danish", text: "Danish" }, { value: "Dhivehi", text: "Dhivehi" }, { value: "Dogri", text: "Dogri" }, { value: "Dutch", text: "Dutch" }, { value: "English", text: "English" }, { value: "Esperanto", text: "Esperanto" }, { value: "Estonian", text: "Estonian" }, { value: "Ewe", text: "Ewe" }, { value: "Filipino", text: "Filipino (Tagalog)" }, { value: "Finnish", text: "Finnish" }, { value: "French", text: "French" }, { value: "Frisian", text: "Frisian" }, { value: "Galician", text: "Galician" }, { value: "Georgian", text: "Georgian" }, { value: "German", text: "German" }, { value: "Greek", text: "Greek" }, { value: "Guarani", text: "Guarani" }, { value: "Gujarati", text: "Gujarati" }, { value: "Haitian Creole", text: "Haitian Creole" }, { value: "Hausa", text: "Hausa" }, { value: "Hawaiian", text: "Hawaiian" }, { value: "Hebrew", text: "Hebrew" }, { value: "Hindi", text: "Hindi" }, { value: "Hmong", text: "Hmong" }, { value: "Hungarian", text: "Hungarian" }, { value: "Icelandic", text: "Icelandic" }, { value: "Igbo", text: "Igbo" }, { value: "Ilocano", text: "Ilocano" }, { value: "Indonesian", text: "Indonesian" }, { value: "Irish", text: "Irish" }, { value: "Italian", text: "Italian" }, { value: "Japanese", text: "Japanese" }, { value: "Javanese", text: "Javanese" }, { value: "Kannada", text: "Kannada" }, { value: "Kazakh", text: "Kazakh" }, { value: "Khmer", text: "Khmer" }, { value: "Kinyarwanda", text: "Kinyarwanda" }, { value: "Konkani", text: "Konkani" }, { value: "Korean", text: "Korean" }, { value: "Krio", text: "Krio" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)" }, { value: "Kyrgyz", text: "Kyrgyz" }, { value: "Lao", text: "Lao" }, { value: "Latin", text: "Latin" }, { value: "Latvian", text: "Latvian" }, { value: "Lingala", text: "Lingala" }, { value: "Lithuanian", text: "Lithuanian" }, { value: "Luganda", text: "Luganda" }, { value: "Luxembourgish", text: "Luxembourgish" }, { value: "Macedonian", text: "Macedonian" }, { value: "Maithili", text: "Maithili" }, { value: "Malagasy", text: "Malagasy" }, { value: "Malay", text: "Malay" }, { value: "Malayalam", text: "Malayalam" }, { value: "Maltese", text: "Maltese" }, { value: "Maori", text: "Maori" }, { value: "Marathi", text: "Marathi" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)" }, { value: "Mizo", text: "Mizo" }, { value: "Mongolian", text: "Mongolian" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)" }, { value: "Nepali", text: "Nepali" }, { value: "Norwegian", text: "Norwegian" }, { value: "Odia (Oriya)", text: "Odia (Oriya)" }, { value: "Oromo", text: "Oromo" }, { value: "Pashto", text: "Pashto" }, { value: "Persian", text: "Persian (Farsi)" }, { value: "Polish", text: "Polish" }, { value: "Portuguese", text: "Portuguese" }, { value: "Punjabi", text: "Punjabi" }, { value: "Quechua", text: "Quechua" }, { value: "Romanian", text: "Romanian" }, { value: "Russian", text: "Russian" }, { value: "Samoan", text: "Samoan" }, { value: "Sanskrit", text: "Sanskrit" }, { value: "Scots Gaelic", text: "Scots Gaelic" }, { value: "Sepedi", text: "Sepedi" }, { value: "Serbian", text: "Serbian" }, { value: "Sesotho", text: "Sesotho" }, { value: "Shona", text: "Shona" }, { value: "Sindhi", text: "Sindhi" }, { value: "Sinhala", text: "Sinhala" }, { value: "Slovak", text: "Slovak" }, { value: "Slovenian", text: "Slovenian" }, { value: "Somali", text: "Somali" }, { value: "Spanish", text: "Spanish" }, { value: "Sundanese", text: "Sundanese" }, { value: "Swahili", text: "Swahili" }, { value: "Swedish", text: "Swedish" }, { value: "Tajik", text: "Tajik" }, { value: "Tamil", text: "Tamil" }, { value: "Tatar", text: "Tatar" }, { value: "Telugu", text: "Telugu" }, { value: "Thai", text: "Thai" }, { value: "Tigrinya", text: "Tigrinya" }, { value: "Tsonga", text: "Tsonga" }, { value: "Turkish", text: "Turkish" }, { value: "Turkmen", text: "Turkmen" }, { value: "Twi", text: "Twi (Akan)" }, { value: "Ukrainian", text: "Ukrainian" }, { value: "Urdu", text: "Urdu" }, { value: "Uyghur", text: "Uyghur" }, { value: "Uzbek", text: "Uzbek" }, { value: "Vietnamese", text: "Vietnamese" }, { value: "Welsh", text: "Welsh" }, { value: "Xhosa", text: "Xhosa" }, { value: "Yiddish", text: "Yiddish" }, { value: "Yoruba", text: "Yoruba" }, { value: "Zulu", text: "Zulu" }];
-    const JOB_FIELDS = [ { value: "None", text: "None (General)" }, { value: "Medical", text: "Medical / Healthcare" }, { value: "Legal", text: "Legal / Law" }, { value: "Engineering", text: "Engineering (General)" }, { value: "IT", text: "Information Technology / Software" }, { value: "Finance", text: "Finance / Banking" }, { value: "Academic", text: "Academic / Research" }, { value: "Marketing", text: "Marketing / Business" } ];
-    const RTL_LANGUAGES = new Set(['Arabic', 'Hebrew', 'Persian', 'Urdu', 'Yiddish', 'Dhivehi', 'Sindhi', 'Pashto', 'Uyghur', 'Kurdish (Sorani)']);
-    const BATCH_DELAY_MS = 4000;
-    // --- END: CONFIGURATION ---
-
-
-    // --- START: DOM Element Selection ---
-    const dom = {
-        html: document.documentElement,
-        form: document.getElementById('translate-form'),
-        inputTypeRadios: document.querySelectorAll('input[name="input_type"]'),
-        textInputContainer: document.getElementById('text-input-container'),
-        fileInputSection: document.getElementById('file-input-section'),
-        dropzoneContainer: document.getElementById('dropzone-container'),
-        dropzonePrompt: document.getElementById('dropzone-prompt'),
-        imagePreviewContainer: document.getElementById('image-preview-container'),
-        imagePreview: document.getElementById('image-preview'),
-        removeFileBtn: document.getElementById('remove-file-btn'),
-        chooseFileBtn: document.getElementById('choose-file-btn'),
-        fileUpload: document.getElementById('file-upload'),
-        fileUploadHint: document.getElementById('file-upload-hint'),
-        pdfViewerSection: document.getElementById('pdf-viewer-section'),
-        pdfPageViewer: document.getElementById('pdf-page-viewer'),
-        pageSelectionCounter: document.getElementById('page-selection-counter'),
-        batchWarning: document.getElementById('batch-warning'),
-        combinePagesCheckbox: document.getElementById('combine-pages-checkbox'),
-        selectAllPagesBtn: document.getElementById('select-all-pages-btn'),
-        deselectAllPagesBtn: document.getElementById('deselect-all-pages-btn'),
-        textInput: document.getElementById('text-input'),
-        sourceLangSelect: document.getElementById('source_lang'),
-        targetLangSelect: document.getElementById('target_lang'),
-        swapBtn: document.getElementById('swap-btn'),
-        charCounter: document.getElementById('char-counter'),
-        output: document.getElementById('output'),
-        copyBtn: document.getElementById('copy-btn'),
-        exportBtn: document.getElementById('export-btn'),
-        copyIconDefault: document.getElementById('copy-icon-default'),
-        copyIconSuccess: document.getElementById('copy-icon-success'),
-        enhancementsToolbar: document.getElementById('enhancements-toolbar'),
-        translateBtn: document.getElementById('translate-btn'),
-        translateBtnText: document.getElementById('translate-btn-text'),
-        translateBtnSpinner: document.getElementById('translate-btn-spinner'),
-        errorDisplay: document.getElementById('error-display'),
-        settingsToggleBtn: document.getElementById('settings-toggle-btn'),
-        settingsPanel: document.getElementById('settings-panel'),
-        modelSelect: document.getElementById('model'),
-        jobFieldSelect: document.getElementById('job_field'),
-        apiKeyInput: document.getElementById('api_key'),
-        toggleApiKeyBtn: document.getElementById('toggle-api-key-visibility'),
-        eyeOpenIcon: document.getElementById('eye-open-icon'),
-        eyeClosedIcon: document.getElementById('eye-closed-icon'),
-        saveSettingsCheckbox: document.getElementById('save-settings-checkbox'),
-        themeToggleBtn: document.getElementById('theme-toggle'),
-        themeIconLight: document.getElementById('theme-icon-light'),
-        themeIconDark: document.getElementById('theme-icon-dark'),
-        useProxyCheckbox: document.getElementById('use-proxy-checkbox'),
-        customProxyContainer: document.getElementById('custom-proxy-container'),
-        customProxyInput: document.getElementById('custom-proxy-input'),
-    };
-    
-    // --- START: State Management ---
-    let pdfDoc = null;
-    let selectedPages = new Set();
-    // --- END: State Management ---
-
-    // --- START: Core Translation Logic ---
-    async function callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl) { const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`; const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl; let payload = { contents: [{ parts: [{ text: prompt }] }], safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }], generationConfig: { response_mime_type: "text/plain" } }; if (useProxy) { payload = { endpoint: directUrl, ...payload }; } const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const responseBody = await response.json(); if (!response.ok) { const errorDetails = responseBody?.error || { message: 'Unknown API error' }; console.error(`Google AI API Error (${response.status})`, errorDetails); let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`; if (response.status === 429) userMessage = "API rate limit exceeded. Please try again later."; throw new Error(userMessage); } const candidate = responseBody.candidates?.[0]; if (!candidate) { const blockReason = responseBody.promptFeedback?.blockReason; if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`); throw new Error("Invalid response structure from AI."); } if (candidate.finishReason && !["STOP", "MAX_TOKENS"].includes(candidate.finishReason)) { if (candidate.finishReason === "SAFETY") throw new Error(`Translation blocked for safety reasons.`); console.warn("AI processing stopped unexpectedly:", candidate.finishReason); } return candidate.content?.parts?.[0]?.text?.trim() ?? ""; }
-    async function performOcr(base64Image, mimeType, apiKey, model, useProxy, customProxyUrl) { const prompt = "Extract all text content from this image. Output ONLY the text found, preserving line breaks as accurately as possible. If no text is found, output nothing."; const promptParts = [{ text: prompt }, { inline_data: { mime_type: mimeType, data: base64Image } }]; const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`; const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl; let payload = { contents: [{ parts: promptParts }], safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }], generationConfig: { response_mime_type: "text/plain" } }; if (useProxy) { payload = { endpoint: directUrl, ...payload }; } const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const responseBody = await response.json(); if (!response.ok) { const errorDetails = responseBody?.error || { message: 'Unknown API error' }; console.error(`Google AI API Error (${response.status})`, errorDetails); let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`; if (response.status === 429) userMessage = "API rate limit exceeded. Please try again later."; throw new Error(userMessage); } const candidate = responseBody.candidates?.[0]; if (!candidate) { const blockReason = responseBody.promptFeedback?.blockReason; if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`); throw new Error("Invalid response structure from AI."); } if (candidate.finishReason && !["STOP", "MAX_TOKENS"].includes(candidate.finishReason)) { if (candidate.finishReason === "SAFETY") throw new Error(`Translation blocked for safety reasons.`); console.warn("AI processing stopped unexpectedly:", candidate.finishReason); } return candidate.content?.parts?.[0]?.text?.trim() ?? ""; }
-    async function extractTextFromPdfPage(pageNumber) { if (!pdfDoc) return null; const page = await pdfDoc.getPage(pageNumber); const textContent = await page.getTextContent(); return textContent.items.map(item => item.str).join(' '); }
-    async function translateText(text, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl) { const jobFieldText = JOB_FIELDS.find(f => f.value === jobField)?.text || 'General'; const specializationContext = (jobField && jobField !== "None") ? `Pay close attention to specialized terms in the field of **${jobFieldText}**.` : ""; const prompt = `
-You are an expert translator. Your task is to accurately translate the given text.
-- Maintain a natural, conversational tone suitable for the target language.
-- Ensure grammatical correctness and proper sentence structure.
-- Preserve the original context and meaning.
-- Use consistent terminology if technical terms are present.
-- Avoid literal, word-for-word translations that sound unnatural.
-- Return ONLY the translated text, with no extra commentary or explanations.
-${specializationContext}
-Translate the following text from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} into **${targetLang}**:
----
-${text}
----`; return callGoogleAI(prompt.trim(), apiKey, model, useProxy, customProxyUrl); }
-    async function enhanceText(text, action, targetLang, apiKey, model, useProxy, customProxyUrl) { let actionInstruction = ''; switch(action) { case 'shorten': actionInstruction = `You are a text editor. Make the following text more concise and to the point. Remove filler words but preserve the core meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'expand': actionInstruction = `You are a content writer. Expand on the following text. Add more detail, examples, or elaborate on the ideas to make it more comprehensive. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'summarize': actionInstruction = `You are a summarization expert. Provide a concise summary of the following text, capturing the main points. Return ONLY the summary, in ${targetLang}.`; break; case 'formal': actionInstruction = `You are a language style expert. Rewrite the following text in a formal tone, suitable for a professional or academic setting. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'informal': actionInstruction = `You are a language style expert. Rewrite the following text in a casual, informal, and friendly tone. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'poetic': actionInstruction = `You are a creative writer. Rewrite the following text in a more poetic and artistic style. Use metaphors, vivid imagery, and evocative language, while preserving the original core meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'simplify': actionInstruction = `You are a language expert who specializes in simplification. Rewrite the following text to be very simple and easy to understand, as if explaining it to a child or someone new to the topic. Use basic vocabulary and short sentences. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; default: return text; } const prompt = `${actionInstruction}\n\n---\n${text}\n---`; return callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl); }
-    
-    // --- START: Streaming Translation Logic ---
-    async function streamGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl, onChunk, onComplete, onError) {
-        const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}`;
-        const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl;
-        let payload = {
-            contents: [{ parts: [{ text: prompt }] }],
-            safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }],
-            generationConfig: { response_mime_type: "text/plain" }
-        };
-        if (useProxy) { payload = { endpoint: directUrl, ...payload }; }
-
-        try {
-            const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-
-            if (!response.ok) {
-                const errorBody = await response.json();
-                const errorDetails = errorBody?.error || { message: 'Unknown API error' };
-                let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`;
-                throw new Error(userMessage);
+    <script>
+        (() => {
+            // --- START: CONFIGURATION ---
+            const DEFAULT_WEB_MODEL = "gemini-2.0-flash";
+            const DEFAULT_PROXY_URL = "https://middleman.yebekhe.workers.dev";
+            const MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
+            const LANGUAGES = [ { value: "auto", text: "Auto-detect Language" }, { value: "Afrikaans", text: "Afrikaans" }, { value: "Albanian", text: "Albanian" }, { value: "Amharic", text: "Amharic" }, { value: "Arabic", text: "Arabic" }, { value: "Armenian", text: "Armenian" }, { value: "Assamese", text: "Assamese" }, { value: "Aymara", text: "Aymara" }, { value: "Azerbaijani", text: "Azerbaijani" }, { value: "Bambara", text: "Bambara" }, { value: "Basque", text: "Basque" }, { value: "Belarusian", text: "Belarusian" }, { value: "Bengali", text: "Bengali" }, { value: "Bhojpuri", text: "Bhojpuri" }, { value: "Bosnian", text: "Bosnian" }, { value: "Bulgarian", text: "Bulgarian" }, { value: "Catalan", text: "Catalan" }, { value: "Cebuano", text: "Cebuano" }, { value: "Chichewa", text: "Chichewa (Nyanja)" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)" }, { value: "Corsican", text: "Corsican" }, { value: "Croatian", text: "Croatian" }, { value: "Czech", text: "Czech" }, { value: "Danish", text: "Danish" }, { value: "Dhivehi", text: "Dhivehi" }, { value: "Dogri", text: "Dogri" }, { value: "Dutch", text: "Dutch" }, { value: "English", text: "English" }, { value: "Esperanto", text: "Esperanto" }, { value: "Estonian", text: "Estonian" }, { value: "Ewe", text: "Ewe" }, { value: "Filipino", text: "Filipino (Tagalog)" }, { value: "Finnish", text: "Finnish" }, { value: "French", text: "French" }, { value: "Frisian", text: "Frisian" }, { value: "Galician", text: "Galician" }, { value: "Georgian", text: "Georgian" }, { value: "German", text: "German" }, { value: "Greek", text: "Greek" }, { value: "Guarani", text: "Guarani" }, { value: "Gujarati", text: "Gujarati" }, { value: "Haitian Creole", text: "Haitian Creole" }, { value: "Hausa", text: "Hausa" }, { value: "Hawaiian", text: "Hawaiian" }, { value: "Hebrew", text: "Hebrew" }, { value: "Hindi", text: "Hindi" }, { value: "Hmong", text: "Hmong" }, { value: "Hungarian", text: "Hungarian" }, { value: "Icelandic", text: "Icelandic" }, { value: "Igbo", text: "Igbo" }, { value: "Ilocano", text: "Ilocano" }, { value: "Indonesian", text: "Indonesian" }, { value: "Irish", text: "Irish" }, { value: "Italian", text: "Italian" }, { value: "Japanese", text: "Japanese" }, { value: "Javanese", text: "Javanese" }, { value: "Kannada", text: "Kannada" }, { value: "Kazakh", text: "Kazakh" }, { value: "Khmer", text: "Khmer" }, { value: "Kinyarwanda", text: "Kinyarwanda" }, { value: "Konkani", text: "Konkani" }, { value: "Korean", text: "Korean" }, { value: "Krio", text: "Krio" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)" }, { value: "Kyrgyz", text: "Kyrgyz" }, { value: "Lao", text: "Lao" }, { value: "Latin", text: "Latin" }, { value: "Latvian", text: "Latvian" }, { value: "Lingala", text: "Lingala" }, { value: "Lithuanian", text: "Lithuanian" }, { value: "Luganda", text: "Luganda" }, { value: "Luxembourgish", text: "Luxembourgish" }, { value: "Macedonian", text: "Macedonian" }, { value: "Maithili", text: "Maithili" }, { value: "Malagasy", text: "Malagasy" }, { value: "Malay", text: "Malay" }, { value: "Malayalam", text: "Malayalam" }, { value: "Maltese", text: "Maltese" }, { value: "Maori", text: "Maori" }, { value: "Marathi", text: "Marathi" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)" }, { value: "Mizo", text: "Mizo" }, { value: "Mongolian", text: "Mongolian" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)" }, { value: "Nepali", text: "Nepali" }, { value: "Norwegian", text: "Norwegian" }, { value: "Odia (Oriya)", text: "Odia (Oriya)" }, { value: "Oromo", text: "Oromo" }, { value: "Pashto", text: "Pashto" }, { value: "Persian", text: "Persian (Farsi)" }, { value: "Polish", text: "Polish" }, { value: "Portuguese", text: "Portuguese" }, { value: "Punjabi", text: "Punjabi" }, { value: "Quechua", text: "Quechua" }, { value: "Romanian", text: "Romanian" }, { value: "Russian", text: "Russian" }, { value: "Samoan", text: "Samoan" }, { value: "Sanskrit", text: "Sanskrit" }, { value: "Scots Gaelic", text: "Scots Gaelic" }, { value: "Sepedi", text: "Sepedi" }, { value: "Serbian", text: "Serbian" }, { value: "Sesotho", text: "Sesotho" }, { value: "Shona", text: "Shona" }, { value: "Sindhi", text: "Sindhi" }, { value: "Sinhala", text: "Sinhala" }, { value: "Slovak", text: "Slovak" }, { value: "Slovenian", text: "Slovenian" }, { value: "Somali", text: "Somali" }, { value: "Spanish", text: "Spanish" }, { value: "Sundanese", text: "Sundanese" }, { value: "Swahili", text: "Swahili" }, { value: "Swedish", text: "Swedish" }, { value: "Tajik", text: "Tajik" }, { value: "Tamil", text: "Tamil" }, { value: "Tatar", text: "Tatar" }, { value: "Telugu", text: "Telugu" }, { value: "Thai", text: "Thai" }, { value: "Tigrinya", text: "Tigrinya" }, { value: "Tsonga", text: "Tsonga" }, { value: "Turkish", text: "Turkish" }, { value: "Turkmen", text: "Turkmen" }, { value: "Twi", text: "Twi (Akan)" }, { value: "Ukrainian", text: "Ukrainian" }, { value: "Urdu", text: "Urdu" }, { value: "Uyghur", text: "Uyghur" }, { value: "Uzbek", text: "Uzbek" }, { value: "Vietnamese", text: "Vietnamese" }, { value: "Welsh", text: "Welsh" }, { value: "Xhosa", text: "Xhosa" }, { value: "Yiddish", text: "Yiddish" }, { value: "Yoruba", text: "Yoruba" }, { value: "Zulu", text: "Zulu" }];
+            const JOB_FIELDS = [ { value: "None", text: "None (General)" }, { value: "Medical", text: "Medical / Healthcare" }, { value: "Legal", text: "Legal / Law" }, { value: "Engineering", text: "Engineering (General)" }, { value: "IT", text: "Information Technology / Software" }, { value: "Finance", text: "Finance / Banking" }, { value: "Academic", text: "Academic / Research" }, { value: "Marketing", text: "Marketing / Business" } ];
+            const TONES = [ { value: "Default", text: "Default" }, { value: "Formal", text: "Formal" }, { value: "Informal", text: "Informal" }, { value: "Poetic", text: "Poetic" }, { value: "Technical", text: "Technical" }, { value: "Simplify", text: "Simple / Easy to read" }, { value: "Custom", text: "Custom..." } ];
+            const RTL_LANGUAGES = new Set(['Arabic', 'Hebrew', 'Persian', 'Urdu', 'Yiddish', 'Dhivehi', 'Sindhi', 'Pashto', 'Uyghur', 'Kurdish (Sorani)']);
+            // --- END: CONFIGURATION ---
+        
+        
+            // --- START: DOM Element Selection ---
+            const dom = {
+                html: document.documentElement,
+                form: document.getElementById('translate-form'),
+                inputTypeRadios: document.querySelectorAll('input[name="input_type"]'),
+                textInputContainer: document.getElementById('text-input-container'),
+                youtubeInputSection: document.getElementById('youtube-input-section'),
+                youtubeUrlInput: document.getElementById('youtube-url-input'),
+                youtubeLangInput: document.getElementById('youtube-lang-input'),
+                fetchYoutubeSubsBtn: document.getElementById('fetch-youtube-subs-btn'),
+                fetchYoutubeBtnText: document.getElementById('fetch-youtube-btn-text'),
+                fetchYoutubeBtnSpinner: document.getElementById('fetch-youtube-btn-spinner'),
+                fileInputSection: document.getElementById('file-input-section'),
+                dropzoneContainer: document.getElementById('dropzone-container'),
+                dropzonePrompt: document.getElementById('dropzone-prompt'),
+                filePreviewContainer: document.getElementById('file-preview-container'),
+                imagePreview: document.getElementById('image-preview'),
+                subtitlePreview: document.getElementById('subtitle-preview'),
+                subtitleFilename: document.getElementById('subtitle-filename'),
+                removeFileBtn: document.getElementById('remove-file-btn'),
+                chooseFileBtn: document.getElementById('choose-file-btn'),
+                fileUpload: document.getElementById('file-upload'),
+                fileUploadHint: document.getElementById('file-upload-hint'),
+                pdfViewerSection: document.getElementById('pdf-viewer-section'),
+                pdfPageViewer: document.getElementById('pdf-page-viewer'),
+                pageSelectionCounter: document.getElementById('page-selection-counter'),
+                batchWarning: document.getElementById('batch-warning'),
+                combinePagesCheckbox: document.getElementById('combine-pages-checkbox'),
+                selectAllPagesBtn: document.getElementById('select-all-pages-btn'),
+                deselectAllPagesBtn: document.getElementById('deselect-all-pages-btn'),
+                subtitleEditorSection: document.getElementById('subtitle-editor-section'),
+                subtitleTableBody: document.getElementById('subtitle-table-body'),
+                translateAllSubsBtn: document.getElementById('translate-all-subs-btn'),
+                subtitleBatchSizeInput: document.getElementById('subtitle-batch-size'),
+                textInput: document.getElementById('text-input'),
+                sourceLangSelect: document.getElementById('source_lang'),
+                targetLangSelect: document.getElementById('target_lang'),
+                swapBtn: document.getElementById('swap-btn'),
+                charCounter: document.getElementById('char-counter'),
+                mainOutputSection: document.getElementById('main-output-section'),
+                output: document.getElementById('output'),
+                copyBtn: document.getElementById('copy-btn'),
+                exportBtn: document.getElementById('export-btn'),
+                exportTextBtn: document.getElementById('export-text-btn'),
+                copyIconDefault: document.getElementById('copy-icon-default'),
+                copyIconSuccess: document.getElementById('copy-icon-success'),
+                enhancementsToolbar: document.getElementById('enhancements-toolbar'),
+                translateBtn: document.getElementById('translate-btn'),
+                translateBtnText: document.getElementById('translate-btn-text'),
+                translateBtnSpinner: document.getElementById('translate-btn-spinner'),
+                errorDisplay: document.getElementById('error-display'),
+                settingsToggleBtn: document.getElementById('settings-toggle-btn'),
+                settingsPanel: document.getElementById('settings-panel'),
+                modelSelect: document.getElementById('model'),
+                jobFieldSelect: document.getElementById('job_field'),
+                translationToneSelect: document.getElementById('translation_tone'),
+                customToneContainer: document.getElementById('custom-tone-container'),
+                customToneInput: document.getElementById('custom-tone-input'),
+                temperatureSlider: document.getElementById('temperature'),
+                temperatureValue: document.getElementById('temperature-value'),
+                requestDelayInput: document.getElementById('request_delay'),
+                apiKeyInput: document.getElementById('api_key'),
+                toggleApiKeyBtn: document.getElementById('toggle-api-key-visibility'),
+                eyeOpenIcon: document.getElementById('eye-open-icon'),
+                eyeClosedIcon: document.getElementById('eye-closed-icon'),
+                saveSettingsCheckbox: document.getElementById('save-settings-checkbox'),
+                themeToggleBtn: document.getElementById('theme-toggle'),
+                themeIconLight: document.getElementById('theme-icon-light'),
+                themeIconDark: document.getElementById('theme-icon-dark'),
+                useProxyCheckbox: document.getElementById('use-proxy-checkbox'),
+                customProxyContainer: document.getElementById('custom-proxy-container'),
+                customProxyInput: document.getElementById('custom-proxy-input'),
+                useCustomPromptCheckbox: document.getElementById('use-custom-prompt-checkbox'),
+                customPromptContainer: document.getElementById('custom-prompt-container'),
+                customPromptInput: document.getElementById('custom-prompt-input'),
+                optimizePromptBtn: document.getElementById('optimize-prompt-btn'),
+                optimizePromptBtnText: document.getElementById('optimize-prompt-btn-text'),
+                optimizePromptSpinner: document.getElementById('optimize-prompt-spinner'),
+                progressContainer: document.getElementById('progress-container'),
+                progressLabel: document.getElementById('progress-label'),
+                progressPercentage: document.getElementById('progress-percentage'),
+                progressBarInner: document.getElementById('progress-bar-inner'),
+                cancelTranslationBtn: document.getElementById('cancel-translation-btn'),
+                logViewer: document.getElementById('log-viewer'),
+                logToggle: document.getElementById('log-toggle'),
+                logContent: document.getElementById('log-content'),
+                logOutput: document.getElementById('log-output'),
+            };
+            
+            // --- START: State Management ---
+            let pdfDoc = null;
+            let selectedPages = new Set();
+            let currentFile = null;
+            let subtitleData = null; // To store parsed subtitle data
+            let translationAbortController = null;
+            // --- END: State Management ---
+        
+            // --- START: Logging ---
+            function log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                
+                const timeEl = document.createElement('span');
+                timeEl.className = 'log-timestamp';
+                timeEl.textContent = `[${timestamp}]`;
+                
+                const msgEl = document.createElement('span');
+                msgEl.className = `log-message ${type}`;
+                msgEl.textContent = message;
+                
+                entry.appendChild(timeEl);
+                entry.appendChild(msgEl);
+                dom.logOutput.appendChild(entry);
+                dom.logContent.scrollTop = dom.logContent.scrollHeight; // Auto-scroll
+            }
+        
+            // --- START: Core Translation Logic ---
+            async function callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl, signal, temperature = 0.7) {
+                log(`Calling Google AI model: ${model}...`);
+                const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl;
+                let payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }],
+                    generationConfig: { 
+                        responseMimeType: "text/plain",
+                        temperature: parseFloat(temperature)
+                    }
+                };
+                if (useProxy) { payload = { endpoint: directUrl, ...payload }; }
+                try {
+                    const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal });
+                    const responseBody = await response.json();
+                    if (!response.ok) {
+                        const errorDetails = responseBody?.error || { message: 'Unknown API error' };
+                        console.error(`Google AI API Error (${response.status})`, errorDetails);
+                        let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`;
+                        if (response.status === 429) userMessage = "API rate limit exceeded. Please try again later.";
+                        throw new Error(userMessage);
+                    }
+                    const candidate = responseBody.candidates?.[0];
+                    if (!candidate) {
+                        const blockReason = responseBody.promptFeedback?.blockReason;
+                        if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`);
+                        throw new Error("Invalid response structure from AI.");
+                    }
+                    if (candidate.finishReason && !["STOP", "MAX_TOKENS"].includes(candidate.finishReason)) {
+                        if (candidate.finishReason === "SAFETY") throw new Error(`Translation blocked for safety reasons.`);
+                        log(`AI processing stopped unexpectedly: ${candidate.finishReason}`, 'warn');
+                    }
+                    const resultText = candidate.content?.parts?.[0]?.text?.trim() ?? "";
+                    log('Successfully received response from AI.', 'success');
+                    return resultText;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        throw new Error('Translation was cancelled by the user.');
+                    }
+                    log(`API call failed: ${error.message}`, 'error');
+                    throw error;
+                }
             }
             
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-            let braceCount = 0;
-            let objectStartIndex = -1;
+            async function callGoogleAIBatch(itemsToTranslate, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl, signal, temperature = 0.7) {
+                log(`Starting batch translation for ${itemsToTranslate.length} lines...`);
+                const jobFieldText = JOB_FIELDS.find(f => f.value === jobField)?.text || 'General';
+                const specializationContext = (jobField && jobField !== "None") ? `Pay close attention to specialized terms in the field of **${jobFieldText}**.` : "";
+            
+                const prompt = `You are an expert translator.
+            Translate the "original" text for each JSON object in the input array from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} to **${targetLang}**.
+            ${specializationContext}
+            You **MUST** return a JSON array of objects. Each object must contain the original "id" and the "translation" of the text.
+            The output array **MUST** have the exact same number of objects as the input array. Do not skip any IDs.
+            
+            Input JSON:
+            ${JSON.stringify(itemsToTranslate)}`.trim();
+            
+                const responseSchema = {
+                    type: 'ARRAY',
+                    items: {
+                        type: 'OBJECT',
+                        properties: {
+                            id: { type: 'INTEGER' },
+                            translation: { type: 'STRING' }
+                        },
+                        required: ['id', 'translation']
+                    }
+                };
+            
+                const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl;
+                let payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema,
+                        temperature: parseFloat(temperature)
+                    }
+                };
+                if (useProxy) { payload = { endpoint: directUrl, ...payload }; }
+                
+                try {
+                    const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal });
+                    const responseBody = await response.json();
+                    if (!response.ok) {
+                        const errorDetails = responseBody?.error || { message: 'Unknown API error' };
+                        let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`;
+                        if (response.status === 429) userMessage = "API rate limit exceeded. Please try again later.";
+                        throw new Error(userMessage);
+                    }
+                    const candidate = responseBody.candidates?.[0];
+                    if (!candidate) {
+                        const blockReason = responseBody.promptFeedback?.blockReason;
+                        if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`);
+                        throw new Error("Invalid response structure from AI.");
+                    }
+                    
+                    const responseText = candidate.content?.parts?.[0]?.text?.trim() ?? "";
+                    const cleanedResponse = responseText.replace(/^```json\s*|```\s*$/g, '');
+                    const translatedObjects = JSON.parse(cleanedResponse);
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) {
-                    if (onComplete) onComplete();
-                    break;
-                }
-                buffer += decoder.decode(value, { stream: true });
-                let i = 0;
-                while (i < buffer.length) {
-                    const char = buffer[i];
-                    if (char === '{') {
-                        if (braceCount === 0) objectStartIndex = i;
-                        braceCount++;
-                    } else if (char === '}') {
-                        if (braceCount > 0) braceCount--;
-                        if (braceCount === 0 && objectStartIndex !== -1) {
-                            const jsonString = buffer.substring(objectStartIndex, i + 1);
-                            try {
-                                const parsed = JSON.parse(jsonString);
-                                const textChunk = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-                                if (textChunk) onChunk(textChunk);
-                            } catch (e) {
-                                // Ignore parsing errors for intermediate chunks
-                            }
-                            objectStartIndex = -1;
+                    if (!Array.isArray(translatedObjects)) {
+                        throw new Error("AI response was not a valid JSON array.");
+                    }
+                    
+                    const validatedObjects = [];
+                    const inputIds = new Set(itemsToTranslate.map(item => item.id));
+                    let processedCount = 0;
+
+                    for (const item of translatedObjects) {
+                        if (item && typeof item.id === 'number' && inputIds.has(item.id)) {
+                             validatedObjects.push({
+                                id: item.id,
+                                translation: item.translation ?? null
+                            });
+                            processedCount++;
                         }
                     }
-                    i++;
-                }
-                if (objectStartIndex !== -1) {
-                    buffer = buffer.substring(objectStartIndex);
-                } else if (braceCount === 0) {
-                    buffer = '';
+
+                    if (processedCount < itemsToTranslate.length) {
+                         log(`Processed ${processedCount} of ${itemsToTranslate.length} lines. Some lines may not have been translated.`, 'warn');
+                    } else {
+                         log('Successfully received and processed batch translation.', 'success');
+                    }
+            
+                    return validatedObjects;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        throw new Error('Translation was cancelled by the user.');
+                    }
+                    log(`Batch API call failed: ${error.message}`, 'error');
+                    if (error instanceof SyntaxError) {
+                         throw new Error("The AI returned an invalid response format for batch translation.");
+                    }
+                    throw error;
                 }
             }
-        } catch (error) {
-            console.error("Streaming failed:", error);
-            if (onError) onError(error);
-        }
-    }
-    function streamTranslateText(text, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl, onChunk, onComplete, onError) {
-        const jobFieldText = JOB_FIELDS.find(f => f.value === jobField)?.text || 'General';
-        const specializationContext = (jobField && jobField !== "None") ? `Pay close attention to specialized terms in the field of **${jobFieldText}**.` : "";
-        const prompt = `
-You are an expert translator. Your task is to accurately translate the given text.
-- Maintain a natural, conversational tone suitable for the target language.
-- Ensure grammatical correctness and proper sentence structure.
-- Preserve the original context and meaning.
-- Use consistent terminology if technical terms are present.
-- Avoid literal, word-for-word translations that sound unnatural.
-- Return ONLY the translated text, with no extra commentary or explanations.
-${specializationContext}
-Translate the following text from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} into **${targetLang}**:
----
-${text}
----`;
-        streamGoogleAI(prompt.trim(), apiKey, model, useProxy, customProxyUrl, onChunk, onComplete, onError);
-    }
-    function streamEnhanceText(text, action, targetLang, apiKey, model, useProxy, customProxyUrl, onChunk, onComplete, onError) {
-        let actionInstruction = '';
-        switch(action) { case 'shorten': actionInstruction = `You are a text editor. Make the following text more concise and to the point. Remove filler words but preserve the core meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'expand': actionInstruction = `You are a content writer. Expand on the following text. Add more detail, examples, or elaborate on the ideas to make it more comprehensive. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'summarize': actionInstruction = `You are a summarization expert. Provide a concise summary of the following text, capturing the main points. Return ONLY the summary, in ${targetLang}.`; break; case 'formal': actionInstruction = `You are a language style expert. Rewrite the following text in a formal tone, suitable for a professional or academic setting. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'informal': actionInstruction = `You are a language style expert. Rewrite the following text in a casual, informal, and friendly tone. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'poetic': actionInstruction = `You are a creative writer. Rewrite the following text in a more poetic and artistic style. Use metaphors, vivid imagery, and evocative language, while preserving the original core meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'simplify': actionInstruction = `You are a language expert who specializes in simplification. Rewrite the following text to be very simple and easy to understand, as if explaining it to a child or someone new to the topic. Use basic vocabulary and short sentences. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; default: onChunk(text); if (onComplete) onComplete(); return; }
-        const prompt = `${actionInstruction}\n\n---\n${text}\n---`;
-        streamGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl, onChunk, onComplete, onError);
-    }
 
-    // --- START: PDF Smart Translation ---
-    async function translatePdfPagesRecursively(pagesToTranslate, translationOptions) {
-        const { apiKey, model, targetLang, jobField, useProxy, customProxyUrl } = translationOptions;
-
-        dom.output.value = `Attempting to translate a chunk of ${pagesToTranslate.length} pages...`;
-        const combinedText = pagesToTranslate.map(p => p.text).join('\n\n');
+            async function performOcr(base64Image, mimeType, apiKey, model, useProxy, customProxyUrl, signal) {
+                log('Performing OCR on image...');
+                const prompt = "Extract all text content from this image. Output ONLY the text found, preserving line breaks as accurately as possible. If no text is found, output nothing.";
+                const promptParts = [{ text: prompt }, { inline_data: { mime_type: mimeType, data: base64Image } }];
+                const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const targetUrl = useProxy ? (customProxyUrl.trim() || DEFAULT_PROXY_URL) : directUrl;
+                let payload = {
+                    contents: [{ parts: promptParts }],
+                    safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }],
+                    generationConfig: { responseMimeType: "text/plain" }
+                };
+                if (useProxy) { payload = { endpoint: directUrl, ...payload }; }
+                try {
+                    const response = await fetch(targetUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal });
+                    const responseBody = await response.json();
+                    if (!response.ok) {
+                        const errorDetails = responseBody?.error || { message: 'Unknown API error' };
+                        let userMessage = errorDetails.message.includes("API key not valid") ? "The provided Google AI API Key is invalid." : `API Error: ${errorDetails.message}`;
+                        throw new Error(userMessage);
+                    }
+                    const text = responseBody.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+                    log(text ? 'OCR completed successfully.' : 'OCR completed, but no text was found.', text ? 'success' : 'warn');
+                    return text;
+                } catch(error) {
+                    if (error.name === 'AbortError') {
+                        throw new Error('OCR was cancelled by the user.');
+                    }
+                    log(`OCR failed: ${error.message}`, 'error');
+                    throw error;
+                }
+            }
         
-        if (!combinedText.trim()) {
-            return pagesToTranslate.map(p => ({ pageNum: p.pageNum, translatedText: "(No text found or page is empty)" }));
-        }
-
-        try {
-            const translatedText = await translateText(combinedText, 'auto', targetLang, jobField, apiKey, model, useProxy, customProxyUrl);
-            const pageNumbers = pagesToTranslate.map(p => p.pageNum).join('-');
-            return [{ pageNum: pageNumbers, translatedText: translatedText }];
-        } catch (error) {
-            console.warn(`Translating chunk of ${pagesToTranslate.length} pages failed. Error: ${error.message}. Splitting...`);
-            showError(`A large chunk failed, splitting into smaller parts...`);
+            async function extractTextFromPdfPage(pageNumber) { if (!pdfDoc) return null; const page = await pdfDoc.getPage(pageNumber); const textContent = await page.getTextContent(); return textContent.items.map(item => item.str).join(' '); }
             
-            if (pagesToTranslate.length <= 1) {
-                const pageNum = pagesToTranslate[0]?.pageNum;
-                showError(`Failed to translate page ${pageNum}. Skipping.`);
-                return [{ pageNum: pageNum, translatedText: `(Error: Translation failed for this page)` }];
+            function getPrompt(text, sourceLang, targetLang, jobField, customPrompt) {
+                if (dom.useCustomPromptCheckbox.checked && customPrompt && customPrompt.trim()) {
+                    log('Using custom prompt.');
+                    return customPrompt
+                        .replace(/\{text\}/g, text)
+                        .replace(/\{source_lang\}/g, sourceLang === 'auto' ? 'the auto-detected language' : sourceLang)
+                        .replace(/\{target_lang\}/g, targetLang);
+                }
+                
+                const jobFieldText = JOB_FIELDS.find(f => f.value === jobField)?.text || 'General';
+                const specializationContext = (jobField && jobField !== "None") ? `Pay close attention to specialized terms in the field of **${jobFieldText}**.` : "";
+                
+                let toneContext = '';
+                const selectedTone = dom.translationToneSelect.value;
+                const customToneText = dom.customToneInput.value.trim();
+                if (selectedTone === 'Custom' && customToneText) {
+                    toneContext = `Adopt the following tone and style: "${customToneText}".`;
+                } else if (selectedTone !== 'Default' && selectedTone !== 'Custom') {
+                    const toneInstructions = {
+                        'Formal': 'Translate the text using a formal, professional tone.',
+                        'Informal': 'Translate the text using a casual, informal, and friendly tone.',
+                        'Poetic': 'Translate the text in a more poetic and artistic style. Use metaphors and evocative language where appropriate.',
+                        'Technical': 'Translate the text with a technical and precise tone, ensuring accuracy for domain-specific terminology.',
+                        'Simplify': 'Translate the text to be very simple and easy to understand, as if explaining it to a child.'
+                    };
+                    toneContext = toneInstructions[selectedTone] || '';
+                }
+
+                return `
+        You are an expert translator. Your task is to accurately translate the given text.
+        - Maintain a natural, conversational tone suitable for the target language.
+        - Ensure grammatical correctness and proper sentence structure.
+        - Preserve the original context and meaning.
+        - Use consistent terminology if technical terms are present.
+        - Avoid literal, word-for-word translations that sound unnatural.
+        - Return ONLY the translated text, with no extra commentary or explanations.
+        ${specializationContext}
+        ${toneContext ? `- ${toneContext}` : ''}
+        Translate the following text from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} into **${targetLang}**:
+        ---
+        ${text}
+        ---`.trim();
             }
-
-            const midPoint = Math.ceil(pagesToTranslate.length / 2);
-            const firstHalf = pagesToTranslate.slice(0, midPoint);
-            const secondHalf = pagesToTranslate.slice(midPoint);
-
-            const firstHalfResult = await translatePdfPagesRecursively(firstHalf, translationOptions);
             
-            dom.output.value = `Waiting before translating next chunk...`;
-            await new Promise(resolve => setTimeout(resolve, BATCH_DELAY_MS));
-
-            const secondHalfResult = await translatePdfPagesRecursively(secondHalf, translationOptions);
+            async function translateText(text, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl, signal, customPrompt = '', temperature = 0.7) {
+                const prompt = getPrompt(text, sourceLang, targetLang, jobField, customPrompt);
+                return callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl, signal, temperature);
+            }
+            async function enhanceText(text, action, targetLang, apiKey, model, useProxy, customProxyUrl, signal, temperature = 0.7) { let actionInstruction = ''; switch(action) { case 'shorten': actionInstruction = `You are a text editor. Make the following text more concise and to the point. Remove filler words but preserve the core meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'expand': actionInstruction = `You are a content writer. Expand on the following text. Add more detail, examples, or elaborate on the ideas to make it more comprehensive. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'summarize': actionInstruction = `You are a summarization expert. Provide a concise summary of the following text, capturing the main points. Return ONLY the summary, in ${targetLang}.`; break; case 'formal': actionInstruction = `You are a language style expert. Rewrite the following text in a formal tone, suitable for a professional or academic setting. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'informal': actionInstruction = `You are a language style expert. Rewrite the following text in a casual, informal, and friendly tone. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'poetic': actionInstruction = `You are a creative writer. Rewrite the following text in a more poetic and artistic style. Use metaphors, vivid imagery, and evocative language, while preserving the original core meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; case 'simplify': actionInstruction = `You are a language expert who specializes in simplification. Rewrite the following text to be very simple and easy to understand, as if explaining it to a child or someone new to the topic. Use basic vocabulary and short sentences. Preserve the original meaning. Return ONLY the rewritten text, in ${targetLang}.`; break; default: return text; } const prompt = `${actionInstruction}\n\n---\n${text}\n---`; return callGoogleAI(prompt, apiKey, model, useProxy, customProxyUrl, signal, temperature); }
             
-            return [...firstHalfResult, ...secondHalfResult];
-        }
-    }
-
-    // --- START: UI and Event Handlers ---
-    function populateSelect(selectElement, options, defaultValue, filter = () => true) { selectElement.innerHTML = options.filter(filter).map(opt => `<option value="${opt.value}" ${opt.value === defaultValue ? 'selected' : ''}>${opt.text}</option>`).join(''); }
-    function handleInputTypeChange() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; const isTextMode = selectedType === 'text'; const isImageMode = selectedType === 'image'; const isPdfMode = selectedType === 'pdf'; dom.textInputContainer.classList.toggle('hidden', !isTextMode); dom.fileInputSection.classList.toggle('hidden', isTextMode); dom.pdfViewerSection.classList.toggle('hidden', !isPdfMode); dom.sourceLangSelect.disabled = !isTextMode; if (!isTextMode) dom.sourceLangSelect.value = 'auto'; if (isImageMode) { dom.fileUpload.accept = "image/png, image/jpeg, image/webp, image/gif"; dom.fileUploadHint.textContent = "PNG, JPG, WEBP, GIF (MAX. 20MB)"; } else if (isPdfMode) { dom.fileUpload.accept = "application/pdf"; dom.fileUploadHint.textContent = "PDF (MAX. 20MB)"; } resetFileInput(); }
-    function resetFileInput() { dom.fileUpload.value = ''; dom.dropzonePrompt.classList.remove('hidden'); dom.imagePreviewContainer.classList.add('hidden'); dom.imagePreview.src = ''; dom.pdfViewerSection.classList.add('hidden'); dom.pdfPageViewer.innerHTML = ''; pdfDoc = null; selectedPages.clear(); updatePageSelectionCounter(); validateForm(); clearOutput(); }
-    function swapLanguages() { const sourceVal = dom.sourceLangSelect.value; const targetVal = dom.targetLangSelect.value; if (sourceVal === 'auto') return; dom.sourceLangSelect.value = targetVal; dom.targetLangSelect.value = sourceVal; validateForm(); if(dom.output.value) dom.output.dir = RTL_LANGUAGES.has(dom.targetLangSelect.value) ? 'rtl' : 'ltr'; }
-    function validateForm() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; let hasInput = false; if (selectedType === 'text') { hasInput = dom.textInput.value.trim().length > 0 && dom.textInput.value.length <= 5000; } else if (selectedType === 'image') { hasInput = dom.fileUpload.files.length > 0; } else if (selectedType === 'pdf') { hasInput = selectedPages.size > 0; } const isApiKeyValid = dom.apiKeyInput.value.trim().length > 0; dom.translateBtn.disabled = !hasInput || !isApiKeyValid; dom.swapBtn.disabled = dom.sourceLangSelect.value === 'auto' || selectedType !== 'text'; }
-    function updateCharCounter() { const isTextMode = document.querySelector('input[name="input_type"]:checked').value === 'text'; if (isTextMode) { const len = dom.textInput.value.length; dom.charCounter.textContent = `${len} / 5000`; dom.charCounter.classList.toggle('text-red-500', len > 5000); dom.charCounter.classList.toggle('dark:text-red-400', len > 5000); } else { dom.charCounter.textContent = ''; } }
-    function showError(message) { dom.errorDisplay.textContent = message; }
-    function clearOutput() { dom.output.value = ''; dom.copyBtn.disabled = true; dom.exportBtn.disabled = true; dom.enhancementsToolbar.classList.add('hidden', 'opacity-0', '-translate-y-2'); showError(''); }
-    async function handleFileChange(event) { const file = event.target.files[0]; if (!file) { resetFileInput(); return; } const selectedType = document.querySelector('input[name="input_type"]:checked').value; if (file.size > 20 * 1024 * 1024) { showError("File size exceeds 20MB limit."); resetFileInput(); return; } if (selectedType === 'image') { const reader = new FileReader(); reader.onload = (e) => { dom.imagePreview.src = e.target.result; dom.dropzonePrompt.classList.add('hidden'); dom.imagePreviewContainer.classList.remove('hidden'); }; reader.readAsDataURL(file); } else if (selectedType === 'pdf') { dom.pdfViewerSection.classList.remove('hidden'); await renderPdf(file); } validateForm(); }
-async function renderPdf(file) {
-    const fileReader = new FileReader();
-    fileReader.onload = async (e) => {
-        try {
-            dom.pdfPageViewer.innerHTML = '<div class="spinner w-8 h-8 text-sky-500 mx-auto col-span-full"></div>';
-            const typedarray = new Uint8Array(e.target.result);
-            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
-            pdfDoc = await pdfjsLib.getDocument({ data: typedarray }).promise;
+            // --- START: Progress & Cancellation ---
+            function showProgress(label) {
+                dom.progressContainer.classList.remove('hidden');
+                dom.progressLabel.textContent = label;
+                updateProgress(0, 1);
+            }
+            function updateProgress(current, total) {
+                const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
+                dom.progressBarInner.style.width = `${percentage}%`;
+                dom.progressPercentage.textContent = `${percentage}%`;
+            }
+            function hideProgress() {
+                dom.progressContainer.classList.add('hidden');
+            }
+            function cancelTranslation() {
+                if (translationAbortController) {
+                    translationAbortController.abort();
+                    log('Cancellation request sent.', 'warn');
+                }
+            }
+        
+            // --- START: PDF Smart Translation ---
+            async function translatePdfPagesRecursively(pagesToTranslate, translationOptions) {
+                const { signal } = translationOptions;
+                if (signal.aborted) throw new Error("Translation was cancelled.");
+                
+                const combinedText = pagesToTranslate.map(p => p.text).join('\n\n');
+                if (!combinedText.trim()) {
+                    return pagesToTranslate.map(p => ({ pageNum: p.pageNum, translatedText: "(No text found or page is empty)" }));
+                }
+        
+                try {
+                    const translatedText = await translateText(combinedText, 'auto', translationOptions.targetLang, translationOptions.jobField, translationOptions.apiKey, translationOptions.model, translationOptions.useProxy, translationOptions.customProxyUrl, signal, dom.customPromptInput.value, translationOptions.temperature);
+                    const pageNumbers = pagesToTranslate.map(p => p.pageNum).join('-');
+                    return [{ pageNum: pageNumbers, translatedText: translatedText }];
+                } catch (error) {
+                    if (signal.aborted) throw error;
+                    log(`Translating chunk of ${pagesToTranslate.length} pages failed. Splitting...`, 'warn');
+                    
+                    if (pagesToTranslate.length <= 1) {
+                        const pageNum = pagesToTranslate[0]?.pageNum;
+                        log(`Failed to translate page ${pageNum}. Skipping.`, 'error');
+                        return [{ pageNum: pageNum, translatedText: `(Error: Translation failed for this page)` }];
+                    }
+        
+                    const midPoint = Math.ceil(pagesToTranslate.length / 2);
+                    const firstHalf = pagesToTranslate.slice(0, midPoint);
+                    const secondHalf = pagesToTranslate.slice(midPoint);
+        
+                    const firstHalfResult = await translatePdfPagesRecursively(firstHalf, translationOptions);
+                    
+                    const delay = parseFloat(dom.requestDelayInput.value) * 1000 || 2000;
+                    log(`Waiting for ${delay}ms before next chunk...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+        
+                    const secondHalfResult = await translatePdfPagesRecursively(secondHalf, translationOptions);
+                    
+                    return [...firstHalfResult, ...secondHalfResult];
+                }
+            }
+        
+            // --- START: Subtitle Parsers & Editor ---
+            function parseSrt(data) { const pattern = /(\d+)\r?\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\r?\n([\s\S]*?)(?=\r?\n\r?\n|$)/g; const lines = []; let match; while ((match = pattern.exec(data)) !== null) { lines.push({ id: match[1], startTime: match[2], endTime: match[3], text: match[4] }); } return { lines, type: 'srt' }; }
+            function reconstructSrt(parsedData, translatedLines) { return parsedData.lines.map((line, index) => `${line.id}\n${line.startTime} --> ${line.endTime}\n${translatedLines[index] || line.text}`).join('\n\n') + '\n\n'; }
+            function parseVtt(data) { const blocks = data.trim().split(/\r?\n\r?\n/); const header = blocks.shift() || 'WEBVTT'; const lines = []; const timecodePattern = /(\d{2}:\d{2}:\d{2}\.\d{3}\s-->\s\d{2}:\d{2}:\d{2}\.\d{3}.*)/; for (const block of blocks) { const blockLines = block.split(/\r?\n/); const timecodeIndex = blockLines.findIndex(l => timecodePattern.test(l)); if (timecodeIndex !== -1) { const timecode = blockLines[timecodeIndex].match(timecodePattern)[1]; const text = blockLines.slice(timecodeIndex + 1).join('\n'); lines.push({ timecode, text }); } } return { header, lines, type: 'vtt' }; }
+            function reconstructVtt(parsedData, translatedLines) { const body = parsedData.lines.map((line, index) => `${line.timecode}\n${translatedLines[index] || line.text}`).join('\n\n'); return `${parsedData.header}\n\n${body}`; }
+            function parseSsaAss(data) { const sections = data.split(/\[(.*?)\]/); const result = { info: '', styles: '', events: { format: null, lines: [] }, type: 'ass' }; for (let i = 1; i < sections.length; i += 2) { const sectionName = sections[i].trim().toLowerCase(); const sectionContent = sections[i + 1].trim(); if (sectionName.startsWith('script info')) { result.info = sectionContent; } else if (sectionName.endsWith('styles')) { result.styles = sectionContent; } else if (sectionName === 'events') { const lines = sectionContent.split(/\r?\n/); const formatLine = lines.find(l => l.toLowerCase().startsWith('format:')); if (!formatLine) continue; result.events.format = formatLine; const formatFields = formatLine.split(':')[1].trim().split(',').map(f => f.trim()); const textIndex = formatFields.findIndex(f => f.toLowerCase() === 'text'); if (textIndex === -1) continue; lines.forEach(line => { if (line.toLowerCase().startsWith('dialogue:')) { const parts = line.split(','); const meta = parts.slice(0, textIndex).join(','); const text = parts.slice(textIndex).join(','); result.events.lines.push({ meta, text }); } }); } } return result; }
+            function reconstructSsaAss(parsedData, translatedLines) { const eventsHeader = `[Events]\n${parsedData.events.format}\n`; const eventLines = parsedData.events.lines.map((line, index) => `Dialogue: ${line.meta},${translatedLines[index] || line.text}`).join('\n'); let scriptInfoSection = parsedData.info ? `[Script Info]\n${parsedData.info}\n\n` : ''; let stylesSection = parsedData.styles ? `[V4+ Styles]\n${parsedData.styles}\n\n` : ''; return `${scriptInfoSection}${stylesSection}${eventsHeader}${eventLines}`; }
             
-            dom.pdfPageViewer.innerHTML = ''; // Clear the spinner
-
-            // --- NEW: Lazy Loading Logic ---
-
-            // 1. Create a callback for the observer
-            const lazyLoadPage = (entries, observer) => {
-                entries.forEach(entry => {
-                    // If the placeholder is intersecting the viewport
-                    if (entry.isIntersecting) {
-                        const placeholder = entry.target;
-                        const pageNum = parseInt(placeholder.dataset.pageNumber, 10);
+            function processAndDisplaySubtitles(fileContent, fileName) {
+                try {
+                    log(`Processing subtitle content from: ${fileName}`);
+                    const fileExt = fileName.split('.').pop().toLowerCase();
+                    let parser;
+                    switch (fileExt) {
+                        case 'srt': parser = parseSrt; break;
+                        case 'vtt': parser = parseVtt; break;
+                        case 'ass': case 'ssa': parser = parseSsaAss; break;
+                        default: throw new Error(`Unsupported subtitle format: .${fileExt}`);
+                    }
+                    subtitleData = parser(fileContent);
+                    const lines = subtitleData.lines || subtitleData.events.lines;
+                     if (!lines || lines.length === 0) {
+                        throw new Error(`No subtitle entries found in the file.`);
+                    }
+                    log(`Found ${lines.length} subtitle entries.`);
+                    dom.subtitleTableBody.innerHTML = ''; // Clear previous table data
+                    lines.forEach((line, index) => {
+                        const row = document.createElement('tr');
+                        row.dataset.originalIndex = index;
+                        let timestamp = '';
+                        if (line.startTime && line.endTime) timestamp = `${line.startTime} --> ${line.endTime}`;
+                        else if (line.timecode) timestamp = line.timecode;
+                        else if (line.meta) timestamp = line.meta.split(',').slice(1,3).join(' -> ');
                         
-                        // Render the actual page
-                        createPdfPageView(pageNum).then(pageView => {
-                           // Replace the placeholder with the rendered page
-                           placeholder.parentNode.replaceChild(pageView, placeholder);
+                        row.innerHTML = `
+                            <td class="text-center">${line.id || index + 1}</td>
+                            <td>${timestamp}</td>
+                            <td>${line.text.replace(/\n/g, '<br>')}</td>
+                            <td class="translated-text"></td>
+                            <td><button type="button" data-index="${index}" class="translate-sub-row-btn w-full px-2 py-1 text-xs rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Translate</button></td>
+                        `;
+                        dom.subtitleTableBody.appendChild(row);
+                    });
+                    dom.subtitleEditorSection.classList.remove('hidden');
+                    dom.dropzonePrompt.classList.add('hidden');
+                    dom.filePreviewContainer.classList.remove('hidden');
+                    dom.subtitlePreview.classList.remove('hidden');
+                    dom.imagePreview.classList.add('hidden');
+                    dom.subtitleFilename.textContent = fileName;
+                    validateForm();
+                } catch(error) {
+                     showError(error.message);
+                    log(error.message, 'error');
+                    resetFileInput();
+                }
+            }
+            async function renderSubtitleEditor(file) {
+                const fileContent = await fileToString(file);
+                processAndDisplaySubtitles(fileContent, file.name);
+            }
+            
+            // --- START: UI and Event Handlers ---
+            function populateSelect(selectElement, options, defaultValue, filter = () => true) { selectElement.innerHTML = options.filter(filter).map(opt => `<option value="${opt.value}" ${opt.value === defaultValue ? 'selected' : ''}>${opt.text}</option>`).join(''); }
+            function handleInputTypeChange() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; const isTextMode = selectedType === 'text'; const isImageMode = selectedType === 'image'; const isPdfMode = selectedType === 'pdf'; const isSubtitleMode = selectedType === 'subtitle'; dom.textInputContainer.classList.toggle('hidden', !isTextMode); dom.fileInputSection.classList.toggle('hidden', !isImageMode && !isPdfMode && !isSubtitleMode); dom.youtubeInputSection.classList.toggle('hidden', !isSubtitleMode); dom.pdfViewerSection.classList.toggle('hidden', !isPdfMode); dom.subtitleEditorSection.classList.toggle('hidden', !isSubtitleMode); dom.mainOutputSection.classList.toggle('hidden', isSubtitleMode); dom.sourceLangSelect.disabled = !isTextMode; if (!isTextMode) dom.sourceLangSelect.value = 'auto'; if (isImageMode) { dom.fileUpload.accept = "image/png, image/jpeg, image/webp, image/gif"; dom.fileUploadHint.textContent = "PNG, JPG, WEBP, GIF (MAX. 20MB)"; } else if (isPdfMode) { dom.fileUpload.accept = "application/pdf"; dom.fileUploadHint.textContent = "PDF (MAX. 20MB)"; } else if (isSubtitleMode) { dom.fileUpload.accept = ".srt,.vtt,.ssa,.ass"; dom.fileUploadHint.textContent = "SRT, VTT, SSA, ASS (MAX. 20MB)"; } resetFileInput(); }
+            function resetFileInput() { dom.fileUpload.value = ''; dom.dropzonePrompt.classList.remove('hidden'); dom.filePreviewContainer.classList.add('hidden'); dom.imagePreview.src = ''; dom.subtitlePreview.classList.add('hidden'); dom.subtitleFilename.textContent = ''; dom.youtubeUrlInput.value = ''; currentFile = null; dom.pdfViewerSection.classList.add('hidden'); dom.pdfPageViewer.innerHTML = ''; pdfDoc = null; selectedPages.clear(); dom.subtitleEditorSection.classList.add('hidden'); dom.subtitleTableBody.innerHTML = ''; subtitleData = null; updatePageSelectionCounter(); validateForm(); clearOutput(); }
+            function swapLanguages() { const sourceVal = dom.sourceLangSelect.value; const targetVal = dom.targetLangSelect.value; if (sourceVal === 'auto') return; dom.sourceLangSelect.value = targetVal; dom.targetLangSelect.value = sourceVal; validateForm(); if(dom.output.value) dom.output.dir = RTL_LANGUAGES.has(dom.targetLangSelect.value) ? 'rtl' : 'ltr'; }
+            function validateForm() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; let hasInput = false; if (selectedType === 'text') { hasInput = dom.textInput.value.trim().length > 0 && dom.textInput.value.length <= 5000; } else if (selectedType === 'image') { hasInput = currentFile !== null; } else if (selectedType === 'pdf') { hasInput = selectedPages.size > 0; } else if (selectedType === 'subtitle') { hasInput = subtitleData !== null && (subtitleData.lines?.length > 0 || subtitleData.events?.lines.length > 0); dom.exportBtn.disabled = !hasInput; } const isApiKeyValid = dom.apiKeyInput.value.trim().length > 0; dom.translateBtn.disabled = !hasInput || !isApiKeyValid || selectedType === 'subtitle'; dom.swapBtn.disabled = dom.sourceLangSelect.value === 'auto' || selectedType !== 'text'; }
+            function updateCharCounter() { const isTextMode = document.querySelector('input[name="input_type"]:checked').value === 'text'; if (isTextMode) { const len = dom.textInput.value.length; dom.charCounter.textContent = `${len} / 5000`; dom.charCounter.classList.toggle('text-red-500', len > 5000); dom.charCounter.classList.toggle('dark:text-red-400', len > 5000); } else { dom.charCounter.textContent = ''; } }
+            function showError(message) { dom.errorDisplay.textContent = message; }
+            function clearOutput() { dom.output.value = ''; dom.copyBtn.disabled = true; dom.exportTextBtn.disabled = true; dom.enhancementsToolbar.classList.add('hidden', 'opacity-0', '-translate-y-2'); showError(''); }
+            async function handleFileChange(event) { const file = event.target.files[0]; if (!file) { resetFileInput(); return; } currentFile = file; log(`File selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`); const selectedType = document.querySelector('input[name="input_type"]:checked').value; if (file.size > 20 * 1024 * 1024) { showError("File size exceeds 20MB limit."); log("File size exceeds 20MB limit.", 'error'); resetFileInput(); return; } if (selectedType === 'image') { dom.dropzonePrompt.classList.add('hidden'); dom.filePreviewContainer.classList.remove('hidden'); dom.subtitlePreview.classList.add('hidden'); dom.imagePreview.classList.remove('hidden'); dom.imagePreview.src = URL.createObjectURL(file); } else if (selectedType === 'pdf') { dom.filePreviewContainer.classList.add('hidden'); dom.pdfViewerSection.classList.remove('hidden'); await renderPdf(file); } else if (selectedType === 'subtitle') { await renderSubtitleEditor(file); } validateForm(); }
+            async function renderPdf(file) {
+                try {
+                    log('Loading PDF...');
+                    dom.pdfPageViewer.innerHTML = '<div class="spinner w-8 h-8 text-sky-500 mx-auto col-span-full"></div>';
+                    const typedarray = new Uint8Array(await file.arrayBuffer());
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+                    pdfDoc = await pdfjsLib.getDocument({ data: typedarray }).promise;
+                    log(`PDF loaded with ${pdfDoc.numPages} pages.`, 'success');
+                    dom.pdfPageViewer.innerHTML = '';
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const placeholder = entry.target;
+                                const pageNum = parseInt(placeholder.dataset.pageNumber, 10);
+                                createPdfPageView(pageNum).then(pageView => {
+                                   placeholder.parentNode.replaceChild(pageView, placeholder);
+                                });
+                                observer.unobserve(placeholder);
+                            }
                         });
+                    }, { root: dom.pdfPageViewer, rootMargin: '200px' });
+                    for (let i = 1; i <= pdfDoc.numPages; i++) {
+                        const placeholder = document.createElement('div');
+                        placeholder.className = "pdf-page-placeholder";
+                        placeholder.style.minHeight = '300px'; 
+                        placeholder.dataset.pageNumber = i;
+                        dom.pdfPageViewer.appendChild(placeholder);
+                        observer.observe(placeholder);
+                    }
+                } catch (error) {
+                    console.error("Error rendering PDF:", error);
+                    showError("Could not load or render the PDF file.");
+                    log(`Failed to render PDF: ${error.message}`, 'error');
+                    dom.pdfPageViewer.innerHTML = '<p class="text-center text-red-500 col-span-full">Failed to load PDF</p>';
+                }
+            }
+            async function createPdfPageView(pageNum) {
+                const page = await pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 1.2 });
+                const canvas = document.createElement('canvas');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                canvas.className = "w-full h-auto block";
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                const pageContainer = document.createElement('div');
+                pageContainer.className = "pdf-page-item relative cursor-pointer border-2 border-slate-400 dark:border-slate-600 rounded-lg overflow-hidden bg-white";
+                pageContainer.dataset.pageNumber = pageNum;
+                pageContainer.title = `Page ${pageNum}`;
+                if (selectedPages.has(pageNum)) pageContainer.classList.add('selected');
+                const pageNumberLabel = document.createElement('div');
+                pageNumberLabel.className = "absolute bottom-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded";
+                pageNumberLabel.textContent = `Page ${pageNum}`;
+                pageContainer.appendChild(canvas);
+                pageContainer.appendChild(pageNumberLabel);
+                pageContainer.addEventListener('click', () => togglePageSelection(pageNum));
+                return pageContainer;
+            }
+            function togglePageSelection(pageNumber) { const thumbElement = dom.pdfPageViewer.querySelector(`.pdf-page-item[data-page-number="${pageNumber}"]`); if (selectedPages.has(pageNumber)) { selectedPages.delete(pageNumber); thumbElement?.classList.remove('selected'); } else { selectedPages.add(pageNumber); thumbElement?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); }
+            function updatePageSelectionCounter() { const delay = parseFloat(dom.requestDelayInput.value) || 2; const timeEstimate = Math.round(selectedPages.size * delay); dom.pageSelectionCounter.textContent = `${selectedPages.size} pages selected`; dom.batchWarning.textContent = selectedPages.size > 1 && !dom.combinePagesCheckbox.checked ? `Translation may take up to ${timeEstimate} seconds to complete.` : ''; }
+            
+            async function handleFormSubmit(event) {
+                event.preventDefault();
+                if (dom.translateBtn.disabled) return;
+                showError('');
+                clearOutput();
+                dom.translateBtn.disabled = true;
+                dom.translateBtnText.classList.add('hidden');
+                dom.translateBtnSpinner.classList.remove('hidden');
+                translationAbortController = new AbortController();
+                const { signal } = translationAbortController;
+                const formData = new FormData(dom.form);
+                const apiKey = formData.get('api_key').trim();
+                const model = formData.get('model');
+                const targetLang = formData.get('target_lang');
+                const sourceLang = formData.get('source_lang');
+                const jobField = formData.get('job_field');
+                const inputType = formData.get('input_type');
+                const useProxy = formData.get('use_proxy') === 'on';
+                const customProxyUrl = formData.get('custom_proxy_url');
+                const combinePages = formData.get('combine_pages') === 'on';
+                const temperature = dom.temperatureSlider.value;
+                
+                try {
+                    if (inputType === 'pdf') {
+                        const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+                        log(`Starting translation for ${sortedPages.length} PDF pages.`);
+                        showProgress(`Translating ${sortedPages.length} pages...`);
+                        dom.output.value = `Extracting text from ${sortedPages.length} pages...`;
+                        const pageData = [];
+                        for (const pageNum of sortedPages) {
+                            if (signal.aborted) throw new Error("Translation was cancelled.");
+                            const pageText = await extractTextFromPdfPage(pageNum);
+                            pageData.push({ pageNum: pageNum, text: pageText || "" });
+                            updateProgress(pageData.length, sortedPages.length * 2); // 50% for extraction
+                        }
+                        const translationOptions = { apiKey, model, targetLang, jobField, useProxy, customProxyUrl, signal, customPrompt: dom.customPromptInput.value, temperature };
+                        log('Text extraction complete. Starting translation...');
+                        const translatedPageChunks = await translatePdfPagesRecursively(pageData, translationOptions);
+                        updateProgress(1, 1); // 100%
+                        if (combinePages) {
+                            dom.output.value = translatedPageChunks.map(p => p.translatedText).join('\n\n');
+                        } else {
+                            dom.output.value = translatedPageChunks.map(p => `--- PAGE ${p.pageNum} ---\n${p.translatedText}`).join('\n\n');
+                        }
+                    } else {
+                        let textToTranslate;
+                        if (inputType === 'text') {
+                            textToTranslate = formData.get('text').trim();
+                        } else if (inputType === 'image') {
+                            if (!currentFile) throw new Error("Please select an image file.");
+                            dom.output.value = 'Extracting text from image...';
+                            const base64Image = await fileToBase64(currentFile);
+                            textToTranslate = await performOcr(base64Image, currentFile.type, apiKey, model, useProxy, customProxyUrl, signal);
+                            if (!textToTranslate) {
+                                dom.output.value = "(No text detected in image)";
+                                throw new Error("No text detected in image");
+                            }
+                        }
                         
-                        // Stop observing this placeholder since it's now rendered
-                        observer.unobserve(placeholder);
+                        dom.output.value = 'Translating...';
+                        const translatedText = await translateText(textToTranslate, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl, signal, dom.customPromptInput.value, temperature);
+                        dom.output.value = translatedText;
+                    }
+                    dom.output.dir = RTL_LANGUAGES.has(targetLang) ? 'rtl' : 'ltr';
+                    if (dom.output.value) {
+                        dom.copyBtn.disabled = false;
+                        dom.exportTextBtn.disabled = false;
+                        dom.enhancementsToolbar.classList.remove('hidden');
+                        setTimeout(() => dom.enhancementsToolbar.classList.remove('opacity-0', '-translate-y-2'), 10);
+                    }
+                } catch (error) {
+                    console.error("Translation failed:", error);
+                    showError(error.message);
+                    dom.output.value = '';
+                } finally {
+                    dom.translateBtnText.classList.remove('hidden');
+                    dom.translateBtnSpinner.classList.add('hidden');
+                    hideProgress();
+                    validateForm();
+                    translationAbortController = null;
+                }
+            }
+        
+            async function handleEnhancement(action) {
+                const currentText = dom.output.value;
+                if (!currentText) { showError("Nothing to enhance."); return; }
+                showError('');
+                const originalBtnText = {};
+                dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => {
+                    originalBtnText[btn.dataset.action] = btn.innerHTML;
+                    btn.disabled = true;
+                    if (btn.dataset.action === action) {
+                        btn.innerHTML = '<div class="spinner w-4 h-4 mx-auto"></div>';
                     }
                 });
-            };
-
-            // 2. Create the observer instance
-            const observer = new IntersectionObserver(lazyLoadPage, {
-                root: dom.pdfPageViewer, // Observe within the scroll container
-                rootMargin: '200px',   // Start loading pages 200px before they become visible
-            });
-
-            // 3. Create and observe placeholders instead of rendering immediately
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                const placeholder = document.createElement('div');
-                placeholder.className = "pdf-page-placeholder";
-                // Set a min-height to prevent layout shifts and ensure the scrollbar is correct
-                placeholder.style.minHeight = '300px'; 
-                placeholder.dataset.pageNumber = i;
-                dom.pdfPageViewer.appendChild(placeholder);
+                translationAbortController = new AbortController();
+                const apiKey = dom.apiKeyInput.value.trim();
+                const model = dom.modelSelect.value;
+                const useProxy = dom.useProxyCheckbox.checked;
+                const customProxyUrl = dom.customProxyInput.value;
+                const targetLang = dom.targetLangSelect.value;
+                const temperature = dom.temperatureSlider.value;
                 
-                // Tell the observer to watch this new placeholder
-                observer.observe(placeholder);
+                try {
+                    const enhancedText = await enhanceText(currentText, action, targetLang, apiKey, model, useProxy, customProxyUrl, translationAbortController.signal, temperature);
+                    dom.output.value = enhancedText;
+                } catch (error) {
+                    showError(error.message);
+                    // Don't restore original text on failure, so user sees error and can try again without losing context.
+                } finally {
+                    dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalBtnText[btn.dataset.action];
+                    });
+                    translationAbortController = null;
+                }
             }
-
-        } catch (error) {
-            console.error("Error rendering PDF:", error);
-            showError("Could not load or render the PDF file.");
-            dom.pdfPageViewer.innerHTML = '<p class="text-center text-red-500 col-span-full">Failed to load PDF</p>';
-        }
-    };
-    fileReader.readAsArrayBuffer(file);
-}
-
-async function createPdfPageView(pageNum) {
-    const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1.2 });
-    const canvas = document.createElement('canvas');
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    canvas.className = "w-full h-auto block";
-    
-    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
-
-    const pageContainer = document.createElement('div');
-    pageContainer.className = "pdf-page-item relative cursor-pointer border-2 border-slate-400 dark:border-slate-600 rounded-lg overflow-hidden bg-white";
-    pageContainer.dataset.pageNumber = pageNum;
-    pageContainer.title = `Page ${pageNum}`;
-
-    // Re-check if the page is already selected when it's rendered
-    if (selectedPages.has(pageNum)) {
-        pageContainer.classList.add('selected');
-    }
-
-    const pageNumberLabel = document.createElement('div');
-    pageNumberLabel.className = "absolute bottom-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded";
-    pageNumberLabel.textContent = `Page ${pageNum}`;
-    
-    pageContainer.appendChild(canvas);
-    pageContainer.appendChild(pageNumberLabel);
-    pageContainer.addEventListener('click', () => togglePageSelection(pageNum));
-    
-    return pageContainer;
-}
-    function togglePageSelection(pageNumber) { const thumbElement = dom.pdfPageViewer.querySelector(`.pdf-page-item[data-page-number="${pageNumber}"]`); if (selectedPages.has(pageNumber)) { selectedPages.delete(pageNumber); thumbElement?.classList.remove('selected'); } else { selectedPages.add(pageNumber); thumbElement?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); }
-    function updatePageSelectionCounter() { dom.pageSelectionCounter.textContent = `${selectedPages.size} pages selected`; const timeEstimate = Math.round(selectedPages.size * (BATCH_DELAY_MS / 1000)); dom.batchWarning.textContent = selectedPages.size > 1 && !dom.combinePagesCheckbox.checked ? `Translation may take up to ${timeEstimate} seconds to complete.` : ''; }
-    
-    async function handleFormSubmit(event) {
-        event.preventDefault();
-        if (dom.translateBtn.disabled) return;
-        showError('');
-        clearOutput();
-        dom.translateBtn.disabled = true;
-        dom.translateBtnText.classList.add('hidden');
-        dom.translateBtnSpinner.classList.remove('hidden');
-        const formData = new FormData(dom.form);
-        const apiKey = formData.get('api_key').trim();
-        const model = formData.get('model');
-        const targetLang = formData.get('target_lang');
-        const sourceLang = formData.get('source_lang');
-        const jobField = formData.get('job_field');
-        const inputType = formData.get('input_type');
-        const useProxy = formData.get('use_proxy') === 'on';
-        const customProxyUrl = formData.get('custom_proxy_url');
-        const combinePages = formData.get('combine_pages') === 'on';
-
-        try {
-            if (inputType === 'pdf') {
-                const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
-                dom.output.value = `Extracting text from ${sortedPages.length} pages...`;
-                const pageData = [];
-                for (const pageNum of sortedPages) {
-                    const pageText = await extractTextFromPdfPage(pageNum);
-                    pageData.push({ pageNum: pageNum, text: pageText || "" });
-                }
-                const translationOptions = { apiKey, model, targetLang, jobField, useProxy, customProxyUrl };
-                const translatedPageChunks = await translatePdfPagesRecursively(pageData, translationOptions);
-                if (combinePages) {
-                    dom.output.value = translatedPageChunks.map(p => p.translatedText).join('\n\n');
-                } else {
-                    dom.output.value = translatedPageChunks.map(p => `--- PAGE ${p.pageNum} ---\n${p.translatedText}`).join('\n\n');
-                }
-                dom.output.dir = RTL_LANGUAGES.has(targetLang) ? 'rtl' : 'ltr';
-                if (dom.output.value) {
-                    dom.copyBtn.disabled = false;
-                    dom.exportBtn.disabled = false;
-                    dom.enhancementsToolbar.classList.remove('hidden');
-                    setTimeout(() => dom.enhancementsToolbar.classList.remove('opacity-0', '-translate-y-2'), 10);
-                }
-            } else {
-                let textToTranslate;
-                if (inputType === 'text') {
-                    dom.output.value = ''; // Clear for streaming
-                    textToTranslate = formData.get('text').trim();
-                } else if (inputType === 'image') {
-                    const imageFile = formData.get('file');
-                    if (!imageFile || imageFile.size === 0) throw new Error("Please select an image file.");
-                    dom.output.value = 'Extracting text from image...';
-                    const base64Image = await fileToBase64(imageFile);
-                    textToTranslate = await performOcr(base64Image, imageFile.type, apiKey, model, useProxy, customProxyUrl);
-                    if (!textToTranslate) {
-                        dom.output.value = "(No text detected in image)";
-                        dom.translateBtnText.classList.remove('hidden');
-                        dom.translateBtnSpinner.classList.add('hidden');
-                        validateForm();
+            
+            // --- START: Local Storage and Settings ---
+            const LS_SETTINGS_KEY = 'fluentify_settings_v7';
+            function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value, useCustomPrompt: dom.useCustomPromptCheckbox.checked, customPrompt: dom.customPromptInput.value, temperature: dom.temperatureSlider.value, requestDelay: dom.requestDelayInput.value, translationTone: dom.translationToneSelect.value, customTone: dom.customToneInput.value }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
+            function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; dom.translationToneSelect.value = settings.translationTone || 'Default'; dom.customToneInput.value = settings.customTone || ''; dom.customToneContainer.classList.toggle('hidden', dom.translationToneSelect.value !== 'Custom'); applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.useCustomPromptCheckbox.checked = settings.useCustomPrompt || false; dom.customPromptInput.value = settings.customPrompt || ''; dom.temperatureSlider.value = settings.temperature || 0.7; dom.temperatureValue.textContent = settings.temperature || 0.7; dom.requestDelayInput.value = settings.requestDelay || 4; dom.saveSettingsCheckbox.checked = true; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
+            
+            // --- START: Theme Management ---
+            function applyTheme(theme) { dom.html.classList.toggle('dark', theme === 'dark'); dom.themeIconLight.classList.toggle('hidden', theme === 'dark'); dom.themeIconDark.classList.toggle('hidden', theme !== 'dark'); }
+            function toggleTheme() { const newTheme = dom.html.classList.contains('dark') ? 'light' : 'dark'; applyTheme(newTheme); saveSettings(); }
+            
+            // --- START: Helper Functions ---
+            function fileToString(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsText(file); reader.onload = () => resolve(reader.result); reader.onerror = (error) => reject(error); }); }
+            function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = (error) => reject(error); }); }
+            function copyToClipboard() { if (!dom.output.value) return; navigator.clipboard.writeText(dom.output.value).then(() => { dom.copyIconDefault.classList.add('hidden'); dom.copyIconSuccess.classList.remove('hidden'); setTimeout(() => { dom.copyIconDefault.classList.remove('hidden'); dom.copyIconSuccess.classList.add('hidden'); }, 2000); }).catch(err => { console.error('Failed to copy text:', err); showError('Could not copy text.'); }); }
+            function exportOutput() {
+                const inputType = document.querySelector('input[name="input_type"]:checked').value;
+                let content = dom.output.value;
+                let filename = 'translation.txt';
+        
+                if (inputType === 'subtitle' && subtitleData) {
+                    log('Reconstructing subtitle file for export...');
+                    const translatedLines = Array.from(dom.subtitleTableBody.querySelectorAll('tr')).map(row => row.cells[3].textContent);
+                    let reconstructor;
+                    switch(subtitleData.type) {
+                        case 'srt': reconstructor = reconstructSrt; break;
+                        case 'vtt': reconstructor = reconstructVtt; break;
+                        case 'ass': reconstructor = reconstructSsaAss; break;
+                    }
+                    if(reconstructor) {
+                        content = reconstructor(subtitleData, translatedLines);
+                        const originalName = (currentFile?.name || 'youtube_export').substring(0, (currentFile?.name || 'youtube_export').lastIndexOf('.'));
+                        const ext = subtitleData.type;
+                        filename = `${originalName}.translated.${ext}`;
+                        log(`Exporting as ${filename}`, 'success');
+                    } else {
+                        log('Could not find reconstructor for subtitle format.', 'error');
                         return;
                     }
-                    dom.output.value = ''; // Clear for streaming
                 }
+                
+                if (!content) return;
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            }
+            // --- START: YouTube Subtitle Helpers ---
+            function parseVideoIdFromUrl(url) { const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/; const match = url.match(regex); return match ? match[1] : null; }
+            function formatSrtTimestamp(totalSeconds) { const hours = Math.floor(totalSeconds / 3600), minutes = Math.floor((totalSeconds % 3600) / 60), seconds = Math.floor(totalSeconds % 60), milliseconds = Math.round((totalSeconds - Math.floor(totalSeconds)) * 1000); const pad = (num, len = 2) => String(num).padStart(len, '0'); return `${pad(hours)}:${pad(minutes)}:${pad(seconds)},${pad(milliseconds, 3)}`; }
+            function generateSrtFromYT(subtitles) { return subtitles.map((line, index) => { const startSeconds = parseFloat(line.start); const endSeconds = startSeconds + parseFloat(line.dur); const startTime = formatSrtTimestamp(startSeconds); const endTime = formatSrtTimestamp(endSeconds); return `${index + 1}\n${startTime} --> ${endTime}\n${line.text}\n`; }).join('\n'); }
+            
+            async function handleFetchYouTubeSubs() {
+                const url = dom.youtubeUrlInput.value;
+                const videoId = parseVideoIdFromUrl(url);
+                const langCode = dom.youtubeLangInput.value.trim();
 
-                await new Promise((resolve, reject) => {
-                    streamTranslateText(
-                        textToTranslate, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl,
-                        (chunk) => { // onChunk
-                            dom.output.value += chunk;
-                            dom.output.dir = RTL_LANGUAGES.has(targetLang) ? 'rtl' : 'ltr';
-                        },
-                        () => { // onComplete
-                            if (dom.output.value) {
-                                dom.copyBtn.disabled = false;
-                                dom.exportBtn.disabled = false;
-                                dom.enhancementsToolbar.classList.remove('hidden');
-                                setTimeout(() => dom.enhancementsToolbar.classList.remove('opacity-0', '-translate-y-2'), 10);
-                            }
-                            resolve();
-                        },
-                        (error) => { reject(error); } // onError
-                    );
+                if (!videoId) { showError('Invalid YouTube URL. Please check and try again.'); return; }
+                if (!langCode) { showError('Please enter a language code (e.g., "en").'); return; }
+
+                dom.fetchYoutubeBtnText.classList.add('hidden');
+                dom.fetchYoutubeBtnSpinner.classList.remove('hidden');
+                dom.fetchYoutubeSubsBtn.disabled = true;
+                resetFileInput();
+
+                try {
+                    const targetApiUrl = `https://youtube-caption-extractor.vercel.app/api/videoDetails?videoID=${videoId}&lang=${langCode}`;
+                    const proxyUrl = `https://whateverorigin.org/get?url=${encodeURIComponent(targetApiUrl)}`;
+                    log(`Fetching YouTube subtitles via: ${targetApiUrl}`);
+                    
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`CORS proxy error: ${response.statusText}`);
+
+                    const proxyData = await response.json();
+                    if (!proxyData.contents) throw new Error('Empty response from proxy.');
+                    
+                    const data = JSON.parse(proxyData.contents);
+                    const details = data.videoDetails;
+
+                    if (data.error || !details || !details.subtitles || details.subtitles.length === 0) {
+                        throw new Error(`No subtitles found for language code "${langCode}". The code might be incorrect or the language unavailable.`);
+                    }
+                    
+                    log(`Successfully fetched ${details.subtitles.length} lines for video: ${details.title}`, 'success');
+                    const srtContent = generateSrtFromYT(details.subtitles);
+                    const fileName = `${details.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.srt`;
+                    
+                    // Create a mock file object for the exporter
+                    currentFile = { name: fileName };
+
+                    processAndDisplaySubtitles(srtContent, fileName);
+
+                } catch (error) {
+                    let errorMessage = error.message;
+                    if (error instanceof SyntaxError) { errorMessage = 'Failed to parse API response. The API or proxy may be down.'; }
+                    showError(errorMessage);
+                    log(errorMessage, 'error');
+                } finally {
+                    dom.fetchYoutubeBtnText.classList.remove('hidden');
+                    dom.fetchYoutubeBtnSpinner.classList.add('hidden');
+                    dom.fetchYoutubeSubsBtn.disabled = false;
+                }
+            }
+            
+            // --- START: Initialization ---
+            function initialize() {
+                populateSelect(dom.sourceLangSelect, LANGUAGES, 'auto');
+                populateSelect(dom.targetLangSelect, LANGUAGES, 'English', opt => opt.value !== 'auto');
+                populateSelect(dom.modelSelect, MODELS.map(m => ({ value: m, text: m })), DEFAULT_WEB_MODEL);
+                populateSelect(dom.jobFieldSelect, JOB_FIELDS, 'None');
+                populateSelect(dom.translationToneSelect, TONES, 'Default');
+                loadSettings();
+                handleInputTypeChange();
+                dom.customProxyContainer.classList.toggle('hidden', !dom.useProxyCheckbox.checked);
+                dom.customPromptContainer.classList.toggle('hidden', !dom.useCustomPromptCheckbox.checked);
+                
+                // Event Listeners
+                dom.form.addEventListener('submit', handleFormSubmit);
+                dom.inputTypeRadios.forEach(radio => radio.addEventListener('change', handleInputTypeChange));
+                dom.swapBtn.addEventListener('click', swapLanguages);
+                dom.copyBtn.addEventListener('click', copyToClipboard);
+                dom.exportBtn.addEventListener('click', exportOutput);
+                dom.exportTextBtn.addEventListener('click', exportOutput);
+                dom.themeToggleBtn.addEventListener('click', toggleTheme);
+                dom.fetchYoutubeSubsBtn.addEventListener('click', handleFetchYouTubeSubs);
+                dom.chooseFileBtn.addEventListener('click', () => dom.fileUpload.click());
+                dom.removeFileBtn.addEventListener('click', resetFileInput);
+                dom.fileUpload.addEventListener('change', handleFileChange);
+                ['dragover', 'drop'].forEach(eventName => dom.dropzoneContainer.addEventListener(eventName, e => e.preventDefault()));
+                dom.dropzoneContainer.addEventListener('dragenter', () => dom.dropzoneContainer.classList.add('border-sky-500'));
+                dom.dropzoneContainer.addEventListener('dragleave', () => dom.dropzoneContainer.classList.remove('border-sky-500'));
+                dom.dropzoneContainer.addEventListener('drop', (e) => { dom.dropzoneContainer.classList.remove('border-sky-500'); if (e.dataTransfer.files.length) { dom.fileUpload.files = e.dataTransfer.files; dom.fileUpload.dispatchEvent(new Event('change')); } });
+                dom.selectAllPagesBtn.addEventListener('click', () => { if (!pdfDoc) return; const allPageItems = dom.pdfPageViewer.querySelectorAll('.pdf-page-item, .pdf-page-placeholder'); for(let i = 1; i <= pdfDoc.numPages; i++) { selectedPages.add(i); allPageItems[i-1]?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); });
+                dom.deselectAllPagesBtn.addEventListener('click', () => { selectedPages.clear(); dom.pdfPageViewer.querySelectorAll('.pdf-page-item.selected').forEach(thumb => thumb.classList.remove('selected')); updatePageSelectionCounter(); validateForm(); });
+                dom.combinePagesCheckbox.addEventListener('change', updatePageSelectionCounter);
+                dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => btn.addEventListener('click', () => handleEnhancement(btn.dataset.action)));
+                [dom.textInput, dom.apiKeyInput, dom.sourceLangSelect, dom.targetLangSelect, dom.customProxyInput].forEach(el => el.addEventListener('input', validateForm));
+                dom.textInput.addEventListener('input', updateCharCounter);
+                dom.settingsToggleBtn.addEventListener('click', () => dom.settingsPanel.classList.toggle('hidden'));
+                dom.toggleApiKeyBtn.addEventListener('click', () => { const isPassword = dom.apiKeyInput.type === 'password'; dom.apiKeyInput.type = isPassword ? 'text' : 'password'; dom.eyeOpenIcon.classList.toggle('hidden', isPassword); dom.eyeClosedIcon.classList.toggle('hidden', !isPassword); });
+                dom.useProxyCheckbox.addEventListener('change', (e) => dom.customProxyContainer.classList.toggle('hidden', !e.target.checked));
+                dom.useCustomPromptCheckbox.addEventListener('change', (e) => dom.customPromptContainer.classList.toggle('hidden', !e.target.checked));
+                dom.translationToneSelect.addEventListener('change', (e) => dom.customToneContainer.classList.toggle('hidden', e.target.value !== 'Custom'));
+                dom.logToggle.addEventListener('click', () => dom.logViewer.classList.toggle('max-h-0'));
+                dom.cancelTranslationBtn.addEventListener('click', cancelTranslation);
+                dom.temperatureSlider.addEventListener('input', (e) => { dom.temperatureValue.textContent = e.target.value; });
+                dom.requestDelayInput.addEventListener('input', updatePageSelectionCounter);
+        
+                // Subtitle editor event delegation
+                dom.subtitleTableBody.addEventListener('click', async (e) => {
+                    if (e.target && e.target.classList.contains('translate-sub-row-btn')) {
+                        const btn = e.target;
+                        const index = btn.dataset.index;
+                        const row = btn.closest('tr');
+                        const originalText = (subtitleData.lines || subtitleData.events.lines)[index].text;
+                        const targetCell = row.cells[3];
+                        btn.disabled = true;
+                        btn.innerHTML = `<svg class="spinner w-3 h-3 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 R>0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+                        try {
+                            const apiKey = dom.apiKeyInput.value.trim();
+                            if (!apiKey) throw new Error("API Key is required.");
+                            const translated = await translateText(originalText, 'auto', dom.targetLangSelect.value, dom.jobFieldSelect.value, apiKey, dom.modelSelect.value, dom.useProxyCheckbox.checked, dom.customProxyInput.value, null, dom.customPromptInput.value, dom.temperatureSlider.value);
+                            targetCell.textContent = translated;
+                        } catch(err) {
+                            showError(err.message);
+                            targetCell.textContent = 'Error!';
+                        } finally {
+                            btn.disabled = false;
+                            btn.textContent = 'Translate';
+                        }
+                    }
                 });
-            }
-        } catch (error) {
-            console.error("Translation failed:", error);
-            showError(error.message);
-            dom.output.value = '';
-        } finally {
-            dom.translateBtnText.classList.remove('hidden');
-            dom.translateBtnSpinner.classList.add('hidden');
-            validateForm();
-        }
-    }
+                
+                dom.translateAllSubsBtn.addEventListener('click', async () => {
+                    const apiKey = dom.apiKeyInput.value.trim();
+                    if (!apiKey) { showError("API Key is required."); return; }
 
-    async function handleEnhancement(action) {
-        const currentText = dom.output.value;
-        if (!currentText) { showError("Nothing to enhance."); return; }
-        showError('');
-        const originalBtnText = {};
-        dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => {
-            originalBtnText[btn.dataset.action] = btn.innerHTML;
-            btn.disabled = true;
-            if (btn.dataset.action === action) {
-                btn.innerHTML = '<div class="spinner w-4 h-4 mx-auto"></div>';
-            }
-        });
-        const apiKey = dom.apiKeyInput.value.trim();
-        const model = dom.modelSelect.value;
-        const useProxy = dom.useProxyCheckbox.checked;
-        const customProxyUrl = dom.customProxyInput.value;
-        const targetLang = dom.targetLangSelect.value;
+                    const allRows = Array.from(dom.subtitleTableBody.querySelectorAll('tr'))
+                        .map((row, index) => ({
+                            row: row,
+                            btn: row.querySelector('.translate-sub-row-btn'),
+                            targetCell: row.cells[3],
+                            originalText: (subtitleData.lines || subtitleData.events.lines)[index].text,
+                            originalIndex: index
+                        }));
 
-        dom.output.value = ''; // Clear for streaming
-        try {
-            await new Promise((resolve, reject) => {
-                streamEnhanceText(
-                    currentText, action, targetLang, apiKey, model, useProxy, customProxyUrl,
-                    (chunk) => { dom.output.value += chunk; }, // onChunk
-                    () => { resolve(); }, // onComplete
-                    (error) => { reject(error); } // onError
-                );
-            });
-        } catch (error) {
-            console.error(`Enhancement failed:`, error);
-            showError(error.message);
-            dom.output.value = currentText; // Restore original text on failure
-        } finally {
-            dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => {
-                btn.disabled = false;
-                btn.innerHTML = originalBtnText[btn.dataset.action];
-            });
-        }
-    }
-    
-    // --- START: Local Storage and Settings ---
-    const LS_SETTINGS_KEY = 'fluentify_settings_v4';
-    function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
-    function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.saveSettingsCheckbox.checked = true; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
-    
-    // --- START: Theme Management ---
-    function applyTheme(theme) { dom.html.classList.toggle('dark', theme === 'dark'); dom.themeIconLight.classList.toggle('hidden', theme === 'dark'); dom.themeIconDark.classList.toggle('hidden', theme !== 'dark'); }
-    function toggleTheme() { const newTheme = dom.html.classList.contains('dark') ? 'light' : 'dark'; applyTheme(newTheme); saveSettings(); }
-    
-    // --- START: Helper Functions ---
-    function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = (error) => reject(error); }); }
-    function copyToClipboard() { if (!dom.output.value) return; navigator.clipboard.writeText(dom.output.value).then(() => { dom.copyIconDefault.classList.add('hidden'); dom.copyIconSuccess.classList.remove('hidden'); setTimeout(() => { dom.copyIconDefault.classList.remove('hidden'); dom.copyIconSuccess.classList.add('hidden'); }, 2000); }).catch(err => { console.error('Failed to copy text:', err); showError('Could not copy text.'); }); }
-    function exportToTxt() { if (!dom.output.value) return; const blob = new Blob([dom.output.value], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'translation.txt'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
-    
-    // --- START: Initialization ---
-    function initialize() {
-        populateSelect(dom.sourceLangSelect, LANGUAGES, 'auto');
-        populateSelect(dom.targetLangSelect, LANGUAGES, 'English', opt => opt.value !== 'auto');
-        populateSelect(dom.modelSelect, MODELS.map(m => ({ value: m, text: m })), DEFAULT_WEB_MODEL);
-        populateSelect(dom.jobFieldSelect, JOB_FIELDS, 'None');
-        loadSettings();
-        handleInputTypeChange();
-        dom.customProxyContainer.classList.toggle('hidden', !dom.useProxyCheckbox.checked);
-        dom.form.addEventListener('submit', handleFormSubmit);
-        dom.inputTypeRadios.forEach(radio => radio.addEventListener('change', handleInputTypeChange));
-        dom.swapBtn.addEventListener('click', swapLanguages);
-        dom.copyBtn.addEventListener('click', copyToClipboard);
-        dom.exportBtn.addEventListener('click', exportToTxt);
-        dom.themeToggleBtn.addEventListener('click', toggleTheme);
-        dom.chooseFileBtn.addEventListener('click', () => dom.fileUpload.click());
-        dom.removeFileBtn.addEventListener('click', resetFileInput);
-        dom.fileUpload.addEventListener('change', handleFileChange);
-        ['dragover', 'drop'].forEach(eventName => dom.dropzoneContainer.addEventListener(eventName, e => e.preventDefault()));
-        dom.dropzoneContainer.addEventListener('dragenter', () => dom.dropzoneContainer.classList.add('border-sky-500'));
-        dom.dropzoneContainer.addEventListener('dragleave', () => dom.dropzoneContainer.classList.remove('border-sky-500'));
-        dom.dropzoneContainer.addEventListener('drop', (e) => { dom.dropzoneContainer.classList.remove('border-sky-500'); if (e.dataTransfer.files.length) { dom.fileUpload.files = e.dataTransfer.files; dom.fileUpload.dispatchEvent(new Event('change')); } });
-        dom.selectAllPagesBtn.addEventListener('click', () => { if (!pdfDoc) return; const allPageItems = dom.pdfPageViewer.querySelectorAll('.pdf-page-item'); for(let i = 1; i <= pdfDoc.numPages; i++) { selectedPages.add(i); allPageItems[i-1]?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); });
-        dom.deselectAllPagesBtn.addEventListener('click', () => { selectedPages.clear(); dom.pdfPageViewer.querySelectorAll('.pdf-page-item').forEach(thumb => thumb.classList.remove('selected')); updatePageSelectionCounter(); validateForm(); });
-        dom.combinePagesCheckbox.addEventListener('change', updatePageSelectionCounter);
-        dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => btn.addEventListener('click', () => handleEnhancement(btn.dataset.action)));
-        [dom.textInput, dom.apiKeyInput, dom.sourceLangSelect, dom.targetLangSelect, dom.customProxyInput].forEach(el => el.addEventListener('input', validateForm));
-        dom.textInput.addEventListener('input', updateCharCounter);
-        dom.settingsToggleBtn.addEventListener('click', () => dom.settingsPanel.classList.toggle('hidden'));
-        dom.toggleApiKeyBtn.addEventListener('click', () => { const isPassword = dom.apiKeyInput.type === 'password'; dom.apiKeyInput.type = isPassword ? 'text' : 'password'; dom.eyeOpenIcon.classList.toggle('hidden', isPassword); dom.eyeClosedIcon.classList.toggle('hidden', !isPassword); });
-        dom.useProxyCheckbox.addEventListener('change', (e) => dom.customProxyContainer.classList.toggle('hidden', !e.target.checked));
-        [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput].forEach(el => el.addEventListener('change', saveSettings));
-        console.log("Fluentify App Initialized.");
-    }
-    
-    document.addEventListener('DOMContentLoaded', initialize);
-})();
-</script>
+                    const rowsToTranslate = allRows.filter(item => !item.targetCell.textContent.trim());
+                    const totalToTranslate = rowsToTranslate.length;
+
+                    if (totalToTranslate === 0) {
+                        log('All subtitles are already translated.', 'info');
+                        return;
+                    }
+                    
+                    translationAbortController = new AbortController();
+                    const { signal } = translationAbortController;
+                    showProgress(`Translating ${totalToTranslate} subtitle lines...`);
+                    dom.translateAllSubsBtn.disabled = true;
+                    rowsToTranslate.forEach(item => item.btn.disabled = true);
+
+                    try {
+                        const batchSize = parseInt(dom.subtitleBatchSizeInput.value, 10) || 250;
+                        const chunks = [];
+                        for (let i = 0; i < totalToTranslate; i += batchSize) {
+                            chunks.push(rowsToTranslate.slice(i, i + batchSize));
+                        }
+                        
+                        let translatedCount = 0;
+                        updateProgress(translatedCount, totalToTranslate);
+
+                        for (let i = 0; i < chunks.length; i++) {
+                            const chunk = chunks[i];
+                            if (signal.aborted) throw new Error("Translation was cancelled.");
+                            
+                            log(`Translating batch ${i + 1} of ${chunks.length} (${chunk.length} lines)...`);
+                            const itemsToTranslate = chunk.map(item => ({
+                                id: item.originalIndex,
+                                original: item.originalText
+                            }));
+                            
+                            const translatedObjects = await callGoogleAIBatch(
+                                itemsToTranslate, 'auto', dom.targetLangSelect.value, dom.jobFieldSelect.value, apiKey, dom.modelSelect.value,
+                                dom.useProxyCheckbox.checked, dom.customProxyInput.value, signal, dom.temperatureSlider.value
+                            );
+                            
+                            if (signal.aborted) throw new Error("Translation was cancelled.");
+
+                            const translationMap = new Map(translatedObjects.map(item => [item.id, item.translation]));
+
+                            chunk.forEach(item => {
+                                const translatedText = translationMap.get(item.originalIndex);
+                                if (translatedText !== null && translatedText !== undefined) {
+                                    item.targetCell.textContent = translatedText;
+                                } else {
+                                    item.targetCell.textContent = '(Translation failed)';
+                                }
+                            });
+                            
+                            translatedCount += chunk.length;
+                            updateProgress(translatedCount, totalToTranslate);
+
+                            if (i < chunks.length - 1) {
+                                const delay = parseFloat(dom.requestDelayInput.value) * 1000 || 2000;
+                                log(`Waiting for ${delay}ms before next batch...`);
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                if (signal.aborted) throw new Error("Translation was cancelled.");
+                            }
+                        }
+                        log('Batch translation complete.', 'success');
+                    } catch (err) {
+                        showError(err.message);
+                    } finally {
+                        hideProgress();
+                        translationAbortController = null;
+                        dom.translateAllSubsBtn.disabled = false;
+                        dom.subtitleTableBody.querySelectorAll('.translate-sub-row-btn').forEach(btn => btn.disabled = false);
+                    }
+                });
+        
+                dom.optimizePromptBtn.addEventListener('click', async () => {
+                    const currentPrompt = dom.customPromptInput.value;
+                    if (!currentPrompt.trim()) { showError("Enter a prompt to optimize."); return; }
+                    dom.optimizePromptBtnText.classList.add('hidden');
+                    dom.optimizePromptSpinner.classList.remove('hidden');
+                    dom.optimizePromptBtn.disabled = true;
+                    try {
+                        const metaPrompt = `You are a prompt engineering expert. Rewrite the following prompt to be clearer, more concise, and more effective for a large language model that performs translation. The prompt must include placeholders like {text}, {source_lang}, and {target_lang}. Return only the optimized prompt, without any commentary.
+        ---
+        ${currentPrompt}
+        ---`;
+                        const apiKey = dom.apiKeyInput.value.trim();
+                        if (!apiKey) throw new Error("API Key is required to optimize prompt.");
+                        const optimizedPrompt = await callGoogleAI(metaPrompt, apiKey, dom.modelSelect.value, dom.useProxyCheckbox.checked, dom.customProxyInput.value, null, 0.5); // Use lower temp for optimization
+                        dom.customPromptInput.value = optimizedPrompt;
+                        log('Prompt optimized successfully.', 'success');
+                    } catch (err) {
+                        showError(err.message);
+                    } finally {
+                        dom.optimizePromptBtnText.classList.remove('hidden');
+                        dom.optimizePromptSpinner.classList.add('hidden');
+                        dom.optimizePromptBtn.disabled = false;
+                    }
+                });
+        
+                // Settings persistence
+                [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput, dom.useCustomPromptCheckbox, dom.customPromptInput, dom.temperatureSlider, dom.requestDelayInput, dom.translationToneSelect, dom.customToneInput].forEach(el => {
+                    const event = el.type === 'checkbox' || el.type === 'range' ? 'change' : 'input';
+                    el.addEventListener(event, saveSettings);
+                });
+        
+                log("Fluentify App Initialized.");
+            }
+            
+            document.addEventListener('DOMContentLoaded', initialize);
+        })();
+        </script>
 
 </body>
 </html>
