@@ -471,8 +471,97 @@ ${text}
     function showError(message) { dom.errorDisplay.textContent = message; }
     function clearOutput() { dom.output.value = ''; dom.copyBtn.disabled = true; dom.exportBtn.disabled = true; dom.enhancementsToolbar.classList.add('hidden', 'opacity-0', '-translate-y-2'); showError(''); }
     async function handleFileChange(event) { const file = event.target.files[0]; if (!file) { resetFileInput(); return; } const selectedType = document.querySelector('input[name="input_type"]:checked').value; if (file.size > 20 * 1024 * 1024) { showError("File size exceeds 20MB limit."); resetFileInput(); return; } if (selectedType === 'image') { const reader = new FileReader(); reader.onload = (e) => { dom.imagePreview.src = e.target.result; dom.dropzonePrompt.classList.add('hidden'); dom.imagePreviewContainer.classList.remove('hidden'); }; reader.readAsDataURL(file); } else if (selectedType === 'pdf') { dom.pdfViewerSection.classList.remove('hidden'); await renderPdf(file); } validateForm(); }
-    async function renderPdf(file) { const fileReader = new FileReader(); fileReader.onload = async (e) => { try { dom.pdfPageViewer.innerHTML = '<div class="spinner w-8 h-8 text-sky-500 mx-auto col-span-full"></div>'; const typedarray = new Uint8Array(e.target.result); pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`; pdfDoc = await pdfjsLib.getDocument({ data: typedarray }).promise; dom.pdfPageViewer.innerHTML = ''; for (let i = 1; i <= pdfDoc.numPages; i++) { const pageView = await createPdfPageView(i); dom.pdfPageViewer.appendChild(pageView); } } catch (error) { console.error("Error rendering PDF:", error); showError("Could not load or render the PDF file."); dom.pdfPageViewer.innerHTML = '<p class="text-center text-red-500 col-span-full">Failed to load PDF</p>'; } }; fileReader.readAsArrayBuffer(file); }
-    async function createPdfPageView(pageNum) { const page = await pdfDoc.getPage(pageNum); const viewport = page.getViewport({ scale: 1.2 }); const canvas = document.createElement('canvas'); canvas.height = viewport.height; canvas.width = viewport.width; canvas.className = "w-full h-auto block"; await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise; const pageContainer = document.createElement('div'); pageContainer.className = "pdf-page-item relative cursor-pointer border-2 border-slate-400 dark:border-slate-600 rounded-lg overflow-hidden bg-white"; pageContainer.dataset.pageNumber = pageNum; pageContainer.title = `Page ${pageNum}`; const pageNumberLabel = document.createElement('div'); pageNumberLabel.className = "absolute bottom-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded"; pageNumberLabel.textContent = `Page ${pageNum}`; pageContainer.appendChild(canvas); pageContainer.appendChild(pageNumberLabel); pageContainer.addEventListener('click', () => togglePageSelection(pageNum)); return pageContainer; }
+async function renderPdf(file) {
+    const fileReader = new FileReader();
+    fileReader.onload = async (e) => {
+        try {
+            dom.pdfPageViewer.innerHTML = '<div class="spinner w-8 h-8 text-sky-500 mx-auto col-span-full"></div>';
+            const typedarray = new Uint8Array(e.target.result);
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+            pdfDoc = await pdfjsLib.getDocument({ data: typedarray }).promise;
+            
+            dom.pdfPageViewer.innerHTML = ''; // Clear the spinner
+
+            // --- NEW: Lazy Loading Logic ---
+
+            // 1. Create a callback for the observer
+            const lazyLoadPage = (entries, observer) => {
+                entries.forEach(entry => {
+                    // If the placeholder is intersecting the viewport
+                    if (entry.isIntersecting) {
+                        const placeholder = entry.target;
+                        const pageNum = parseInt(placeholder.dataset.pageNumber, 10);
+                        
+                        // Render the actual page
+                        createPdfPageView(pageNum).then(pageView => {
+                           // Replace the placeholder with the rendered page
+                           placeholder.parentNode.replaceChild(pageView, placeholder);
+                        });
+                        
+                        // Stop observing this placeholder since it's now rendered
+                        observer.unobserve(placeholder);
+                    }
+                });
+            };
+
+            // 2. Create the observer instance
+            const observer = new IntersectionObserver(lazyLoadPage, {
+                root: dom.pdfPageViewer, // Observe within the scroll container
+                rootMargin: '200px',   // Start loading pages 200px before they become visible
+            });
+
+            // 3. Create and observe placeholders instead of rendering immediately
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const placeholder = document.createElement('div');
+                placeholder.className = "pdf-page-placeholder";
+                // Set a min-height to prevent layout shifts and ensure the scrollbar is correct
+                placeholder.style.minHeight = '300px'; 
+                placeholder.dataset.pageNumber = i;
+                dom.pdfPageViewer.appendChild(placeholder);
+                
+                // Tell the observer to watch this new placeholder
+                observer.observe(placeholder);
+            }
+
+        } catch (error) {
+            console.error("Error rendering PDF:", error);
+            showError("Could not load or render the PDF file.");
+            dom.pdfPageViewer.innerHTML = '<p class="text-center text-red-500 col-span-full">Failed to load PDF</p>';
+        }
+    };
+    fileReader.readAsArrayBuffer(file);
+}
+
+async function createPdfPageView(pageNum) {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 1.2 });
+    const canvas = document.createElement('canvas');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    canvas.className = "w-full h-auto block";
+    
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+
+    const pageContainer = document.createElement('div');
+    pageContainer.className = "pdf-page-item relative cursor-pointer border-2 border-slate-400 dark:border-slate-600 rounded-lg overflow-hidden bg-white";
+    pageContainer.dataset.pageNumber = pageNum;
+    pageContainer.title = `Page ${pageNum}`;
+
+    // Re-check if the page is already selected when it's rendered
+    if (selectedPages.has(pageNum)) {
+        pageContainer.classList.add('selected');
+    }
+
+    const pageNumberLabel = document.createElement('div');
+    pageNumberLabel.className = "absolute bottom-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded";
+    pageNumberLabel.textContent = `Page ${pageNum}`;
+    
+    pageContainer.appendChild(canvas);
+    pageContainer.appendChild(pageNumberLabel);
+    pageContainer.addEventListener('click', () => togglePageSelection(pageNum));
+    
+    return pageContainer;
+}
     function togglePageSelection(pageNumber) { const thumbElement = dom.pdfPageViewer.querySelector(`.pdf-page-item[data-page-number="${pageNumber}"]`); if (selectedPages.has(pageNumber)) { selectedPages.delete(pageNumber); thumbElement?.classList.remove('selected'); } else { selectedPages.add(pageNumber); thumbElement?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); }
     function updatePageSelectionCounter() { dom.pageSelectionCounter.textContent = `${selectedPages.size} pages selected`; const timeEstimate = Math.round(selectedPages.size * (BATCH_DELAY_MS / 1000)); dom.batchWarning.textContent = selectedPages.size > 1 && !dom.combinePagesCheckbox.checked ? `Translation may take up to ${timeEstimate} seconds to complete.` : ''; }
     
