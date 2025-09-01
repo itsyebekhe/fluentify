@@ -69,6 +69,27 @@
         #subtitle-editor-section td:nth-child(3), #subtitle-editor-section td:nth-child(4) { font-size: 0.9rem; }
         #subtitle-editor-section .translated-text { background-color: #f0f9ff; }
         .dark #subtitle-editor-section .translated-text { background-color: #1e293b; }
+
+        #subtitle-editor-section td[contenteditable="true"] {
+            outline: 2px solid transparent;
+            transition: background-color 0.2s ease, outline-color 0.2s ease;
+        }
+        #subtitle-editor-section td[contenteditable="true"]:focus {
+            background-color: #f0f9ff;
+            outline-color: #0ea5e9;
+        }
+        .dark #subtitle-editor-section td[contenteditable="true"]:focus {
+            background-color: #0c4a6e;
+        }
+        #subtitle-editor-section mark {
+            background-color: #fde047;
+            color: #1e293b;
+            padding: 1px 2px;
+            border-radius: 3px;
+        }
+        .dark #subtitle-editor-section mark {
+            background-color: #facc15;
+        }
     </style>
 </head>
 
@@ -182,6 +203,12 @@
                                 <input type="number" id="subtitle-batch-size" value="250" min="1" step="1" class="w-20 p-2 text-center bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
                             </div>
                             <div class="flex items-center gap-2">
+                                 <button type="button" id="break-lines-toggle-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Break Long Lines" aria-label="Break Long Lines">
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 8.25l4.5 4.5m0 0l4.5 4.5m-4.5-4.5L5.25 12.75m14.25-4.5l-4.5 4.5m4.5-4.5l-4.5-4.5M5.25 12.75l4.5-4.5" /></svg>
+                                </button>
+                                 <button type="button" id="find-replace-toggle-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Find & Replace" aria-label="Find & Replace">
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                                </button>
                                  <button type="button" id="export-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Export as subtitle file" aria-label="Export as subtitle file">
                                    <svg id="export-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                                 </button>
@@ -189,6 +216,29 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="break-lines-panel" class="hidden p-3 my-2 bg-slate-300/50 dark:bg-slate-800/50 rounded-md">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-2">
+                                <label for="break-lines-max-chars" class="text-sm font-medium whitespace-nowrap">Max chars / line:</label>
+                                <input type="number" id="break-lines-max-chars" value="42" min="10" step="1" class="w-20 p-2 text-center bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
+                            </div>
+                            <button type="button" id="break-lines-apply-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors">Apply Changes</button>
+                        </div>
+                    </div>
+                    <div id="find-replace-panel" class="hidden p-3 my-2 bg-slate-300/50 dark:bg-slate-800/50 rounded-md space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input type="text" id="find-input" placeholder="Find text..." class="w-full bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-2 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                            <input type="text" id="replace-input" placeholder="Replace with..." class="w-full bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-2 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <label class="flex items-center text-sm"><input type="checkbox" id="find-case-sensitive" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500 mr-1.5">Case Sensitive</label>
+                            </div>
+                            <button type="button" id="replace-all-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors">Replace All</button>
+                        </div>
+                    </div>
+                    
                     <div class="scroll-container max-h-[30rem] overflow-auto">
                         <table id="subtitle-table">
                             <thead class="sticky top-0 bg-slate-200 dark:bg-slate-700">
@@ -291,6 +341,10 @@
                         </div>
                     </div>
                     <div class="flex items-center pt-2 border-t border-slate-300 dark:border-slate-700">
+                        <input id="pdf-ocr-checkbox" name="pdf_ocr" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
+                        <label for="pdf-ocr-checkbox" class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Use OCR for scanned PDF pages</label>
+                    </div>
+                    <div class="flex items-center pt-2 border-t border-slate-300 dark:border-slate-700">
                         <input id="save-settings-checkbox" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
                         <label for="save-settings-checkbox" class="ml-2 block text-sm text-slate-600 dark:text-slate-400">Save all settings in this browser</label>
                     </div>
@@ -376,7 +430,7 @@
     <script>
         (() => {
             // --- START: CONFIGURATION ---
-            const DEFAULT_WEB_MODEL = "gemini-2.0-flash";
+            const DEFAULT_WEB_MODEL = "gemini-2.5-pro";
             const DEFAULT_PROXY_URL = "https://middleman.yebekhe.workers.dev";
             const MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
             const LANGUAGES = [ { value: "auto", text: "Auto-detect Language" }, { value: "Afrikaans", text: "Afrikaans" }, { value: "Albanian", text: "Albanian" }, { value: "Amharic", text: "Amharic" }, { value: "Arabic", text: "Arabic" }, { value: "Armenian", text: "Armenian" }, { value: "Assamese", text: "Assamese" }, { value: "Aymara", text: "Aymara" }, { value: "Azerbaijani", text: "Azerbaijani" }, { value: "Bambara", text: "Bambara" }, { value: "Basque", text: "Basque" }, { value: "Belarusian", text: "Belarusian" }, { value: "Bengali", text: "Bengali" }, { value: "Bhojpuri", text: "Bhojpuri" }, { value: "Bosnian", text: "Bosnian" }, { value: "Bulgarian", text: "Bulgarian" }, { value: "Catalan", text: "Catalan" }, { value: "Cebuano", text: "Cebuano" }, { value: "Chichewa", text: "Chichewa (Nyanja)" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)" }, { value: "Corsican", text: "Corsican" }, { value: "Croatian", text: "Croatian" }, { value: "Czech", text: "Czech" }, { value: "Danish", text: "Danish" }, { value: "Dhivehi", text: "Dhivehi" }, { value: "Dogri", text: "Dogri" }, { value: "Dutch", text: "Dutch" }, { value: "English", text: "English" }, { value: "Esperanto", text: "Esperanto" }, { value: "Estonian", text: "Estonian" }, { value: "Ewe", text: "Ewe" }, { value: "Filipino", text: "Filipino (Tagalog)" }, { value: "Finnish", text: "Finnish" }, { value: "French", text: "French" }, { value: "Frisian", text: "Frisian" }, { value: "Galician", text: "Galician" }, { value: "Georgian", text: "Georgian" }, { value: "German", text: "German" }, { value: "Greek", text: "Greek" }, { value: "Guarani", text: "Guarani" }, { value: "Gujarati", text: "Gujarati" }, { value: "Haitian Creole", text: "Haitian Creole" }, { value: "Hausa", text: "Hausa" }, { value: "Hawaiian", text: "Hawaiian" }, { value: "Hebrew", text: "Hebrew" }, { value: "Hindi", text: "Hindi" }, { value: "Hmong", text: "Hmong" }, { value: "Hungarian", text: "Hungarian" }, { value: "Icelandic", text: "Icelandic" }, { value: "Igbo", text: "Igbo" }, { value: "Ilocano", text: "Ilocano" }, { value: "Indonesian", text: "Indonesian" }, { value: "Irish", text: "Irish" }, { value: "Italian", text: "Italian" }, { value: "Japanese", text: "Japanese" }, { value: "Javanese", text: "Javanese" }, { value: "Kannada", text: "Kannada" }, { value: "Kazakh", text: "Kazakh" }, { value: "Khmer", text: "Khmer" }, { value: "Kinyarwanda", text: "Kinyarwanda" }, { value: "Konkani", text: "Konkani" }, { value: "Korean", text: "Korean" }, { value: "Krio", text: "Krio" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)" }, { value: "Kyrgyz", text: "Kyrgyz" }, { value: "Lao", text: "Lao" }, { value: "Latin", text: "Latin" }, { value: "Latvian", text: "Latvian" }, { value: "Lingala", text: "Lingala" }, { value: "Lithuanian", text: "Lithuanian" }, { value: "Luganda", text: "Luganda" }, { value: "Luxembourgish", text: "Luxembourgish" }, { value: "Macedonian", text: "Macedonian" }, { value: "Maithili", text: "Maithili" }, { value: "Malagasy", text: "Malagasy" }, { value: "Malay", text: "Malay" }, { value: "Malayalam", text: "Malayalam" }, { value: "Maltese", text: "Maltese" }, { value: "Maori", text: "Maori" }, { value: "Marathi", text: "Marathi" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)" }, { value: "Mizo", text: "Mizo" }, { value: "Mongolian", text: "Mongolian" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)" }, { value: "Nepali", text: "Nepali" }, { value: "Norwegian", text: "Norwegian" }, { value: "Odia (Oriya)", text: "Odia (Oriya)" }, { value: "Oromo", text: "Oromo" }, { value: "Pashto", text: "Pashto" }, { value: "Persian", text: "Persian (Farsi)" }, { value: "Polish", text: "Polish" }, { value: "Portuguese", text: "Portuguese" }, { value: "Punjabi", text: "Punjabi" }, { value: "Quechua", text: "Quechua" }, { value: "Romanian", text: "Romanian" }, { value: "Russian", text: "Russian" }, { value: "Samoan", text: "Samoan" }, { value: "Sanskrit", text: "Sanskrit" }, { value: "Scots Gaelic", text: "Scots Gaelic" }, { value: "Sepedi", text: "Sepedi" }, { value: "Serbian", text: "Serbian" }, { value: "Sesotho", text: "Sesotho" }, { value: "Shona", text: "Shona" }, { value: "Sindhi", text: "Sindhi" }, { value: "Sinhala", text: "Sinhala" }, { value: "Slovak", text: "Slovak" }, { value: "Slovenian", text: "Slovenian" }, { value: "Somali", text: "Somali" }, { value: "Spanish", text: "Spanish" }, { value: "Sundanese", text: "Sundanese" }, { value: "Swahili", text: "Swahili" }, { value: "Swedish", text: "Swedish" }, { value: "Tajik", text: "Tajik" }, { value: "Tamil", text: "Tamil" }, { value: "Tatar", text: "Tatar" }, { value: "Telugu", text: "Telugu" }, { value: "Thai", text: "Thai" }, { value: "Tigrinya", text: "Tigrinya" }, { value: "Tsonga", text: "Tsonga" }, { value: "Turkish", text: "Turkish" }, { value: "Turkmen", text: "Turkmen" }, { value: "Twi", text: "Twi (Akan)" }, { value: "Ukrainian", text: "Ukrainian" }, { value: "Urdu", text: "Urdu" }, { value: "Uyghur", text: "Uyghur" }, { value: "Uzbek", text: "Uzbek" }, { value: "Vietnamese", text: "Vietnamese" }, { value: "Welsh", text: "Welsh" }, { value: "Xhosa", text: "Xhosa" }, { value: "Yiddish", text: "Yiddish" }, { value: "Yoruba", text: "Yoruba" }, { value: "Zulu", text: "Zulu" }];
@@ -461,6 +515,7 @@
                 useCustomPromptCheckbox: document.getElementById('use-custom-prompt-checkbox'),
                 customPromptContainer: document.getElementById('custom-prompt-container'),
                 customPromptInput: document.getElementById('custom-prompt-input'),
+                pdfOcrCheckbox: document.getElementById('pdf-ocr-checkbox'),
                 optimizePromptBtn: document.getElementById('optimize-prompt-btn'),
                 optimizePromptBtnText: document.getElementById('optimize-prompt-btn-text'),
                 optimizePromptSpinner: document.getElementById('optimize-prompt-spinner'),
@@ -473,6 +528,17 @@
                 logToggle: document.getElementById('log-toggle'),
                 logContent: document.getElementById('log-content'),
                 logOutput: document.getElementById('log-output'),
+                // Subtitle Editor Tools
+                findReplaceToggleBtn: document.getElementById('find-replace-toggle-btn'),
+                breakLinesToggleBtn: document.getElementById('break-lines-toggle-btn'),
+                findReplacePanel: document.getElementById('find-replace-panel'),
+                breakLinesPanel: document.getElementById('break-lines-panel'),
+                findInput: document.getElementById('find-input'),
+                replaceInput: document.getElementById('replace-input'),
+                findCaseSensitive: document.getElementById('find-case-sensitive'),
+                replaceAllBtn: document.getElementById('replace-all-btn'),
+                breakLinesMaxChars: document.getElementById('break-lines-max-chars'),
+                breakLinesApplyBtn: document.getElementById('break-lines-apply-btn'),
             };
             
             // --- START: State Management ---
@@ -554,14 +620,18 @@
                 const jobFieldText = JOB_FIELDS.find(f => f.value === jobField)?.text || 'General';
                 const specializationContext = (jobField && jobField !== "None") ? `Pay close attention to specialized terms in the field of **${jobFieldText}**.` : "";
             
-                const prompt = `You are an expert translator.
-            Translate the "original" text for each JSON object in the input array from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} to **${targetLang}**.
-            ${specializationContext}
-            You **MUST** return a JSON array of objects. Each object must contain the original "id" and the "translation" of the text.
-            The output array **MUST** have the exact same number of objects as the input array. Do not skip any IDs.
-            
-            Input JSON:
-            ${JSON.stringify(itemsToTranslate)}`.trim();
+                const prompt = `You are an expert subtitle translator for videos.
+Your task is to translate a sequence of subtitle lines.
+Translate the "original" text for each JSON object in the input array from ${sourceLang === 'auto' ? 'the auto-detected language' : sourceLang} to **${targetLang}**.
+${specializationContext}
+
+**Crucially, you must maintain the conversational context and continuity between the lines.** The translation for one line should flow naturally from the previous line and into the next within the batch.
+
+You **MUST** return a JSON array of objects. Each object must contain the original "id" and the "translation" of the text.
+The output array **MUST** have the exact same number of objects as the input array. Do not skip any IDs.
+
+Input JSON:
+${JSON.stringify(itemsToTranslate)}`.trim();
             
                 const responseSchema = {
                     type: 'ARRAY',
@@ -602,6 +672,10 @@
                         const blockReason = responseBody.promptFeedback?.blockReason;
                         if (blockReason) throw new Error(`Request blocked due to safety settings: ${blockReason}`);
                         throw new Error("Invalid response structure from AI.");
+                    }
+
+                    if (candidate.finishReason === "MAX_TOKENS") {
+                        throw new Error("The request was too large and the AI's response was cut short. Please reduce the 'Lines / Request' value in the Subtitle Editor and try again.");
                     }
                     
                     const responseText = candidate.content?.parts?.[0]?.text?.trim() ?? "";
@@ -677,7 +751,50 @@
                 }
             }
         
-            async function extractTextFromPdfPage(pageNumber) { if (!pdfDoc) return null; const page = await pdfDoc.getPage(pageNumber); const textContent = await page.getTextContent(); return textContent.items.map(item => item.str).join(' '); }
+            async function extractTextFromPdfPage(pageNumber, ocrOptions) {
+                if (!pdfDoc) return null;
+                const page = await pdfDoc.getPage(pageNumber);
+                
+                // 1. Try standard text extraction
+                const textContent = await page.getTextContent();
+                let extractedText = textContent.items.map(item => item.str).join(' ').trim();
+                
+                // 2. Check if OCR is needed and enabled
+                const TEXT_THRESHOLD = 20; // If less than 20 chars, assume it's a scan
+                if (ocrOptions.useOcr && extractedText.length < TEXT_THRESHOLD) {
+                    log(`Page ${pageNumber} has little/no text. Attempting OCR...`, 'info');
+                    try {
+                        // 3. Render page to canvas
+                        const viewport = page.getViewport({ scale: 1.5 }); // Use a decent scale for OCR quality
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        
+                        // 4. Convert to base64
+                        const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
+                        
+                        // 5. Perform OCR
+                        const ocrText = await performOcr(
+                            base64Image,
+                            'image/jpeg',
+                            ocrOptions.apiKey,
+                            ocrOptions.model,
+                            ocrOptions.useProxy,
+                            ocrOptions.customProxyUrl,
+                            ocrOptions.signal
+                        );
+                        return ocrText || "(OCR detected no text)"; // Return OCR text if available
+                    } catch (error) {
+                        log(`OCR failed for page ${pageNumber}: ${error.message}`, 'error');
+                        // Fallback to the little text we found, or an error message
+                        return extractedText || `(OCR failed for page ${pageNumber})`;
+                    }
+                }
+                
+                return extractedText; // Return standard extracted text
+            }
             
             function getPrompt(text, sourceLang, targetLang, jobField, customPrompt) {
                 if (dom.useCustomPromptCheckbox.checked && customPrompt && customPrompt.trim()) {
@@ -791,31 +908,41 @@
             }
         
             // --- START: Subtitle Parsers & Editor ---
-            function parseSrt(data) { const pattern = /(\d+)\r?\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\r?\n([\s\S]*?)(?=\r?\n\r?\n|$)/g; const lines = []; let match; while ((match = pattern.exec(data)) !== null) { lines.push({ id: match[1], startTime: match[2], endTime: match[3], text: match[4] }); } return { lines, type: 'srt' }; }
+            function parseSrt(data) { const pattern = /(\d+)\r?\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\r?\n([\s\S]*?)(?=\r?\n\r?\n|$)/g; const lines = []; let match; while ((match = pattern.exec(data)) !== null) { lines.push({ id: parseInt(match[1], 10), startTime: match[2], endTime: match[3], text: match[4] }); } return { lines, type: 'srt' }; }
             function reconstructSrt(parsedData, translatedLines) { return parsedData.lines.map((line, index) => `${line.id}\n${line.startTime} --> ${line.endTime}\n${translatedLines[index] || line.text}`).join('\n\n') + '\n\n'; }
-            function parseVtt(data) { const blocks = data.trim().split(/\r?\n\r?\n/); const header = blocks.shift() || 'WEBVTT'; const lines = []; const timecodePattern = /(\d{2}:\d{2}:\d{2}\.\d{3}\s-->\s\d{2}:\d{2}:\d{2}\.\d{3}.*)/; for (const block of blocks) { const blockLines = block.split(/\r?\n/); const timecodeIndex = blockLines.findIndex(l => timecodePattern.test(l)); if (timecodeIndex !== -1) { const timecode = blockLines[timecodeIndex].match(timecodePattern)[1]; const text = blockLines.slice(timecodeIndex + 1).join('\n'); lines.push({ timecode, text }); } } return { header, lines, type: 'vtt' }; }
+            function parseVtt(data) { const blocks = data.trim().split(/\r?\n\r?\n/); const header = blocks.shift() || 'WEBVTT'; const lines = []; const timecodePattern = /(\d{2}:\d{2}:\d{2}\.\d{3}\s-->\s\d{2}:\d{2}:\d{2}\.\d{3}.*)/; for (const block of blocks) { const blockLines = block.split(/\r?\n/); const timecodeIndex = blockLines.findIndex(l => timecodePattern.test(l)); if (timecodeIndex !== -1) { const timecode = blockLines[timecodeIndex].match(timecodePattern)[1]; const text = blockLines.slice(timecodeIndex + 1).join('\n'); const [startTime, endTime] = timecode.split(' --> ')[0].split(' ')[0]; lines.push({ startTime: startTime.replace('.',','), endTime: endTime.replace('.',','), text, timecode }); } } return { header, lines, type: 'vtt' }; }
             function reconstructVtt(parsedData, translatedLines) { const body = parsedData.lines.map((line, index) => `${line.timecode}\n${translatedLines[index] || line.text}`).join('\n\n'); return `${parsedData.header}\n\n${body}`; }
             function parseSsaAss(data) { const sections = data.split(/\[(.*?)\]/); const result = { info: '', styles: '', events: { format: null, lines: [] }, type: 'ass' }; for (let i = 1; i < sections.length; i += 2) { const sectionName = sections[i].trim().toLowerCase(); const sectionContent = sections[i + 1].trim(); if (sectionName.startsWith('script info')) { result.info = sectionContent; } else if (sectionName.endsWith('styles')) { result.styles = sectionContent; } else if (sectionName === 'events') { const lines = sectionContent.split(/\r?\n/); const formatLine = lines.find(l => l.toLowerCase().startsWith('format:')); if (!formatLine) continue; result.events.format = formatLine; const formatFields = formatLine.split(':')[1].trim().split(',').map(f => f.trim()); const textIndex = formatFields.findIndex(f => f.toLowerCase() === 'text'); if (textIndex === -1) continue; lines.forEach(line => { if (line.toLowerCase().startsWith('dialogue:')) { const parts = line.split(','); const meta = parts.slice(0, textIndex).join(','); const text = parts.slice(textIndex).join(','); result.events.lines.push({ meta, text }); } }); } } return result; }
             function reconstructSsaAss(parsedData, translatedLines) { const eventsHeader = `[Events]\n${parsedData.events.format}\n`; const eventLines = parsedData.events.lines.map((line, index) => `Dialogue: ${line.meta},${translatedLines[index] || line.text}`).join('\n'); let scriptInfoSection = parsedData.info ? `[Script Info]\n${parsedData.info}\n\n` : ''; let stylesSection = parsedData.styles ? `[V4+ Styles]\n${parsedData.styles}\n\n` : ''; return `${scriptInfoSection}${stylesSection}${eventsHeader}${eventLines}`; }
             
-            function processAndDisplaySubtitles(fileContent, fileName) {
+            function rerenderSubtitleTable() {
+                if (!subtitleData) return;
+                const translatedTexts = Array.from(dom.subtitleTableBody.querySelectorAll('tr')).map(row => row.cells[3].textContent);
+                processAndDisplaySubtitles(null, null, translatedTexts);
+            }
+            
+            function processAndDisplaySubtitles(fileContent, fileName, preservedTranslations = null) {
                 try {
-                    log(`Processing subtitle content from: ${fileName}`);
-                    const fileExt = fileName.split('.').pop().toLowerCase();
-                    let parser;
-                    switch (fileExt) {
-                        case 'srt': parser = parseSrt; break;
-                        case 'vtt': parser = parseVtt; break;
-                        case 'ass': case 'ssa': parser = parseSsaAss; break;
-                        default: throw new Error(`Unsupported subtitle format: .${fileExt}`);
+                    if(fileContent) { // Parse new file
+                        log(`Processing subtitle content from: ${fileName}`);
+                        const fileExt = fileName.split('.').pop().toLowerCase();
+                        let parser;
+                        switch (fileExt) {
+                            case 'srt': parser = parseSrt; break;
+                            case 'vtt': parser = parseVtt; break;
+                            case 'ass': case 'ssa': parser = parseSsaAss; break;
+                            default: throw new Error(`Unsupported subtitle format: .${fileExt}`);
+                        }
+                        subtitleData = parser(fileContent);
                     }
-                    subtitleData = parser(fileContent);
+                    
                     const lines = subtitleData.lines || subtitleData.events.lines;
                      if (!lines || lines.length === 0) {
                         throw new Error(`No subtitle entries found in the file.`);
                     }
-                    log(`Found ${lines.length} subtitle entries.`);
+                    log(`Rendering ${lines.length} subtitle entries.`);
                     dom.subtitleTableBody.innerHTML = ''; // Clear previous table data
+                    
                     lines.forEach((line, index) => {
                         const row = document.createElement('tr');
                         row.dataset.originalIndex = index;
@@ -828,17 +955,20 @@
                             <td class="text-center">${line.id || index + 1}</td>
                             <td>${timestamp}</td>
                             <td>${line.text.replace(/\n/g, '<br>')}</td>
-                            <td class="translated-text"></td>
+                            <td class="translated-text" contenteditable="true">${preservedTranslations ? (preservedTranslations[index] || '') : ''}</td>
                             <td><button type="button" data-index="${index}" class="translate-sub-row-btn w-full px-2 py-1 text-xs rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Translate</button></td>
                         `;
                         dom.subtitleTableBody.appendChild(row);
                     });
+                    
                     dom.subtitleEditorSection.classList.remove('hidden');
-                    dom.dropzonePrompt.classList.add('hidden');
-                    dom.filePreviewContainer.classList.remove('hidden');
-                    dom.subtitlePreview.classList.remove('hidden');
-                    dom.imagePreview.classList.add('hidden');
-                    dom.subtitleFilename.textContent = fileName;
+                    if (fileName) { // Only update file preview if it's a new file
+                        dom.dropzonePrompt.classList.add('hidden');
+                        dom.filePreviewContainer.classList.remove('hidden');
+                        dom.subtitlePreview.classList.remove('hidden');
+                        dom.imagePreview.classList.add('hidden');
+                        dom.subtitleFilename.textContent = fileName;
+                    }
                     validateForm();
                 } catch(error) {
                      showError(error.message);
@@ -856,7 +986,7 @@
             function handleInputTypeChange() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; const isTextMode = selectedType === 'text'; const isImageMode = selectedType === 'image'; const isPdfMode = selectedType === 'pdf'; const isSubtitleMode = selectedType === 'subtitle'; dom.textInputContainer.classList.toggle('hidden', !isTextMode); dom.fileInputSection.classList.toggle('hidden', !isImageMode && !isPdfMode && !isSubtitleMode); dom.youtubeInputSection.classList.toggle('hidden', !isSubtitleMode); dom.pdfViewerSection.classList.toggle('hidden', !isPdfMode); dom.subtitleEditorSection.classList.toggle('hidden', !isSubtitleMode); dom.mainOutputSection.classList.toggle('hidden', isSubtitleMode); dom.sourceLangSelect.disabled = !isTextMode; if (!isTextMode) dom.sourceLangSelect.value = 'auto'; if (isImageMode) { dom.fileUpload.accept = "image/png, image/jpeg, image/webp, image/gif"; dom.fileUploadHint.textContent = "PNG, JPG, WEBP, GIF (MAX. 20MB)"; } else if (isPdfMode) { dom.fileUpload.accept = "application/pdf"; dom.fileUploadHint.textContent = "PDF (MAX. 20MB)"; } else if (isSubtitleMode) { dom.fileUpload.accept = ".srt,.vtt,.ssa,.ass"; dom.fileUploadHint.textContent = "SRT, VTT, SSA, ASS (MAX. 20MB)"; } resetFileInput(); }
             function resetFileInput() { dom.fileUpload.value = ''; dom.dropzonePrompt.classList.remove('hidden'); dom.filePreviewContainer.classList.add('hidden'); dom.imagePreview.src = ''; dom.subtitlePreview.classList.add('hidden'); dom.subtitleFilename.textContent = ''; dom.youtubeUrlInput.value = ''; currentFile = null; dom.pdfViewerSection.classList.add('hidden'); dom.pdfPageViewer.innerHTML = ''; pdfDoc = null; selectedPages.clear(); dom.subtitleEditorSection.classList.add('hidden'); dom.subtitleTableBody.innerHTML = ''; subtitleData = null; updatePageSelectionCounter(); validateForm(); clearOutput(); }
             function swapLanguages() { const sourceVal = dom.sourceLangSelect.value; const targetVal = dom.targetLangSelect.value; if (sourceVal === 'auto') return; dom.sourceLangSelect.value = targetVal; dom.targetLangSelect.value = sourceVal; validateForm(); if(dom.output.value) dom.output.dir = RTL_LANGUAGES.has(dom.targetLangSelect.value) ? 'rtl' : 'ltr'; }
-            function validateForm() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; let hasInput = false; if (selectedType === 'text') { hasInput = dom.textInput.value.trim().length > 0 && dom.textInput.value.length <= 5000; } else if (selectedType === 'image') { hasInput = currentFile !== null; } else if (selectedType === 'pdf') { hasInput = selectedPages.size > 0; } else if (selectedType === 'subtitle') { hasInput = subtitleData !== null && (subtitleData.lines?.length > 0 || subtitleData.events?.lines.length > 0); dom.exportBtn.disabled = !hasInput; } const isApiKeyValid = dom.apiKeyInput.value.trim().length > 0; dom.translateBtn.disabled = !hasInput || !isApiKeyValid || selectedType === 'subtitle'; dom.swapBtn.disabled = dom.sourceLangSelect.value === 'auto' || selectedType !== 'text'; }
+            function validateForm() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; let hasInput = false; if (selectedType === 'text') { hasInput = dom.textInput.value.trim().length > 0 && dom.textInput.value.length <= 5000; } else if (selectedType === 'image') { hasInput = currentFile !== null; } else if (selectedType === 'pdf') { hasInput = selectedPages.size > 0; } else if (selectedType === 'subtitle') { const hasSubs = subtitleData !== null && (subtitleData.lines?.length > 0 || subtitleData.events?.lines.length > 0); hasInput = hasSubs; dom.exportBtn.disabled = !hasSubs; dom.findReplaceToggleBtn.disabled = !hasSubs; dom.breakLinesToggleBtn.disabled = !hasSubs || subtitleData.type === 'ass'; } const isApiKeyValid = dom.apiKeyInput.value.trim().length > 0; dom.translateBtn.disabled = !hasInput || !isApiKeyValid || selectedType === 'subtitle'; dom.swapBtn.disabled = dom.sourceLangSelect.value === 'auto' || selectedType !== 'text'; }
             function updateCharCounter() { const isTextMode = document.querySelector('input[name="input_type"]:checked').value === 'text'; if (isTextMode) { const len = dom.textInput.value.length; dom.charCounter.textContent = `${len} / 5000`; dom.charCounter.classList.toggle('text-red-500', len > 5000); dom.charCounter.classList.toggle('dark:text-red-400', len > 5000); } else { dom.charCounter.textContent = ''; } }
             function showError(message) { dom.errorDisplay.textContent = message; }
             function clearOutput() { dom.output.value = ''; dom.copyBtn.disabled = true; dom.exportTextBtn.disabled = true; dom.enhancementsToolbar.classList.add('hidden', 'opacity-0', '-translate-y-2'); showError(''); }
@@ -950,9 +1080,19 @@
                         showProgress(`Translating ${sortedPages.length} pages...`);
                         dom.output.value = `Extracting text from ${sortedPages.length} pages...`;
                         const pageData = [];
+                        const usePdfOcr = dom.pdfOcrCheckbox.checked;
+
                         for (const pageNum of sortedPages) {
                             if (signal.aborted) throw new Error("Translation was cancelled.");
-                            const pageText = await extractTextFromPdfPage(pageNum);
+                            const ocrOptions = {
+                                useOcr: usePdfOcr,
+                                apiKey,
+                                model,
+                                useProxy,
+                                customProxyUrl,
+                                signal
+                            };
+                            const pageText = await extractTextFromPdfPage(pageNum, ocrOptions);
                             pageData.push({ pageNum: pageNum, text: pageText || "" });
                             updateProgress(pageData.length, sortedPages.length * 2); // 50% for extraction
                         }
@@ -1041,8 +1181,8 @@
             
             // --- START: Local Storage and Settings ---
             const LS_SETTINGS_KEY = 'fluentify_settings_v7';
-            function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value, useCustomPrompt: dom.useCustomPromptCheckbox.checked, customPrompt: dom.customPromptInput.value, temperature: dom.temperatureSlider.value, requestDelay: dom.requestDelayInput.value, translationTone: dom.translationToneSelect.value, customTone: dom.customToneInput.value }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
-            function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; dom.translationToneSelect.value = settings.translationTone || 'Default'; dom.customToneInput.value = settings.customTone || ''; dom.customToneContainer.classList.toggle('hidden', dom.translationToneSelect.value !== 'Custom'); applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.useCustomPromptCheckbox.checked = settings.useCustomPrompt || false; dom.customPromptInput.value = settings.customPrompt || ''; dom.temperatureSlider.value = settings.temperature || 0.7; dom.temperatureValue.textContent = settings.temperature || 0.7; dom.requestDelayInput.value = settings.requestDelay || 4; dom.saveSettingsCheckbox.checked = true; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
+            function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value, useCustomPrompt: dom.useCustomPromptCheckbox.checked, customPrompt: dom.customPromptInput.value, temperature: dom.temperatureSlider.value, requestDelay: dom.requestDelayInput.value, translationTone: dom.translationToneSelect.value, customTone: dom.customToneInput.value, pdfOcr: dom.pdfOcrCheckbox.checked }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
+            function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; dom.translationToneSelect.value = settings.translationTone || 'Default'; dom.customToneInput.value = settings.customTone || ''; dom.customToneContainer.classList.toggle('hidden', dom.translationToneSelect.value !== 'Custom'); applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.useCustomPromptCheckbox.checked = settings.useCustomPrompt || false; dom.customPromptInput.value = settings.customPrompt || ''; dom.temperatureSlider.value = settings.temperature || 0.7; dom.temperatureValue.textContent = settings.temperature || 0.7; dom.requestDelayInput.value = settings.requestDelay || 4; dom.pdfOcrCheckbox.checked = settings.pdfOcr || false; dom.saveSettingsCheckbox.checked = true; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
             
             // --- START: Theme Management ---
             function applyTheme(theme) { dom.html.classList.toggle('dark', theme === 'dark'); dom.themeIconLight.classList.toggle('hidden', theme === 'dark'); dom.themeIconDark.classList.toggle('hidden', theme !== 'dark'); }
@@ -1103,16 +1243,18 @@
 
                 try {
                     const targetApiUrl = `https://youtube-caption-extractor.vercel.app/api/videoDetails?videoID=${videoId}&lang=${langCode}`;
-                    const proxyUrl = `https://whateverorigin.org/get?url=${encodeURIComponent(targetApiUrl)}`;
+                    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(targetApiUrl)}`;
                     log(`Fetching YouTube subtitles via: ${targetApiUrl}`);
                     
                     const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error(`CORS proxy error: ${response.statusText}`);
+                    if (!response.ok) throw new Error(`API error: ${response.statusText}`);
 
                     const proxyData = await response.json();
-                    if (!proxyData.contents) throw new Error('Empty response from proxy.');
-                    
-                    const data = JSON.parse(proxyData.contents);
+                    if (!proxyData) throw new Error('Empty response from proxy.');
+
+                    // The original code `JSON.parse(proxyData)` would fail because `response.json()` already returns an object.
+                    // This change handles both cases gracefully: if the API returns a stringified JSON or a direct object.
+                    const data = (typeof proxyData === 'string') ? JSON.parse(proxyData) : proxyData;
                     const details = data.videoDetails;
 
                     if (data.error || !details || !details.subtitles || details.subtitles.length === 0) {
@@ -1139,6 +1281,132 @@
                     dom.fetchYoutubeSubsBtn.disabled = false;
                 }
             }
+            
+            // --- START: Subtitle Editor Tools ---
+            function highlightMatchesInSubtitles() {
+                const findText = dom.findInput.value;
+                const isCaseSensitive = dom.findCaseSensitive.checked;
+                const flags = isCaseSensitive ? 'g' : 'gi';
+                const regex = new RegExp(findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+            
+                dom.subtitleTableBody.querySelectorAll('td.translated-text').forEach(cell => {
+                    // Restore original text before highlighting
+                    const originalText = cell.textContent;
+                    if (findText) {
+                        cell.innerHTML = originalText.replace(regex, match => `<mark>${match}</mark>`);
+                    } else {
+                        cell.innerHTML = originalText; // Remove marks if search is empty
+                    }
+                });
+            }
+
+            function handleReplaceAllInSubtitles() {
+                const findText = dom.findInput.value;
+                if (!findText) {
+                    showError("Please enter text to find.");
+                    return;
+                }
+                const replaceText = dom.replaceInput.value;
+                const isCaseSensitive = dom.findCaseSensitive.checked;
+                const flags = isCaseSensitive ? 'g' : 'gi';
+                const regex = new RegExp(findText, flags);
+                let replacements = 0;
+            
+                dom.subtitleTableBody.querySelectorAll('td.translated-text').forEach(cell => {
+                    if (cell.textContent.match(regex)) {
+                        cell.textContent = cell.textContent.replace(regex, replaceText);
+                        replacements++;
+                    }
+                });
+                log(`Replaced ${replacements} instance(s).`, 'success');
+                dom.findInput.value = ''; // Clear find input to remove highlights
+                highlightMatchesInSubtitles();
+            }
+
+            function timeToMs(time) { const parts = time.split(/[:,.]/); return parseInt(parts[0], 10) * 3600000 + parseInt(parts[1], 10) * 60000 + parseInt(parts[2], 10) * 1000 + parseInt(parts[3], 10); }
+            function msToTime(ms, isVTT) { const d = new Date(ms); const pad = (n) => n.toString().padStart(2, '0'); const padMs = (n) => n.toString().padStart(3, '0'); const separator = isVTT ? '.' : ','; return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}${separator}${padMs(d.getUTCMilliseconds())}`; }
+
+            function handleBreakLongLines() {
+                if (!subtitleData || !subtitleData.lines) return;
+                if (!confirm('This will permanently modify your subtitle data by splitting long lines. This action cannot be undone. Are you sure?')) return;
+
+                const maxLength = parseInt(dom.breakLinesMaxChars.value, 10);
+                if (isNaN(maxLength) || maxLength < 10) {
+                    showError("Max characters must be a number greater than 10.");
+                    return;
+                }
+
+                log(`Breaking lines longer than ${maxLength} characters...`);
+                // First, sync any manual edits from the DOM to subtitleData
+                const translatedLines = Array.from(dom.subtitleTableBody.querySelectorAll('tr')).map(row => row.cells[3].textContent);
+
+                const newLines = [];
+                const isVTT = subtitleData.type === 'vtt';
+                let hasChanges = false;
+
+                subtitleData.lines.forEach((line, index) => {
+                    const currentTranslatedText = translatedLines[index] || '';
+                    if (currentTranslatedText.length <= maxLength) {
+                        newLines.push({ ...line, translatedText: currentTranslatedText }); // Pass through
+                        return;
+                    }
+
+                    const startMs = timeToMs(line.startTime.replace(',', '.'));
+                    const endMs = timeToMs(line.endTime.replace(',', '.'));
+                    const durationMs = endMs - startMs;
+
+                    if (durationMs < 1000) { // Don't split very short duration lines
+                        newLines.push({ ...line, translatedText: currentTranslatedText });
+                        return;
+                    }
+                    
+                    hasChanges = true;
+                    const words = currentTranslatedText.split(' ');
+                    let currentLineText = '';
+                    const chunks = [];
+                    
+                    words.forEach(word => {
+                        if ((currentLineText + ' ' + word).trim().length > maxLength) {
+                            chunks.push(currentLineText.trim());
+                            currentLineText = word;
+                        } else {
+                            currentLineText = (currentLineText + ' ' + word).trim();
+                        }
+                    });
+                    chunks.push(currentLineText.trim());
+
+                    const chunkDuration = durationMs / chunks.length;
+                    
+                    chunks.forEach((chunk, chunkIndex) => {
+                        const newStartMs = startMs + (chunkIndex * chunkDuration);
+                        const newEndMs = newStartMs + chunkDuration;
+                        newLines.push({
+                            ...line, // Copy original data like text
+                            startTime: msToTime(newStartMs, isVTT),
+                            endTime: msToTime(newEndMs, isVTT),
+                            id: null, // We'll renumber later
+                            translatedText: chunk
+                        });
+                    });
+                });
+
+                if (!hasChanges) {
+                    log('No lines needed to be split.', 'info');
+                    return;
+                }
+
+                // Renumber IDs for SRT format
+                if (subtitleData.type === 'srt') {
+                    newLines.forEach((line, index) => { line.id = index + 1; });
+                }
+
+                subtitleData.lines = newLines.map(({ translatedText, ...rest }) => rest);
+                const newTranslations = newLines.map(line => line.translatedText);
+
+                log(`Split complete. Total lines are now ${newLines.length}. Re-rendering table.`);
+                processAndDisplaySubtitles(null, null, newTranslations);
+            }
+
             
             // --- START: Initialization ---
             function initialize() {
@@ -1320,8 +1588,16 @@
                     }
                 });
         
+                // Subtitle Editor Tools Listeners
+                dom.findReplaceToggleBtn.addEventListener('click', () => dom.findReplacePanel.classList.toggle('hidden'));
+                dom.breakLinesToggleBtn.addEventListener('click', () => dom.breakLinesPanel.classList.toggle('hidden'));
+                dom.findInput.addEventListener('input', highlightMatchesInSubtitles);
+                dom.findCaseSensitive.addEventListener('change', highlightMatchesInSubtitles);
+                dom.replaceAllBtn.addEventListener('click', handleReplaceAllInSubtitles);
+                dom.breakLinesApplyBtn.addEventListener('click', handleBreakLongLines);
+
                 // Settings persistence
-                [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput, dom.useCustomPromptCheckbox, dom.customPromptInput, dom.temperatureSlider, dom.requestDelayInput, dom.translationToneSelect, dom.customToneInput].forEach(el => {
+                [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput, dom.useCustomPromptCheckbox, dom.customPromptInput, dom.temperatureSlider, dom.requestDelayInput, dom.translationToneSelect, dom.customToneInput, dom.pdfOcrCheckbox].forEach(el => {
                     const event = el.type === 'checkbox' || el.type === 'range' ? 'change' : 'input';
                     el.addEventListener(event, saveSettings);
                 });
