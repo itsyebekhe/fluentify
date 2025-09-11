@@ -63,6 +63,7 @@
 
         #subtitle-editor-section table { width: 100%; border-collapse: collapse; }
         #subtitle-editor-section th, #subtitle-editor-section td { padding: 8px 12px; border: 1px solid #d1d5db; text-align: left; vertical-align: middle;}
+        html[dir="rtl"] #subtitle-editor-section th, html[dir="rtl"] #subtitle-editor-section td { text-align: right; }
         .dark #subtitle-editor-section th, .dark #subtitle-editor-section td { border-color: #4b5563; }
         #subtitle-editor-section th { background-color: #f3f4f6; }
         .dark #subtitle-editor-section th { background-color: #374151; }
@@ -115,32 +116,42 @@
         <div id="app-container" class="bg-white dark:bg-slate-800 bg-card rounded-2xl shadow-lg dark:shadow-2xl dark:shadow-black/30 p-6 md:p-8 relative overflow-hidden">
             
             <header class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Fluentify</h1>
-                <button id="theme-toggle" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors" aria-label="Toggle theme">
-                    <svg id="theme-icon-light" class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="theme-icon-dark" class="w-5 h-5 text-slate-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                </button>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white" data-i18n-key="appTitle">Fluentify</h1>
+                <div class="flex items-center gap-2">
+                    <select id="language-switcher" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none appearance-none cursor-pointer">
+                        <option value="en">English</option>
+                        <option value="fa">فارسی</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                    <button id="how-to-use-btn" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors" data-i18n-title-key="howToUseBtnLabel" aria-label="How to use">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+                    </button>
+                    <button id="theme-toggle" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors" aria-label="Toggle theme">
+                        <svg id="theme-icon-light" class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="w-5 h-5 text-slate-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
             </header>
 
             <form id="translate-form" onsubmit="return false;">
-                <div class="flex items-center space-x-2 mb-4 bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                <div class="flex items-center space-x-2 rtl:space-x-reverse mb-4 bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
                     <label class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
-                        <input type="radio" name="input_type" value="text" class="sr-only" checked> Text
+                        <input type="radio" name="input_type" value="text" class="sr-only" checked> <span data-i18n-key="tabText">Text</span>
                     </label>
                     <label class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
-                        <input type="radio" name="input_type" value="image" class="sr-only"> Image
+                        <input type="radio" name="input_type" value="image" class="sr-only"> <span data-i18n-key="tabImage">Image</span>
                     </label>
                     <label class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
-                        <input type="radio" name="input_type" value="pdf" class="sr-only"> PDF
+                        <input type="radio" name="input_type" value="pdf" class="sr-only"> <span data-i18n-key="tabPDF">PDF</span>
                     </label>
                     <label class="flex-1 text-center py-2 px-3 rounded-md cursor-pointer transition-colors has-[:checked]:bg-sky-500 has-[:checked]:text-white text-slate-600 dark:text-slate-300">
-                        <input type="radio" name="input_type" value="subtitle" class="sr-only"> Subtitle
+                        <input type="radio" name="input_type" value="subtitle" class="sr-only"> <span data-i18n-key="tabSubtitle">Subtitle</span>
                     </label>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
                     <select id="source_lang" name="source_lang" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
-                    <button type="button" id="swap-btn" class="p-3 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed md:mx-0 mx-auto" aria-label="Swap languages">
+                    <button type="button" id="swap-btn" class="p-3 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed md:mx-0 mx-auto" data-i18n-title-key="swapBtnLabel" aria-label="Swap languages">
                         <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
                     </button>
                     <select id="target_lang" name="target_lang" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
@@ -148,21 +159,21 @@
 
                 <div class="relative mb-4">
                     <div id="text-input-container">
-                        <textarea id="text-input" name="text" maxlength="5000" placeholder="Enter text to translate..." class="w-full h-40 p-4 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 resize-none"></textarea>
-                        <span id="char-counter" class="absolute bottom-2 right-3 text-xs text-slate-500 dark:text-slate-400">0 / 5000</span>
+                        <textarea id="text-input" name="text" maxlength="5000" data-i18n-placeholder-key="textInputPlaceholder" placeholder="Enter text to translate..." class="w-full h-40 p-4 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 resize-none"></textarea>
+                        <span id="char-counter" class="absolute bottom-2 right-3 rtl:right-auto rtl:left-3 text-xs text-slate-500 dark:text-slate-400">0 / 5000</span>
                     </div>
 
                     <div id="youtube-input-section" class="hidden mb-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg space-y-3">
-                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Load from YouTube URL</label>
+                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" data-i18n-key="youtubeSectionTitle">Load from YouTube URL</label>
                          <div class="flex flex-col sm:flex-row gap-2">
-                             <input type="text" id="youtube-url-input" placeholder="Enter YouTube Video URL..." class="w-full flex-grow bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-3 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
-                             <input type="text" id="youtube-lang-input" value="en" placeholder="lang" class="sm:w-20 bg-slate-100 dark:bg-slate-700 bg-input text-center rounded-lg p-3 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                             <input type="text" id="youtube-url-input" data-i18n-placeholder-key="youtubeUrlPlaceholder" placeholder="Enter YouTube Video URL..." class="w-full flex-grow bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-3 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                             <input type="text" id="youtube-lang-input" value="en" data-i18n-placeholder-key="youtubeLangPlaceholder" placeholder="lang" class="sm:w-20 bg-slate-100 dark:bg-slate-700 bg-input text-center rounded-lg p-3 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
                              <button type="button" id="fetch-youtube-subs-btn" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors flex items-center justify-center">
-                                <span id="fetch-youtube-btn-text">Fetch</span>
-                                <svg id="fetch-youtube-btn-spinner" class="spinner w-5 h-5 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span id="fetch-youtube-btn-text" data-i18n-key="youtubeFetchBtn">Fetch</span>
+                                <svg id="fetch-youtube-btn-spinner" class="spinner w-5 h-5 ml-2 rtl:ml-0 rtl:mr-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                              </button>
                          </div>
-                         <p class="text-xs text-slate-600 dark:text-slate-400 text-center pt-3 border-t border-slate-300 dark:border-slate-700">
+                         <p class="text-xs text-slate-600 dark:text-slate-400 text-center pt-3 border-t border-slate-300 dark:border-slate-700" data-i18n-key="youtubeNotice" data-i18n-html>
                             For much better subtitles than auto-generated ones for YouTube, try our new service: 
                             <a href="https://ytsrt.pages.dev" target="_blank" rel="noopener noreferrer" class="font-semibold underline text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300">YTSRT</a>.
                         </p>
@@ -172,9 +183,9 @@
                         <div id="dropzone-container" class="relative flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors p-2">
                             <div id="dropzone-prompt" class="flex flex-col items-center justify-center text-center p-4">
                                 <svg class="w-8 h-8 mb-4 text-slate-500 dark:text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/></svg>
-                                <p class="mb-2 text-sm text-slate-500 dark:text-slate-400"><span class="font-semibold">Drag & drop a file</span> or</p>
-                                <button type="button" id="choose-file-btn" class="px-4 py-2 bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Choose File</button>
-                                <p id="file-upload-hint" class="text-xs text-slate-500 mt-2">PNG, JPG, PDF etc.</p>
+                                <p class="mb-2 text-sm text-slate-500 dark:text-slate-400"><span class="font-semibold" data-i18n-key="fileDragDrop">Drag & drop a file</span> <span data-i18n-key="fileOr">or</span></p>
+                                <button type="button" id="choose-file-btn" class="px-4 py-2 bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700" data-i18n-key="fileChooseBtn">Choose File</button>
+                                <p id="file-upload-hint" class="text-xs text-slate-500 mt-2">PNG, JPG, etc.</p>
                             </div>
                             <div id="file-preview-container" class="hidden relative w-full h-full flex items-center justify-center">
                                 <img id="image-preview" class="max-w-full max-h-full object-contain rounded-md" alt="Image preview">
@@ -184,7 +195,7 @@
                                     </svg>
                                     <p id="subtitle-filename" class="mt-2 font-semibold text-slate-700 dark:text-slate-300 truncate"></p>
                                 </div>
-                                <button type="button" id="remove-file-btn" class="absolute top-1 right-1 p-1.5 rounded-full bg-black/50 hover:bg-red-600 text-white transition-colors" aria-label="Remove file">
+                                <button type="button" id="remove-file-btn" class="absolute top-1 right-1 rtl:right-auto rtl:left-1 p-1.5 rounded-full bg-black/50 hover:bg-red-600 text-white transition-colors" data-i18n-title-key="removeFileBtnLabel" aria-label="Remove file">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
@@ -195,10 +206,10 @@
 
                 <div id="pdf-viewer-section" class="hidden mb-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg p-4 space-y-4">
                     <div class="flex flex-wrap gap-4 justify-between items-center pb-3 border-b border-slate-300 dark:border-slate-700">
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">Select Pages to Translate</h3>
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200" data-i18n-key="pdfSelectPagesTitle">Select Pages to Translate</h3>
                         <div class="flex items-center gap-2">
-                             <button type="button" id="select-all-pages-btn" class="px-3 py-1 text-sm font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Select All</button>
-                             <button type="button" id="deselect-all-pages-btn" class="px-3 py-1 text-sm font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Deselect All</button>
+                             <button type="button" id="select-all-pages-btn" class="px-3 py-1 text-sm font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" data-i18n-key="pdfSelectAll">Select All</button>
+                             <button type="button" id="deselect-all-pages-btn" class="px-3 py-1 text-sm font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" data-i18n-key="pdfDeselectAll">Deselect All</button>
                         </div>
                     </div>
                     <div id="pdf-page-viewer" class="scroll-container max-h-[30rem] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-md">
@@ -208,7 +219,7 @@
                         <span id="page-selection-counter" class="text-sm font-medium text-slate-600 dark:text-slate-400">0 pages selected</span>
                         <div class="flex items-center">
                             <input id="combine-pages-checkbox" name="combine_pages" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
-                            <label for="combine-pages-checkbox" class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Combine selected pages before translation</label>
+                            <label for="combine-pages-checkbox" class="ml-2 rtl:ml-0 rtl:mr-2 block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n-key="pdfCombinePages">Combine selected pages before translation</label>
                         </div>
                     </div>
                      <p id="batch-warning" class="text-xs text-amber-600 dark:text-amber-400 text-center mt-2 h-4"></p>
@@ -216,46 +227,54 @@
                 
                 <div id="subtitle-editor-section" class="hidden mb-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg p-4 space-y-4">
                     <div class="flex flex-wrap gap-4 justify-between items-center pb-3 border-b border-slate-300 dark:border-slate-700">
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">Subtitle Editor</h3>
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200" data-i18n-key="subtitleEditorTitle">Subtitle Editor</h3>
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                             <div class="flex items-center gap-2">
-                                <label for="subtitle-batch-size" class="text-sm font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Lines / Request</label>
+                                <label for="subtitle-batch-size" class="text-sm font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap" data-i18n-key="subtitleLinesPerRequest">Lines / Request</label>
                                 <input type="number" id="subtitle-batch-size" value="250" min="1" step="1" class="w-20 p-2 text-center bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
                             </div>
                             <div class="flex items-center gap-2">
-                                 <button type="button" id="break-lines-toggle-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Break Long Lines" aria-label="Break Long Lines">
+                                 <button type="button" id="break-lines-toggle-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled data-i18n-title-key="subtitleBreakLinesBtnLabel" title="Break Long Lines" aria-label="Break Long Lines">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 8.25l4.5 4.5m0 0l4.5 4.5m-4.5-4.5L5.25 12.75m14.25-4.5l-4.5 4.5m4.5-4.5l-4.5-4.5M5.25 12.75l4.5-4.5" /></svg>
                                 </button>
-                                 <button type="button" id="find-replace-toggle-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Find & Replace" aria-label="Find & Replace">
+                                 <button type="button" id="find-replace-toggle-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled data-i18n-title-key="subtitleFindReplaceBtnLabel" title="Find & Replace" aria-label="Find & Replace">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
                                 </button>
-                                 <button type="button" id="export-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Export as subtitle file" aria-label="Export as subtitle file">
+                                 <button type="button" id="export-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled data-i18n-title-key="subtitleExportBtnLabel" title="Export as subtitle file" aria-label="Export as subtitle file">
                                    <svg id="export-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                                 </button>
-                                <button type="button" id="translate-all-subs-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors">Translate All</button>
+                                <button type="button" id="translate-all-subs-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors" data-i18n-key="subtitleTranslateAll">Translate All</button>
                             </div>
+                        </div>
+                    </div>
+
+                    <div id="saved-progress-notification" class="hidden p-3 my-2 bg-sky-100 dark:bg-sky-900/50 border border-sky-300 dark:border-sky-700 rounded-md flex flex-col sm:flex-row justify-between items-center gap-2">
+                        <p class="text-sm font-medium text-sky-800 dark:text-sky-200" data-i18n-key="subtitleSavedProgress">Saved progress found for this file.</p>
+                        <div class="flex-shrink-0">
+                            <button type="button" id="load-progress-btn" class="px-3 py-1.5 text-xs font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors" data-i18n-key="subtitleLoadProgress">Load Progress</button>
+                            <button type="button" id="clear-progress-btn" class="ml-2 rtl:ml-0 rtl:mr-2 px-3 py-1.5 text-xs font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" data-i18n-key="subtitleClearHistory">Clear History</button>
                         </div>
                     </div>
 
                     <div id="break-lines-panel" class="hidden p-3 my-2 bg-slate-300/50 dark:bg-slate-800/50 rounded-md">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2">
-                                <label for="break-lines-max-chars" class="text-sm font-medium whitespace-nowrap">Max chars / line:</label>
+                                <label for="break-lines-max-chars" class="text-sm font-medium whitespace-nowrap" data-i18n-key="breakLinesPanelTitle">Max chars / line:</label>
                                 <input type="number" id="break-lines-max-chars" value="42" min="10" step="1" class="w-20 p-2 text-center bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
                             </div>
-                            <button type="button" id="break-lines-apply-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors">Apply Changes</button>
+                            <button type="button" id="break-lines-apply-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors" data-i18n-key="breakLinesApply">Apply Changes</button>
                         </div>
                     </div>
                     <div id="find-replace-panel" class="hidden p-3 my-2 bg-slate-300/50 dark:bg-slate-800/50 rounded-md space-y-3">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input type="text" id="find-input" placeholder="Find text..." class="w-full bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-2 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
-                            <input type="text" id="replace-input" placeholder="Replace with..." class="w-full bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-2 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                            <input type="text" id="find-input" data-i18n-placeholder-key="findInputPlaceholder" placeholder="Find text..." class="w-full bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-2 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
+                            <input type="text" id="replace-input" data-i18n-placeholder-key="replaceInputPlaceholder" placeholder="Replace with..." class="w-full bg-slate-100 dark:bg-slate-700 bg-input rounded-lg p-2 border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 transition duration-200">
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-4">
-                                <label class="flex items-center text-sm"><input type="checkbox" id="find-case-sensitive" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500 mr-1.5">Case Sensitive</label>
+                                <label class="flex items-center text-sm"><input type="checkbox" id="find-case-sensitive" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500 mr-1.5 rtl:mr-0 rtl:ml-1.5"> <span data-i18n-key="findCaseSensitive">Case Sensitive</span></label>
                             </div>
-                            <button type="button" id="replace-all-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors">Replace All</button>
+                            <button type="button" id="replace-all-btn" class="px-4 py-2 text-sm font-bold rounded-md bg-sky-500 hover:bg-sky-600 text-white transition-colors" data-i18n-key="replaceAllBtn">Replace All</button>
                         </div>
                     </div>
                     
@@ -263,11 +282,11 @@
                         <table id="subtitle-table">
                             <thead class="sticky top-0 bg-slate-200 dark:bg-slate-700">
                                 <tr>
-                                    <th class="w-12">#</th>
-                                    <th class="w-40">Timestamp</th>
-                                    <th>Original Text</th>
-                                    <th>Translated Text</th>
-                                    <th class="w-24">Action</th>
+                                    <th class="w-12" data-i18n-key="subtitleTableHeaderNum">#</th>
+                                    <th class="w-40" data-i18n-key="subtitleTableHeaderTime">Timestamp</th>
+                                    <th data-i18n-key="subtitleTableHeaderOrig">Original Text</th>
+                                    <th data-i18n-key="subtitleTableHeaderTrans">Translated Text</th>
+                                    <th class="w-24" data-i18n-key="subtitleTableHeaderAction">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="subtitle-table-body">
@@ -285,100 +304,95 @@
                     <div class="progress-bar">
                         <div id="progress-bar-inner" class="progress-bar-inner" style="width: 0%;"></div>
                     </div>
-                    <button type="button" id="cancel-translation-btn" class="w-full mt-2 px-4 py-2 text-sm font-medium rounded-md bg-red-500 hover:bg-red-600 text-white transition-colors">Cancel</button>
+                    <button type="button" id="cancel-translation-btn" class="w-full mt-2 px-4 py-2 text-sm font-medium rounded-md bg-red-500 hover:bg-red-600 text-white transition-colors" data-i18n-key="progressCancel">Cancel</button>
                 </div>
 
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <button type="button" id="settings-toggle-btn" class="w-full text-center py-3 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors font-medium">Advanced Settings</button>
+                    <button type="button" id="settings-toggle-btn" class="w-full text-center py-3 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors font-medium" data-i18n-key="advSettingsBtn">Advanced Settings</button>
                     <button type="submit" id="translate-btn" class="w-full text-center py-3 px-4 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
-                        <span id="translate-btn-text">Translate</span>
-                        <svg id="translate-btn-spinner" class="spinner w-5 h-5 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span id="translate-btn-text" data-i18n-key="translateBtn">Translate</span>
+                        <svg id="translate-btn-spinner" class="spinner w-5 h-5 ml-2 rtl:ml-0 rtl:mr-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </button>
                 </div>
                 
                 <div id="settings-panel" class="hidden space-y-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg mb-4">
                     <div>
-                        <label for="model" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">AI Model</label>
+                        <label for="model" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n-key="settingsModel">AI Model</label>
                         <select id="model" name="model" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
                     </div>
                     <div>
-                        <label for="job_field" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Translation Specialization</label>
+                        <label for="job_field" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n-key="settingsSpecialization">Translation Specialization</label>
                         <select id="job_field" name="job_field" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
                     </div>
                     <div>
-                        <label for="translation_tone" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Translation Tone</label>
+                        <label for="translation_tone" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n-key="settingsTone">Translation Tone</label>
                         <select id="translation_tone" name="translation_tone" class="w-full bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 rounded-lg p-3"></select>
                     </div>
                     <div id="custom-tone-container" class="hidden">
-                         <label for="custom-tone-input" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Custom Tone Instruction</label>
-                         <textarea id="custom-tone-input" placeholder="e.g., 'Translate this in the style of a pirate.'" class="w-full h-20 p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500"></textarea>
+                         <label for="custom-tone-input" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n-key="settingsCustomToneLabel">Custom Tone Instruction</label>
+                         <textarea id="custom-tone-input" data-i18n-placeholder-key="settingsCustomTonePlaceholder" placeholder="e.g., 'Translate this in the style of a pirate.'" class="w-full h-20 p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500"></textarea>
                     </div>
                     <div>
                         <label for="temperature" class="flex justify-between text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                            <span>Creativity (Temperature)</span>
+                            <span data-i18n-key="settingsCreativity">Creativity (Temperature)</span>
                             <span id="temperature-value">0.7</span>
                         </label>
                         <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.1" value="0.7" class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer dark:bg-slate-600">
                     </div>
                      <div>
-                        <label for="request_delay" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Request Delay (seconds)</label>
+                        <label for="request_delay" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n-key="settingsRequestDelay">Request Delay (seconds)</label>
                         <input type="number" id="request_delay" name="request_delay" min="0" step="0.1" value="4" class="w-full p-2.5 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent text-sm focus:ring-2 focus:ring-sky-500">
                     </div>
                     <div>
-                        <label for="api_key" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Google AI API Key</label>
-                        <div class="relative">
-                            <input type="password" id="api_key" name="api_key" placeholder="Enter your API Key" class="w-full p-3 pr-10 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500">
-                            <button type="button" id="toggle-api-key-visibility" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white" aria-label="Toggle API Key visibility">
-                                <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                            </button>
-                        </div>
+                        <label for="api_key" class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1" data-i18n-key="settingsApiKey">Google AI API Key(s)</label>
+                        <textarea id="api_key" name="api_key" data-i18n-placeholder-key="settingsApiKeyPlaceholder" placeholder="Enter your API Keys, one per line." class="w-full p-3 h-24 bg-slate-100 dark:bg-slate-700 bg-input rounded-lg border-slate-300 dark:border-transparent focus:ring-2 focus:ring-sky-500 resize-y"></textarea>
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1" data-i18n-key="settingsApiKeyHint">Enter multiple keys to distribute load or as backups.</p>
                     </div>
                     <div class="space-y-2 pt-2 border-t border-slate-300 dark:border-slate-700">
                         <div class="flex items-center">
                             <input id="use-proxy-checkbox" name="use_proxy" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
-                            <label for="use-proxy-checkbox" class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Use Proxy</label>
+                            <label for="use-proxy-checkbox" class="ml-2 rtl:ml-0 rtl:mr-2 block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n-key="settingsUseProxy">Use Proxy</label>
                         </div>
                         <div id="custom-proxy-container" class="hidden">
-                            <label for="custom-proxy-input" class="block text-sm font-medium text-slate-600 dark:text-slate-400">Custom Proxy URL (Optional)</label>
+                            <label for="custom-proxy-input" class="block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n-key="settingsCustomProxyLabel">Custom Proxy URL (Optional)</label>
                             <input type="url" id="custom-proxy-input" name="custom_proxy_url" placeholder="https://your-proxy.workers.dev/" class="mt-1 w-full p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500">
-                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Deploy your own proxy using <a href="https://github.com/yebekhe/middleman" target="_blank" rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a>.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1" data-i18n-key="settingsCustomProxyHint" data-i18n-html>Deploy your own proxy using <a href="https://github.com/yebekhe/middleman" target="_blank" rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a>.</p>
                         </div>
                     </div>
                     <div class="space-y-2 pt-2 border-t border-slate-300 dark:border-slate-700">
                         <div class="flex items-center">
                             <input id="use-custom-prompt-checkbox" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
-                            <label for="use-custom-prompt-checkbox" class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Use Custom Prompt</label>
+                            <label for="use-custom-prompt-checkbox" class="ml-2 rtl:ml-0 rtl:mr-2 block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n-key="settingsUseCustomPrompt">Use Custom Prompt</label>
                         </div>
                         <div id="custom-prompt-container" class="hidden space-y-2">
-                            <textarea id="custom-prompt-input" placeholder="Enter your custom prompt. Use {text}, {source_lang}, and {target_lang} as placeholders." class="w-full h-28 p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500"></textarea>
+                            <textarea id="custom-prompt-input" data-i18n-placeholder-key="settingsCustomPromptPlaceholder" placeholder="Enter your custom prompt. Use {text}, {source_lang}, and {target_lang} as placeholders." class="w-full h-28 p-2.5 bg-slate-100 dark:bg-slate-700 bg-input border-slate-300 dark:border-transparent text-sm rounded-lg focus:ring-2 focus:ring-sky-500"></textarea>
                             <button type="button" id="optimize-prompt-btn" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                <i class="fas fa-magic mr-2"></i>
-                                <span id="optimize-prompt-btn-text">Optimize</span>
-                                <svg id="optimize-prompt-spinner" class="spinner w-4 h-4 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <i class="fas fa-magic mr-2 rtl:mr-0 rtl:ml-2"></i>
+                                <span id="optimize-prompt-btn-text" data-i18n-key="settingsOptimizePrompt">Optimize</span>
+                                <svg id="optimize-prompt-spinner" class="spinner w-4 h-4 ml-2 rtl:ml-0 rtl:mr-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             </button>
                         </div>
                     </div>
                     <div class="flex items-center pt-2 border-t border-slate-300 dark:border-slate-700">
                         <input id="pdf-ocr-checkbox" name="pdf_ocr" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
-                        <label for="pdf-ocr-checkbox" class="ml-2 block text-sm font-medium text-slate-600 dark:text-slate-400">Use OCR for scanned PDF pages</label>
+                        <label for="pdf-ocr-checkbox" class="ml-2 rtl:ml-0 rtl:mr-2 block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n-key="settingsOcr">Use OCR for scanned PDF pages</label>
                     </div>
                     <div class="flex items-center pt-2 border-t border-slate-300 dark:border-slate-700">
                         <input id="save-settings-checkbox" type="checkbox" class="h-4 w-4 rounded border-slate-400 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-sky-600 focus:ring-sky-500">
-                        <label for="save-settings-checkbox" class="ml-2 block text-sm text-slate-600 dark:text-slate-400">Save all settings in this browser</label>
+                        <label for="save-settings-checkbox" class="ml-2 rtl:ml-0 rtl:mr-2 block text-sm text-slate-600 dark:text-slate-400" data-i18n-key="settingsSave">Save all settings in this browser</label>
                     </div>
                 </div>
 
                 <div id="main-output-section">
                     <div class="relative">
-                        <textarea id="output" placeholder="Translation will appear here..." readonly class="w-full min-h-[10rem] p-4 pr-32 bg-slate-200 dark:bg-slate-900 bg-input rounded-lg border-slate-300 dark:border-transparent resize-y"></textarea>
-                        <div class="absolute top-3 right-3 flex items-center gap-2">
-                            <button type="button" id="copy-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Copy output" aria-label="Copy output">
+                        <textarea id="output" data-i18n-placeholder-key="outputPlaceholder" placeholder="Translation will appear here..." readonly class="w-full min-h-[10rem] p-4 pr-32 rtl:pr-4 rtl:pl-32 bg-slate-200 dark:bg-slate-900 bg-input rounded-lg border-slate-300 dark:border-transparent resize-y"></textarea>
+                        <div class="absolute top-3 right-3 rtl:right-auto rtl:left-3 flex items-center gap-2">
+                            <button type="button" id="copy-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled data-i18n-title-key="copyBtnLabel" title="Copy output" aria-label="Copy output">
                                 <svg id="copy-icon-default" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg>
                                 <svg id="copy-icon-success" class="w-5 h-5 text-green-600 dark:text-green-400 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                             </button>
-                             <button type="button" id="export-text-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled title="Export as TXT file" aria-label="Export as TXT file">
+                             <button type="button" id="export-text-btn" class="p-2 rounded-full bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled data-i18n-title-key="exportTextBtnLabel" title="Export as TXT file" aria-label="Export as TXT file">
                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                             </button>
                         </div>
@@ -386,24 +400,24 @@
                     
                     <div id="enhancements-toolbar" class="mt-4 p-4 bg-slate-200/50 dark:bg-slate-900/50 rounded-lg hidden opacity-0 -translate-y-2 space-y-4">
                         <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-                            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Refine:</span>
-                            <button type="button" data-action="shorten" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Make Shorter</button>
-                            <button type="button" data-action="expand" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Expand</button>
-                            <button type="button" data-action="summarize" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">Summarize</button>
+                            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300" data-i18n-key="refineToolbarTitle">Refine:</span>
+                            <button type="button" data-action="shorten" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600" data-i18n-key="refineShorten">Make Shorter</button>
+                            <button type="button" data-action="expand" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600" data-i18n-key="refineExpand">Expand</button>
+                            <button type="button" data-action="summarize" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600" data-i18n-key="refineSummarize">Summarize</button>
                         </div>
                         <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-t border-slate-300 dark:border-slate-700 pt-4">
-                            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Change Style:</span>
+                            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300" data-i18n-key="styleToolbarTitle">Change Style:</span>
                             <button type="button" data-action="formal" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                                <i class="fas fa-user-tie mr-1.5"></i>Formal
+                                <i class="fas fa-user-tie mr-1.5 rtl:mr-0 rtl:ml-1.5"></i><span data-i18n-key="styleFormal">Formal</span>
                             </button>
                             <button type="button" data-action="informal" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                                <i class="fas fa-comments mr-1.5"></i>Informal
+                                <i class="fas fa-comments mr-1.5 rtl:mr-0 rtl:ml-1.5"></i><span data-i18n-key="styleInformal">Informal</span>
                             </button>
                             <button type="button" data-action="poetic" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                                <i class="fas fa-feather-alt mr-1.5"></i>Poetic
+                                <i class="fas fa-feather-alt mr-1.5 rtl:mr-0 rtl:ml-1.5"></i><span data-i18n-key="stylePoetic">Poetic</span>
                             </button>
                             <button type="button" data-action="simplify" class="enhancement-btn px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-slate-600">
-                                <i class="fas fa-child mr-1.5"></i>Simplify
+                                <i class="fas fa-child mr-1.5 rtl:mr-0 rtl:ml-1.5"></i><span data-i18n-key="styleSimplify">Simplify</span>
                             </button>
                         </div>
                     </div>
@@ -415,7 +429,7 @@
         </div>
         
         <div id="log-viewer" class="w-full max-w-4xl mx-auto mt-4 bg-white dark:bg-slate-800 bg-card rounded-lg shadow-md dark:shadow-lg dark:shadow-black/30 overflow-hidden max-h-0">
-            <button id="log-toggle" class="w-full p-3 text-left font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+            <button id="log-toggle" class="w-full p-3 text-left rtl:text-right font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" data-i18n-key="logTitle">
                 Live Activity Log
             </button>
             <div id="log-content" class="p-4 text-xs font-mono text-slate-600 dark:text-slate-400 max-h-64 overflow-y-auto scroll-container">
@@ -425,10 +439,10 @@
 
         <footer class="max-w-4xl mx-auto py-8 px-4">
             <div class="flex flex-col items-center justify-center text-center gap-4">
-                <p class="text-sm text-slate-600 dark:text-slate-400">
+                <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n-key="footerText" data-i18n-html>
                     Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE
                 </p>
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-6 rtl:space-x-reverse">
                     <a href="https://github.com/itsyebekhe/fluentify" target="_blank" rel="noopener noreferrer"
                         title="GitHub Repository" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
                         <i class="fab fa-github fa-lg"></i>
@@ -446,19 +460,179 @@
         </footer>
     </main>
     
+    <div id="how-to-use-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+            <header class="p-4 border-b dark:border-slate-700 flex justify-between items-center flex-shrink-0">
+                <h2 id="how-to-use-title" class="text-xl font-bold" data-i18n-key="howToUseModalTitle">How to Use Fluentify</h2>
+                <button id="how-to-use-close-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </header>
+            <div id="how-to-use-content" class="p-6 overflow-y-auto text-sm sm:text-base leading-relaxed">
+                <!-- Content will be injected by JS -->
+            </div>
+        </div>
+    </div>
 
     <script>
         (() => {
-            // --- START: CONFIGURATION ---
+            // --- START: CONFIGURATION & I18N ---
             const DEFAULT_WEB_MODEL = "gemini-2.5-pro";
             const DEFAULT_PROXY_URL = "https://middleman.yebekhe.workers.dev";
             const MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
-            const LANGUAGES = [ { value: "auto", text: "Auto-detect Language" }, { value: "Afrikaans", text: "Afrikaans" }, { value: "Albanian", text: "Albanian" }, { value: "Amharic", text: "Amharic" }, { value: "Arabic", text: "Arabic" }, { value: "Armenian", text: "Armenian" }, { value: "Assamese", text: "Assamese" }, { value: "Aymara", text: "Aymara" }, { value: "Azerbaijani", text: "Azerbaijani" }, { value: "Bambara", text: "Bambara" }, { value: "Basque", text: "Basque" }, { value: "Belarusian", text: "Belarusian" }, { value: "Bengali", text: "Bengali" }, { value: "Bhojpuri", text: "Bhojpuri" }, { value: "Bosnian", text: "Bosnian" }, { value: "Bulgarian", text: "Bulgarian" }, { value: "Catalan", text: "Catalan" }, { value: "Cebuano", text: "Cebuano" }, { value: "Chichewa", text: "Chichewa (Nyanja)" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)" }, { value: "Corsican", text: "Corsican" }, { value: "Croatian", text: "Croatian" }, { value: "Czech", text: "Czech" }, { value: "Danish", text: "Danish" }, { value: "Dhivehi", text: "Dhivehi" }, { value: "Dogri", text: "Dogri" }, { value: "Dutch", text: "Dutch" }, { value: "English", text: "English" }, { value: "Esperanto", text: "Esperanto" }, { value: "Estonian", text: "Estonian" }, { value: "Ewe", text: "Ewe" }, { value: "Filipino", text: "Filipino (Tagalog)" }, { value: "Finnish", text: "Finnish" }, { value: "French", text: "French" }, { value: "Frisian", text: "Frisian" }, { value: "Galician", text: "Galician" }, { value: "Georgian", text: "Georgian" }, { value: "German", text: "German" }, { value: "Greek", text: "Greek" }, { value: "Guarani", text: "Guarani" }, { value: "Gujarati", text: "Gujarati" }, { value: "Haitian Creole", text: "Haitian Creole" }, { value: "Hausa", text: "Hausa" }, { value: "Hawaiian", text: "Hawaiian" }, { value: "Hebrew", text: "Hebrew" }, { value: "Hindi", text: "Hindi" }, { value: "Hmong", text: "Hmong" }, { value: "Hungarian", text: "Hungarian" }, { value: "Icelandic", text: "Icelandic" }, { value: "Igbo", text: "Igbo" }, { value: "Ilocano", text: "Ilocano" }, { value: "Indonesian", text: "Indonesian" }, { value: "Irish", text: "Irish" }, { value: "Italian", text: "Italian" }, { value: "Japanese", text: "Japanese" }, { value: "Javanese", text: "Javanese" }, { value: "Kannada", text: "Kannada" }, { value: "Kazakh", text: "Kazakh" }, { value: "Khmer", text: "Khmer" }, { value: "Kinyarwanda", text: "Kinyarwanda" }, { value: "Konkani", text: "Konkani" }, { value: "Korean", text: "Korean" }, { value: "Krio", text: "Krio" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)" }, { value: "Kyrgyz", text: "Kyrgyz" }, { value: "Lao", text: "Lao" }, { value: "Latin", text: "Latin" }, { value: "Latvian", text: "Latvian" }, { value: "Lingala", text: "Lingala" }, { value: "Lithuanian", text: "Lithuanian" }, { value: "Luganda", text: "Luganda" }, { value: "Luxembourgish", text: "Luxembourgish" }, { value: "Macedonian", text: "Macedonian" }, { value: "Maithili", text: "Maithili" }, { value: "Malagasy", text: "Malagasy" }, { value: "Malay", text: "Malay" }, { value: "Malayalam", text: "Malayalam" }, { value: "Maltese", text: "Maltese" }, { value: "Maori", text: "Maori" }, { value: "Marathi", text: "Marathi" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)" }, { value: "Mizo", text: "Mizo" }, { value: "Mongolian", text: "Mongolian" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)" }, { value: "Nepali", text: "Nepali" }, { value: "Norwegian", text: "Norwegian" }, { value: "Odia (Oriya)", text: "Odia (Oriya)" }, { value: "Oromo", text: "Oromo" }, { value: "Pashto", text: "Pashto" }, { value: "Persian", text: "Persian (Farsi)" }, { value: "Polish", text: "Polish" }, { value: "Portuguese", text: "Portuguese" }, { value: "Punjabi", text: "Punjabi" }, { value: "Quechua", text: "Quechua" }, { value: "Romanian", text: "Romanian" }, { value: "Russian", text: "Russian" }, { value: "Samoan", text: "Samoan" }, { value: "Sanskrit", text: "Sanskrit" }, { value: "Scots Gaelic", text: "Scots Gaelic" }, { value: "Sepedi", text: "Sepedi" }, { value: "Serbian", text: "Serbian" }, { value: "Sesotho", text: "Sesotho" }, { value: "Shona", text: "Shona" }, { value: "Sindhi", text: "Sindhi" }, { value: "Sinhala", text: "Sinhala" }, { value: "Slovak", text: "Slovak" }, { value: "Slovenian", text: "Slovenian" }, { value: "Somali", text: "Somali" }, { value: "Spanish", text: "Spanish" }, { value: "Sundanese", text: "Sundanese" }, { value: "Swahili", text: "Swahili" }, { value: "Swedish", text: "Swedish" }, { value: "Tajik", text: "Tajik" }, { value: "Tamil", text: "Tamil" }, { value: "Tatar", text: "Tatar" }, { value: "Telugu", text: "Telugu" }, { value: "Thai", text: "Thai" }, { value: "Tigrinya", text: "Tigrinya" }, { value: "Tsonga", text: "Tsonga" }, { value: "Turkish", text: "Turkish" }, { value: "Turkmen", text: "Turkmen" }, { value: "Twi", text: "Twi (Akan)" }, { value: "Ukrainian", text: "Ukrainian" }, { value: "Urdu", text: "Urdu" }, { value: "Uyghur", text: "Uyghur" }, { value: "Uzbek", text: "Uzbek" }, { value: "Vietnamese", text: "Vietnamese" }, { value: "Welsh", text: "Welsh" }, { value: "Xhosa", text: "Xhosa" }, { value: "Yiddish", text: "Yiddish" }, { value: "Yoruba", text: "Yoruba" }, { value: "Zulu", text: "Zulu" }];
-            const JOB_FIELDS = [ { value: "None", text: "None (General)" }, { value: "Medical", text: "Medical / Healthcare" }, { value: "Legal", text: "Legal / Law" }, { value: "Engineering", text: "Engineering (General)" }, { value: "IT", text: "Information Technology / Software" }, { value: "Finance", text: "Finance / Banking" }, { value: "Academic", text: "Academic / Research" }, { value: "Marketing", text: "Marketing / Business" }, { value: "Cinema", text: "Cinema / TV Series" } ];
-            const TONES = [ { value: "Default", text: "Default" }, { value: "Formal", text: "Formal" }, { value: "Informal", text: "Informal" }, { value: "Poetic", text: "Poetic" }, { value: "Technical", text: "Technical" }, { value: "Simplify", text: "Simple / Easy to read" }, { value: "Custom", text: "Custom..." } ];
+            const LANGUAGES = [ { value: "auto", text: "Auto-detect Language", i18nKey: "lang_auto" }, { value: "Afrikaans", text: "Afrikaans", i18nKey: "lang_af" }, { value: "Albanian", text: "Albanian", i18nKey: "lang_sq" }, { value: "Amharic", text: "Amharic", i18nKey: "lang_am" }, { value: "Arabic", text: "Arabic", i18nKey: "lang_ar" }, { value: "Armenian", text: "Armenian", i18nKey: "lang_hy" }, { value: "Assamese", text: "Assamese", i18nKey: "lang_as" }, { value: "Aymara", text: "Aymara", i18nKey: "lang_ay" }, { value: "Azerbaijani", text: "Azerbaijani", i18nKey: "lang_az" }, { value: "Bambara", text: "Bambara", i18nKey: "lang_bm" }, { value: "Basque", text: "Basque", i18nKey: "lang_eu" }, { value: "Belarusian", text: "Belarusian", i18nKey: "lang_be" }, { value: "Bengali", text: "Bengali", i18nKey: "lang_bn" }, { value: "Bhojpuri", text: "Bhojpuri", i18nKey: "lang_bho" }, { value: "Bosnian", text: "Bosnian", i18nKey: "lang_bs" }, { value: "Bulgarian", text: "Bulgarian", i18nKey: "lang_bg" }, { value: "Catalan", text: "Catalan", i18nKey: "lang_ca" }, { value: "Cebuano", text: "Cebuano", i18nKey: "lang_ceb" }, { value: "Chichewa", text: "Chichewa (Nyanja)", i18nKey: "lang_ny" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)", i18nKey: "lang_zh-CN" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)", i18nKey: "lang_zh-TW" }, { value: "Corsican", text: "Corsican", i18nKey: "lang_co" }, { value: "Croatian", text: "Croatian", i18nKey: "lang_hr" }, { value: "Czech", text: "Czech", i18nKey: "lang_cs" }, { value: "Danish", text: "Danish", i18nKey: "lang_da" }, { value: "Dhivehi", text: "Dhivehi", i18nKey: "lang_dv" }, { value: "Dogri", text: "Dogri", i18nKey: "lang_doi" }, { value: "Dutch", text: "Dutch", i18nKey: "lang_nl" }, { value: "English", text: "English", i18nKey: "lang_en" }, { value: "Esperanto", text: "Esperanto", i18nKey: "lang_eo" }, { value: "Estonian", text: "Estonian", i18nKey: "lang_et" }, { value: "Ewe", text: "Ewe", i18nKey: "lang_ee" }, { value: "Filipino", text: "Filipino (Tagalog)", i18nKey: "lang_tl" }, { value: "Finnish", text: "Finnish", i18nKey: "lang_fi" }, { value: "French", text: "French", i18nKey: "lang_fr" }, { value: "Frisian", text: "Frisian", i18nKey: "lang_fy" }, { value: "Galician", text: "Galician", i18nKey: "lang_gl" }, { value: "Georgian", text: "Georgian", i18nKey: "lang_ka" }, { value: "German", text: "German", i18nKey: "lang_de" }, { value: "Greek", text: "Greek", i18nKey: "lang_el" }, { value: "Guarani", text: "Guarani", i18nKey: "lang_gn" }, { value: "Gujarati", text: "Gujarati", i18nKey: "lang_gu" }, { value: "Haitian Creole", text: "Haitian Creole", i18nKey: "lang_ht" }, { value: "Hausa", text: "Hausa", i18nKey: "lang_ha" }, { value: "Hawaiian", text: "Hawaiian", i18nKey: "lang_haw" }, { value: "Hebrew", text: "Hebrew", i18nKey: "lang_iw" }, { value: "Hindi", text: "Hindi", i18nKey: "lang_hi" }, { value: "Hmong", text: "Hmong", i18nKey: "lang_hmn" }, { value: "Hungarian", text: "Hungarian", i18nKey: "lang_hu" }, { value: "Icelandic", text: "Icelandic", i18nKey: "lang_is" }, { value: "Igbo", text: "Igbo", i18nKey: "lang_ig" }, { value: "Ilocano", text: "Ilocano", i18nKey: "lang_ilo" }, { value: "Indonesian", text: "Indonesian", i18nKey: "lang_id" }, { value: "Irish", text: "Irish", i18nKey: "lang_ga" }, { value: "Italian", text: "Italian", i18nKey: "lang_it" }, { value: "Japanese", text: "Japanese", i18nKey: "lang_ja" }, { value: "Javanese", text: "Javanese", i18nKey: "lang_jw" }, { value: "Kannada", text: "Kannada", i18nKey: "lang_kn" }, { value: "Kazakh", text: "Kazakh", i18nKey: "lang_kk" }, { value: "Khmer", text: "Khmer", i18nKey: "lang_km" }, { value: "Kinyarwanda", text: "Kinyarwanda", i18nKey: "lang_rw" }, { value: "Konkani", text: "Konkani", i18nKey: "lang_gom" }, { value: "Korean", text: "Korean", i18nKey: "lang_ko" }, { value: "Krio", text: "Krio", i18nKey: "lang_kri" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)", i18nKey: "lang_ku" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)", i18nKey: "lang_ckb" }, { value: "Kyrgyz", text: "Kyrgyz", i18nKey: "lang_ky" }, { value: "Lao", text: "Lao", i18nKey: "lang_lo" }, { value: "Latin", text: "Latin", i18nKey: "lang_la" }, { value: "Latvian", text: "Latvian", i18nKey: "lang_lv" }, { value: "Lingala", text: "Lingala", i18nKey: "lang_ln" }, { value: "Lithuanian", text: "Lithuanian", i18nKey: "lang_lt" }, { value: "Luganda", text: "Luganda", i18nKey: "lang_lg" }, { value: "Luxembourgish", text: "Luxembourgish", i18nKey: "lang_lb" }, { value: "Macedonian", text: "Macedonian", i18nKey: "lang_mk" }, { value: "Maithili", text: "Maithili", i18nKey: "lang_mai" }, { value: "Malagasy", text: "Malagasy", i18nKey: "lang_mg" }, { value: "Malay", text: "Malay", i18nKey: "lang_ms" }, { value: "Malayalam", text: "Malayalam", i18nKey: "lang_ml" }, { value: "Maltese", text: "Maltese", i18nKey: "lang_mt" }, { value: "Maori", text: "Maori", i18nKey: "lang_mi" }, { value: "Marathi", text: "Marathi", i18nKey: "lang_mr" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)", i18nKey: "lang_mni-Mtei" }, { value: "Mizo", text: "Mizo", i18nKey: "lang_lus" }, { value: "Mongolian", text: "Mongolian", i18nKey: "lang_mn" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)", i18nKey: "lang_my" }, { value: "Nepali", text: "Nepali", i18nKey: "lang_ne" }, { value: "Norwegian", text: "Norwegian", i18nKey: "lang_no" }, { value: "Odia (Oriya)", text: "Odia (Oriya)", i18nKey: "lang_or" }, { value: "Oromo", text: "Oromo", i18nKey: "lang_om" }, { value: "Pashto", text: "Pashto", i18nKey: "lang_ps" }, { value: "Persian", text: "Persian (Farsi)", i18nKey: "lang_fa" }, { value: "Polish", text: "Polish", i18nKey: "lang_pl" }, { value: "Portuguese", text: "Portuguese", i18nKey: "lang_pt" }, { value: "Punjabi", text: "Punjabi", i18nKey: "lang_pa" }, { value: "Quechua", text: "Quechua", i18nKey: "lang_qu" }, { value: "Romanian", text: "Romanian", i18nKey: "lang_ro" }, { value: "Russian", text: "Russian", i18nKey: "lang_ru" }, { value: "Samoan", text: "Samoan", i18nKey: "lang_sm" }, { value: "Sanskrit", text: "Sanskrit", i18nKey: "lang_sa" }, { value: "Scots Gaelic", text: "Scots Gaelic", i18nKey: "lang_gd" }, { value: "Sepedi", text: "Sepedi", i18nKey: "lang_nso" }, { value: "Serbian", text: "Serbian", i18nKey: "lang_sr" }, { value: "Sesotho", text: "Sesotho", i18nKey: "lang_st" }, { value: "Shona", text: "Shona", i18nKey: "lang_sn" }, { value: "Sindhi", text: "Sindhi", i18nKey: "lang_sd" }, { value: "Sinhala", text: "Sinhala", i18nKey: "lang_si" }, { value: "Slovak", text: "Slovak", i18nKey: "lang_sk" }, { value: "Slovenian", text: "Slovenian", i18nKey: "lang_sl" }, { value: "Somali", text: "Somali", i18nKey: "lang_so" }, { value: "Spanish", text: "Spanish", i18nKey: "lang_es" }, { value: "Sundanese", text: "Sundanese", i18nKey: "lang_su" }, { value: "Swahili", text: "Swahili", i18nKey: "lang_sw" }, { value: "Swedish", text: "Swedish", i18nKey: "lang_sv" }, { value: "Tajik", text: "Tajik", i18nKey: "lang_tg" }, { value: "Tamil", text: "Tamil", i18nKey: "lang_ta" }, { value: "Tatar", text: "Tatar", i18nKey: "lang_tt" }, { value: "Telugu", text: "Telugu", i18nKey: "lang_te" }, { value: "Thai", text: "Thai", i18nKey: "lang_th" }, { value: "Tigrinya", text: "Tigrinya", i18nKey: "lang_ti" }, { value: "Tsonga", text: "Tsonga", i18nKey: "lang_ts" }, { value: "Turkish", text: "Turkish", i18nKey: "lang_tr" }, { value: "Turkmen", text: "Turkmen", i18nKey: "lang_tk" }, { value: "Twi", text: "Twi (Akan)", i18nKey: "lang_ak" }, { value: "Ukrainian", text: "Ukrainian", i18nKey: "lang_uk" }, { value: "Urdu", text: "Urdu", i18nKey: "lang_ur" }, { value: "Uyghur", text: "Uyghur", i18nKey: "lang_ug" }, { value: "Uzbek", text: "Uzbek", i18nKey: "lang_uz" }, { value: "Vietnamese", text: "Vietnamese", i18nKey: "lang_vi" }, { value: "Welsh", text: "Welsh", i18nKey: "lang_cy" }, { value: "Xhosa", text: "Xhosa", i18nKey: "lang_xh" }, { value: "Yiddish", text: "Yiddish", i18nKey: "lang_yi" }, { value: "Yoruba", text: "Yoruba", i18nKey: "lang_yo" }, { value: "Zulu", text: "Zulu", i18nKey: "lang_zu" }];
+            const JOB_FIELDS = [ { value: "None", text: "None (General)", i18nKey: "job_None" }, { value: "Medical", text: "Medical / Healthcare", i18nKey: "job_Medical" }, { value: "Legal", text: "Legal / Law", i18nKey: "job_Legal" }, { value: "Engineering", text: "Engineering (General)", i18nKey: "job_Engineering" }, { value: "IT", text: "Information Technology / Software", i18nKey: "job_IT" }, { value: "Finance", text: "Finance / Banking", i18nKey: "job_Finance" }, { value: "Academic", text: "Academic / Research", i18nKey: "job_Academic" }, { value: "Marketing", text: "Marketing / Business", i18nKey: "job_Marketing" }, { value: "Cinema", text: "Cinema / TV Series", i18nKey: "job_Cinema" } ];
+            const TONES = [ { value: "Default", text: "Default", i18nKey: "tone_Default" }, { value: "Formal", text: "Formal", i18nKey: "tone_Formal" }, { value: "Informal", text: "Informal", i18nKey: "tone_Informal" }, { value: "Poetic", text: "Poetic", i18nKey: "tone_Poetic" }, { value: "Technical", text: "Technical", i18nKey: "tone_Technical" }, { value: "Simplify", text: "Simple / Easy to read", i18nKey: "tone_Simplify" }, { value: "Custom", text: "Custom...", i18nKey: "tone_Custom" } ];
             const RTL_LANGUAGES = new Set(['Arabic', 'Hebrew', 'Persian', 'Urdu', 'Yiddish', 'Dhivehi', 'Sindhi', 'Pashto', 'Uyghur', 'Kurdish (Sorani)']);
-            // --- END: CONFIGURATION ---
-        
+            const TRANSLATIONS = {
+                en: {
+                    appTitle: "Fluentify", tabText: "Text", tabImage: "Image", tabPDF: "PDF", tabSubtitle: "Subtitle", swapBtnLabel: "Swap languages", textInputPlaceholder: "Enter text to translate...", youtubeSectionTitle: "Load from YouTube URL", youtubeUrlPlaceholder: "Enter YouTube Video URL...", youtubeLangPlaceholder: "lang", youtubeFetchBtn: "Fetch", youtubeNotice: `For much better subtitles than auto-generated ones for YouTube, try our new service: <a href="https://ytsrt.pages.dev" target="_blank" rel="noopener noreferrer" class="font-semibold underline text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300">YTSRT</a>.`, fileDragDrop: "Drag & drop a file", fileOr: "or", fileChooseBtn: "Choose File", fileHintImage: "PNG, JPG, WEBP, GIF (MAX. 20MB)", fileHintPDF: "PDF (MAX. 20MB)", fileHintSubtitle: "SRT, VTT, SSA, ASS (MAX. 20MB)", removeFileBtnLabel: "Remove file", pdfSelectPagesTitle: "Select Pages to Translate", pdfSelectAll: "Select All", pdfDeselectAll: "Deselect All", pdfPageCounter: "{count} pages selected", pdfCombinePages: "Combine selected pages before translation", pdfBatchWarning: "Translation may take up to {seconds} seconds to complete.", subtitleEditorTitle: "Subtitle Editor", subtitleLinesPerRequest: "Lines / Request", subtitleBreakLinesBtnLabel: "Break Long Lines", subtitleFindReplaceBtnLabel: "Find & Replace", subtitleExportBtnLabel: "Export as subtitle file", subtitleTranslateAll: "Translate All", subtitleSavedProgress: "Saved progress found for this file.", subtitleLoadProgress: "Load Progress", subtitleClearHistory: "Clear History", breakLinesPanelTitle: "Max chars / line:", breakLinesApply: "Apply Changes", findInputPlaceholder: "Find text...", replaceInputPlaceholder: "Replace with...", findCaseSensitive: "Case Sensitive", replaceAllBtn: "Replace All", subtitleTableHeaderNum: "#", subtitleTableHeaderTime: "Timestamp", subtitleTableHeaderOrig: "Original Text", subtitleTableHeaderTrans: "Translated Text", subtitleTableHeaderAction: "Action", subtitleTranslateRowBtn: "Translate", progressLabelTranslating: "Translating...", progressCancel: "Cancel", advSettingsBtn: "Advanced Settings", translateBtn: "Translate", settingsModel: "AI Model", settingsSpecialization: "Translation Specialization", settingsTone: "Translation Tone", settingsCustomToneLabel: "Custom Tone Instruction", settingsCustomTonePlaceholder: "e.g., 'Translate this in the style of a pirate.'", settingsCreativity: "Creativity (Temperature)", settingsRequestDelay: "Request Delay (seconds)", settingsApiKey: "Google AI API Key(s)", settingsApiKeyPlaceholder: "Enter your API Keys, one per line.", settingsApiKeyHint: "Enter multiple keys to distribute load or as backups.", settingsUseProxy: "Use Proxy", settingsCustomProxyLabel: "Custom Proxy URL (Optional)", settingsCustomProxyHint: `Deploy your own proxy using <a href="https://github.com/yebekhe/middleman" target="_blank" rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a>.`, settingsUseCustomPrompt: "Use Custom Prompt", settingsCustomPromptPlaceholder: "Enter your custom prompt. Use {text}, {source_lang}, and {target_lang} as placeholders.", settingsOptimizePrompt: "Optimize", settingsOcr: "Use OCR for scanned PDF pages", settingsSave: "Save all settings in this browser", outputPlaceholder: "Translation will appear here...", copyBtnLabel: "Copy output", exportTextBtnLabel: "Export as TXT file", refineToolbarTitle: "Refine:", refineShorten: "Make Shorter", refineExpand: "Expand", refineSummarize: "Summarize", styleToolbarTitle: "Change Style:", styleFormal: "Formal", styleInformal: "Informal", stylePoetic: "Poetic", styleSimplify: "Simplify", logTitle: "Live Activity Log", footerText: `Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE`, pageTitle: "Fluentify - Modern AI Translator", howToUseBtnLabel: "How to use", howToUseModalTitle: "How to Use Fluentify",
+                    lang_auto: "Auto-detect Language", lang_af: "Afrikaans", lang_sq: "Albanian", lang_am: "Amharic", lang_ar: "Arabic", lang_hy: "Armenian", lang_as: "Assamese", lang_ay: "Aymara", lang_az: "Azerbaijani", lang_bm: "Bambara", lang_eu: "Basque", lang_be: "Belarusian", lang_bn: "Bengali", lang_bho: "Bhojpuri", lang_bs: "Bosnian", lang_bg: "Bulgarian", lang_ca: "Catalan", lang_ceb: "Cebuano", lang_ny: "Chichewa (Nyanja)", "lang_zh-CN": "Chinese (Simplified)", "lang_zh-TW": "Chinese (Traditional)", lang_co: "Corsican", lang_hr: "Croatian", lang_cs: "Czech", lang_da: "Danish", lang_dv: "Dhivehi", lang_doi: "Dogri", lang_nl: "Dutch", lang_en: "English", lang_eo: "Esperanto", lang_et: "Estonian", lang_ee: "Ewe", lang_tl: "Filipino (Tagalog)", lang_fi: "Finnish", lang_fr: "French", lang_fy: "Frisian", lang_gl: "Galician", lang_ka: "Georgian", lang_de: "German", lang_el: "Greek", lang_gn: "Guarani", lang_gu: "Gujarati", lang_ht: "Haitian Creole", lang_ha: "Hausa", lang_haw: "Hawaiian", lang_iw: "Hebrew", lang_hi: "Hindi", lang_hmn: "Hmong", lang_hu: "Hungarian", lang_is: "Icelandic", lang_ig: "Igbo", lang_ilo: "Ilocano", lang_id: "Indonesian", lang_ga: "Irish", lang_it: "Italian", lang_ja: "Japanese", lang_jw: "Javanese", lang_kn: "Kannada", lang_kk: "Kazakh", lang_km: "Khmer", lang_rw: "Kinyarwanda", lang_gom: "Konkani", lang_ko: "Korean", lang_kri: "Krio", lang_ku: "Kurdish (Kurmanji)", lang_ckb: "Kurdish (Sorani)", lang_ky: "Kyrgyz", lang_lo: "Lao", lang_la: "Latin", lang_lv: "Latvian", lang_ln: "Lingala", lang_lt: "Lithuanian", lang_lg: "Luganda", lang_lb: "Luxembourgish", lang_mk: "Macedonian", lang_mai: "Maithili", lang_mg: "Malagasy", lang_ms: "Malay", lang_ml: "Malayalam", lang_mt: "Maltese", lang_mi: "Maori", lang_mr: "Marathi", "lang_mni-Mtei": "Meiteilon (Manipuri)", lang_lus: "Mizo", lang_mn: "Mongolian", lang_my: "Myanmar (Burmese)", lang_ne: "Nepali", lang_no: "Norwegian", lang_or: "Odia (Oriya)", lang_om: "Oromo", lang_ps: "Pashto", lang_fa: "Persian (Farsi)", lang_pl: "Polish", lang_pt: "Portuguese", lang_pa: "Punjabi", lang_qu: "Quechua", lang_ro: "Romanian", lang_ru: "Russian", lang_sm: "Samoan", lang_sa: "Sanskrit", lang_gd: "Scots Gaelic", lang_nso: "Sepedi", lang_sr: "Serbian", lang_st: "Sesotho", lang_sn: "Shona", lang_sd: "Sindhi", lang_si: "Sinhala", lang_sk: "Slovak", lang_sl: "Slovenian", lang_so: "Somali", lang_es: "Spanish", lang_su: "Sundanese", lang_sw: "Swahili", lang_sv: "Swedish", lang_tg: "Tajik", lang_ta: "Tamil", lang_tt: "Tatar", lang_te: "Telugu", lang_th: "Thai", lang_ti: "Tigrinya", lang_ts: "Tsonga", lang_tr: "Turkish", lang_tk: "Turkmen", lang_ak: "Twi (Akan)", lang_uk: "Ukrainian", lang_ur: "Urdu", lang_ug: "Uyghur", lang_uz: "Uzbek", lang_vi: "Vietnamese", lang_cy: "Welsh", lang_xh: "Xhosa", lang_yi: "Yiddish", lang_yo: "Yoruba", lang_zu: "Zulu",
+                    job_None: "None (General)", job_Medical: "Medical / Healthcare", job_Legal: "Legal / Law", job_Engineering: "Engineering (General)", job_IT: "Information Technology / Software", job_Finance: "Finance / Banking", job_Academic: "Academic / Research", job_Marketing: "Marketing / Business", job_Cinema: "Cinema / TV Series",
+                    tone_Default: "Default", tone_Formal: "Formal", tone_Informal: "Informal", tone_Poetic: "Poetic", tone_Technical: "Technical", tone_Simplify: "Simple / Easy to read", tone_Custom: "Custom..."
+                },
+                fa: {
+                    appTitle: "فلوئنتیفای", tabText: "متن", tabImage: "تصویر", tabPDF: "PDF", tabSubtitle: "زیرنویس", swapBtnLabel: "جابجایی زبان‌ها", textInputPlaceholder: "متن را برای ترجمه وارد کنید...", youtubeSectionTitle: "بارگذاری از آدرس یوتیوب", youtubeUrlPlaceholder: "آدرس ویدیوی یوتیوب را وارد کنید...", youtubeLangPlaceholder: "زبان", youtubeFetchBtn: "دریافت", youtubeNotice: `برای دریافت زیرنویس‌های بسیار بهتر از زیرنویس‌های تولید خودکار یوتیوب، سرویس جدید ما را امتحان کنید: <a href="https://ytsrt.pages.dev" target="_blank" rel="noopener noreferrer" class="font-semibold underline text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300">YTSRT</a>.`, fileDragDrop: "فایل را بکشید و رها کنید", fileOr: "یا", fileChooseBtn: "انتخاب فایل", fileHintImage: "PNG, JPG, WEBP, GIF (حداکثر ۲۰ مگابایت)", fileHintPDF: "PDF (حداکثر ۲۰ مگابایت)", fileHintSubtitle: "SRT, VTT, SSA, ASS (حداکثر ۲۰ مگابایت)", removeFileBtnLabel: "حذف فایل", pdfSelectPagesTitle: "انتخاب صفحات برای ترجمه", pdfSelectAll: "انتخاب همه", pdfDeselectAll: "لغو انتخاب همه", pdfPageCounter: "{count} صفحه انتخاب شد", pdfCombinePages: "ادغام صفحات انتخاب شده قبل از ترجمه", pdfBatchWarning: "ترجمه ممکن است تا {seconds} ثانیه طول بکشد.", subtitleEditorTitle: "ویرایشگر زیرنویس", subtitleLinesPerRequest: "خط / درخواست", subtitleBreakLinesBtnLabel: "شکستن خطوط طولانی", subtitleFindReplaceBtnLabel: "جستجو و جایگزینی", subtitleExportBtnLabel: "خروجی به عنوان فایل زیرنویس", subtitleTranslateAll: "ترجمه همه", subtitleSavedProgress: "پیشرفت ذخیره شده برای این فایل پیدا شد.", subtitleLoadProgress: "بارگذاری پیشرفت", subtitleClearHistory: "پاک کردن تاریخچه", breakLinesPanelTitle: "حداکثر کاراکتر / خط:", breakLinesApply: "اعمال تغییرات", findInputPlaceholder: "جستجوی متن...", replaceInputPlaceholder: "جایگزینی با...", findCaseSensitive: "حساس به حروف بزرگ و کوچک", replaceAllBtn: "جایگزینی همه", subtitleTableHeaderNum: "#", subtitleTableHeaderTime: "برچسب زمانی", subtitleTableHeaderOrig: "متن اصلی", subtitleTableHeaderTrans: "متن ترجمه شده", subtitleTableHeaderAction: "عملیات", subtitleTranslateRowBtn: "ترجمه", progressLabelTranslating: "در حال ترجمه...", progressCancel: "لغو", advSettingsBtn: "تنظیمات پیشرفته", translateBtn: "ترجمه", settingsModel: "مدل هوش مصنوعی", settingsSpecialization: "تخصص ترجمه", settingsTone: "لحن ترجمه", settingsCustomToneLabel: "دستورالعمل لحن سفارشی", settingsCustomTonePlaceholder: "مثال: 'این متن را به سبک دزدان دریایی ترجمه کن.'", settingsCreativity: "خلاقیت (Temperature)", settingsRequestDelay: "تأخیر درخواست (ثانیه)", settingsApiKey: "کلید(های) API گوگل", settingsApiKeyPlaceholder: "کلیدهای API خود را وارد کنید، هر کدام در یک خط.", settingsApiKeyHint: "چندین کلید برای توزیع بار یا به عنوان پشتیبان وارد کنید.", settingsUseProxy: "استفاده از پروکسی", settingsCustomProxyLabel: "آدرس پروکسی سفارشی (اختیاری)", settingsCustomProxyHint: `پروکسی خود را با استفاده از <a href="https://github.com/yebekhe/middleman" target="_blank" rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a> مستقر کنید.`, settingsUseCustomPrompt: "استفاده از پرامپت سفارشی", settingsCustomPromptPlaceholder: "پرامپت سفارشی خود را وارد کنید. از {text}، {source_lang} و {target_lang} به عنوان متغیر استفاده کنید.", settingsOptimizePrompt: "بهینه‌سازی", settingsOcr: "استفاده از OCR برای صفحات PDF اسکن شده", settingsSave: "ذخیره تمام تنظیمات در این مرورگر", outputPlaceholder: "ترجمه در اینجا نمایش داده خواهد شد...", copyBtnLabel: "کپی خروجی", exportTextBtnLabel: "خروجی به عنوان فایل TXT", refineToolbarTitle: "اصلاح:", refineShorten: "کوتاه‌تر کردن", refineExpand: "گسترش دادن", refineSummarize: "خلاصه کردن", styleToolbarTitle: "تغییر سبک:", styleFormal: "رسمی", styleInformal: "غیررسمی", stylePoetic: "شاعرانه", styleSimplify: "ساده‌سازی", logTitle: "گزارش فعالیت زنده", footerText: `ساخته شده با <i class="fas fa-heart text-red-500 mx-1"></i> توسط YEBEKHE`, pageTitle: "Fluentify - مترجم مدرن هوش مصنوعی", howToUseBtnLabel: "راهنمای استفاده", howToUseModalTitle: "راهنمای استفاده از Fluentify",
+                    lang_auto: "تشخیص خودکار زبان", lang_af: "آفریکانس", lang_sq: "آلبانیایی", lang_am: "امهری", lang_ar: "عربی", lang_hy: "ارمنی", lang_as: "آسامی", lang_ay: "آیمارا", lang_az: "آذربایجانی", lang_bm: "بامبارا", lang_eu: "باسکی", lang_be: "بلاروسی", lang_bn: "بنگالی", lang_bho: "بوجپوری", lang_bs: "بوسنیایی", lang_bg: "بلغاری", lang_ca: "کاتالان", lang_ceb: "سبوانو", lang_ny: "چیچوا", "lang_zh-CN": "چینی (ساده شده)", "lang_zh-TW": "چینی (سنتی)", lang_co: "کرسی", lang_hr: "کرواتی", lang_cs: "چکی", lang_da: "دانمارکی", lang_dv: "دیوهی", lang_doi: "دوگری", lang_nl: "هلندی", lang_en: "انگلیسی", lang_eo: "اسپرانتو", lang_et: "استونیایی", lang_ee: "اوه", lang_tl: "فیلیپینی (تاگالوگ)", lang_fi: "فنلاندی", lang_fr: "فرانسوی", lang_fy: "فریزی", lang_gl: "گالیسی", lang_ka: "گرجی", lang_de: "آلمانی", lang_el: "یونانی", lang_gn: "گوارانی", lang_gu: "گجراتی", lang_ht: "کریول هائیتی", lang_ha: "هوسا", lang_haw: "هاوایی", lang_iw: "عبری", lang_hi: "هندی", lang_hmn: "همونگ", lang_hu: "مجاری", lang_is: "ایسلندی", lang_ig: "ایگبو", lang_ilo: "ایلوکانو", lang_id: "اندونزیایی", lang_ga: "ایرلندی", lang_it: "ایتالیایی", lang_ja: "ژاپنی", lang_jw: "جاوه‌ای", lang_kn: "کانارا", lang_kk: "قزاقی", lang_km: "خمر", lang_rw: "کینیارواندا", lang_gom: "کونکانی", lang_ko: "کره‌ای", lang_kri: "کریو", lang_ku: "کردی (کرمانجی)", lang_ckb: "کردی (سورانی)", lang_ky: "قرقیزی", lang_lo: "لائوسی", lang_la: "لاتین", lang_lv: "لتونیایی", lang_ln: "لینگالا", lang_lt: "لیتوانیایی", lang_lg: "لوگاندا", lang_lb: "لوکزامبورگی", lang_mk: "مقدونی", lang_mai: "مایتهیلی", lang_mg: "مالاگاسی", lang_ms: "مالایی", lang_ml: "مالایالام", lang_mt: "مالتی", lang_mi: "مائوری", lang_mr: "مراتی", "lang_mni-Mtei": "می‌تیلون (مانیپوری)", lang_lus: "میزو", lang_mn: "مغولی", lang_my: "میانماری (برمه‌ای)", lang_ne: "نپالی", lang_no: "نروژی", lang_or: "اوریا", lang_om: "اورومو", lang_ps: "پشتو", lang_fa: "فارسی", lang_pl: "لهستانی", lang_pt: "پرتغالی", lang_pa: "پنجابی", lang_qu: "کچوآ", lang_ro: "رومانیایی", lang_ru: "روسی", lang_sm: "ساموآیی", lang_sa: "سانسکریت", lang_gd: "گیلی اسکاتلندی", lang_nso: "سپدی", lang_sr: "صربی", lang_st: "سسوتو", lang_sn: "شونا", lang_sd: "سندی", lang_si: "سینهالی", lang_sk: "اسلواکی", lang_sl: "اسلوونیایی", lang_so: "سومالیایی", lang_es: "اسپانیایی", lang_su: "سوندانی", lang_sw: "سواحیلی", lang_sv: "سوئدی", lang_tg: "تاجیکی", lang_ta: "تامیلی", lang_tt: "تاتاری", lang_te: "تلوگو", lang_th: "تایلندی", lang_ti: "تیگرینیا", lang_ts: "تسونگا", lang_tr: "ترکی", lang_tk: "ترکمنی", lang_ak: "توی (آکان)", lang_uk: "اوکراینی", lang_ur: "اردو", lang_ug: "اویغوری", lang_uz: "ازبکی", lang_vi: "ویتنامی", lang_cy: "ولزی", lang_xh: "خوسا", lang_yi: "ییدیش", lang_yo: "یوروبا", lang_zu: "زولو",
+                    job_None: "هیچکدام (عمومی)", job_Medical: "پزشکی / بهداشت", job_Legal: "حقوقی / قانون", job_Engineering: "مهندسی (عمومی)", job_IT: "فناوری اطلاعات / نرم‌افزار", job_Finance: "مالی / بانکداری", job_Academic: "دانشگاهی / تحقیقاتی", job_Marketing: "بازاریابی / کسب و کار", job_Cinema: "سینما / سریال تلویزیونی",
+                    tone_Default: "پیش‌فرض", tone_Formal: "رسمی", tone_Informal: "غیررسمی", tone_Poetic: "شاعرانه", tone_Technical: "فنی", tone_Simplify: "ساده / روان", tone_Custom: "سفارشی..."
+                },
+                ru: {
+                    appTitle: "Fluentify", tabText: "Текст", tabImage: "Изображение", tabPDF: "PDF", tabSubtitle: "Субтитры", swapBtnLabel: "Поменять языки", textInputPlaceholder: "Введите текст для перевода...", youtubeSectionTitle: "Загрузить с YouTube URL", youtubeUrlPlaceholder: "Введите URL видео YouTube...", youtubeLangPlaceholder: "язык", youtubeFetchBtn: "Получить", youtubeNotice: `Для получения субтитров лучшего качества, чем автоматически сгенерированные на YouTube, попробуйте наш новый сервис: <a href="https://ytsrt.pages.dev" target="_blank" rel="noopener noreferrer" class="font-semibold underline text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300">YTSRT</a>.`, fileDragDrop: "Перетащите файл", fileOr: "или", fileChooseBtn: "Выберите файл", fileHintImage: "PNG, JPG, WEBP, GIF (МАКС. 20МБ)", fileHintPDF: "PDF (МАКС. 20МБ)", fileHintSubtitle: "SRT, VTT, SSA, ASS (МАКС. 20МБ)", removeFileBtnLabel: "Удалить файл", pdfSelectPagesTitle: "Выберите страницы для перевода", pdfSelectAll: "Выбрать все", pdfDeselectAll: "Снять выбор", pdfPageCounter: "Выбрано страниц: {count}", pdfCombinePages: "Объединить выбранные страницы перед переводом", pdfBatchWarning: "Перевод может занять до {seconds} секунд.", subtitleEditorTitle: "Редактор субтитров", subtitleLinesPerRequest: "Строк / запрос", subtitleBreakLinesBtnLabel: "Разбить длинные строки", subtitleFindReplaceBtnLabel: "Найти и заменить", subtitleExportBtnLabel: "Экспортировать как файл субтитров", subtitleTranslateAll: "Перевести все", subtitleSavedProgress: "Найден сохраненный прогресс для этого файла.", subtitleLoadProgress: "Загрузить прогресс", subtitleClearHistory: "Очистить историю", breakLinesPanelTitle: "Макс. символов / строка:", breakLinesApply: "Применить изменения", findInputPlaceholder: "Найти текст...", replaceInputPlaceholder: "Заменить на...", findCaseSensitive: "Учитывать регистр", replaceAllBtn: "Заменить все", subtitleTableHeaderNum: "#", subtitleTableHeaderTime: "Временная метка", subtitleTableHeaderOrig: "Оригинальный текст", subtitleTableHeaderTrans: "Переведенный текст", subtitleTableHeaderAction: "Действие", subtitleTranslateRowBtn: "Перевести", progressLabelTranslating: "Перевод...", progressCancel: "Отмена", advSettingsBtn: "Расширенные настройки", translateBtn: "Перевести", settingsModel: "Модель ИИ", settingsSpecialization: "Специализация перевода", settingsTone: "Тон перевода", settingsCustomToneLabel: "Инструкция для пользовательского тона", settingsCustomTonePlaceholder: "напр., 'Переведи это в стиле пирата.'", settingsCreativity: "Креативность (Temperature)", settingsRequestDelay: "Задержка запроса (секунды)", settingsApiKey: "Ключ(и) API Google AI", settingsApiKeyPlaceholder: "Введите ваши ключи API, по одному на строку.", settingsApiKeyHint: "Введите несколько ключей для распределения нагрузки или как резервные.", settingsUseProxy: "Использовать прокси", settingsCustomProxyLabel: "Пользовательский URL прокси (необязательно)", settingsCustomProxyHint: `Разверните свой собственный прокси с помощью <a href="https://github.com/yebekhe/middleman" target="_blank" rel="noopener noreferrer" class="underline hover:text-sky-500">Middleman</a>.`, settingsUseCustomPrompt: "Использовать свой промпт", settingsCustomPromptPlaceholder: "Введите свой промпт. Используйте {text}, {source_lang} и {target_lang} как переменные.", settingsOptimizePrompt: "Оптимизировать", settingsOcr: "Использовать OCR для сканированных PDF", settingsSave: "Сохранить все настройки в этом браузере", outputPlaceholder: "Перевод появится здесь...", copyBtnLabel: "Копировать результат", exportTextBtnLabel: "Экспортировать в TXT", refineToolbarTitle: "Улучшить:", refineShorten: "Сделать короче", refineExpand: "Расширить", refineSummarize: "Суммировать", styleToolbarTitle: "Изменить стиль:", styleFormal: "Формальный", styleInformal: "Неформальный", stylePoetic: "Поэтический", styleSimplify: "Упростить", logTitle: "Журнал активности", footerText: `Создано с <i class="fas fa-heart text-red-500 mx-1"></i> YEBEKHE`, pageTitle: "Fluentify - Современный ИИ-переводчик", howToUseBtnLabel: "Как использовать", howToUseModalTitle: "Как использовать Fluentify",
+                    lang_auto: "Автоопределение языка", lang_af: "Африкаанс", lang_sq: "Албанский", lang_am: "Амхарский", lang_ar: "Арабский", lang_hy: "Армянский", lang_as: "Ассамский", lang_ay: "Аймара", lang_az: "Азербайджанский", lang_bm: "Бамбара", lang_eu: "Баскский", lang_be: "Белорусский", lang_bn: "Бенгальский", lang_bho: "Бходжпури", lang_bs: "Боснийский", lang_bg: "Болгарский", lang_ca: "Каталанский", lang_ceb: "Себуанский", lang_ny: "Чичева", "lang_zh-CN": "Китайский (упрощенный)", "lang_zh-TW": "Китайский (традиционный)", lang_co: "Корсиканский", lang_hr: "Хорватский", lang_cs: "Чешский", lang_da: "Датский", lang_dv: "Дивехи", lang_doi: "Догри", lang_nl: "Голландский", lang_en: "Английский", lang_eo: "Эсперанто", lang_et: "Эстонский", lang_ee: "Эве", lang_tl: "Филиппинский (тагальский)", lang_fi: "Финский", lang_fr: "Французский", lang_fy: "Фризский", lang_gl: "Галисийский", lang_ka: "Грузинский", lang_de: "Немецкий", lang_el: "Греческий", lang_gn: "Гуарани", lang_gu: "Гуджарати", lang_ht: "Гаитянский креольский", lang_ha: "Хауса", lang_haw: "Гавайский", lang_iw: "Иврит", lang_hi: "Хинди", lang_hmn: "Хмонг", lang_hu: "Венгерский", lang_is: "Исландский", lang_ig: "Игбо", lang_ilo: "Илоканский", lang_id: "Индонезийский", lang_ga: "Ирландский", lang_it: "Итальянский", lang_ja: "Японский", lang_jw: "Яванский", lang_kn: "Каннада", lang_kk: "Казахский", lang_km: "Кхмерский", lang_rw: "Киньяруанда", lang_gom: "Конкани", lang_ko: "Корейский", lang_kri: "Крио", lang_ku: "Курдский (курманджи)", lang_ckb: "Курдский (сорани)", lang_ky: "Киргизский", lang_lo: "Лаосский", lang_la: "Латинский", lang_lv: "Латышский", lang_ln: "Лингала", lang_lt: "Литовский", lang_lg: "Луганда", lang_lb: "Люксембургский", lang_mk: "Македонский", lang_mai: "Майтхили", lang_mg: "Малагасийский", lang_ms: "Малайский", lang_ml: "Малаялам", lang_mt: "Мальтийский", lang_mi: "Маори", lang_mr: "Маратхи", "lang_mni-Mtei": "Меитеилон (манипури)", lang_lus: "Мизо", lang_mn: "Монгольский", lang_my: "Бирманский", lang_ne: "Непальский", lang_no: "Норвежский", lang_or: "Ория", lang_om: "Оромо", lang_ps: "Пушту", lang_fa: "Персидский (фарси)", lang_pl: "Польский", lang_pt: "Португальский", lang_pa: "Панджаби", lang_qu: "Кечуа", lang_ro: "Румынский", lang_ru: "Русский", lang_sm: "Самоанский", lang_sa: "Санскрит", lang_gd: "Шотландский гэльский", lang_nso: "Сепеди", lang_sr: "Сербский", lang_st: "Сесото", lang_sn: "Шона", lang_sd: "Синдхи", lang_si: "Сингальский", lang_sk: "Словацкий", lang_sl: "Словенский", lang_so: "Сомалийский", lang_es: "Испанский", lang_su: "Сунданский", lang_sw: "Суахили", lang_sv: "Шведский", lang_tg: "Таджикский", lang_ta: "Тамильский", lang_tt: "Татарский", lang_te: "Телугу", lang_th: "Тайский", lang_ti: "Тигринья", lang_ts: "Тсонга", lang_tr: "Турецкий", lang_tk: "Туркменский", lang_ak: "Тви (акан)", lang_uk: "Украинский", lang_ur: "Урду", lang_ug: "Уйгурский", lang_uz: "Узбекский", lang_vi: "Вьетнамский", lang_cy: "Валлийский", lang_xh: "Коса", lang_yi: "Идиш", lang_yo: "Йоруба", lang_zu: "Зулу",
+                    job_None: "Нет (общий)", job_Medical: "Медицина / Здравоохранение", job_Legal: "Юриспруденция / Право", job_Engineering: "Инженерия (общая)", job_IT: "ИТ / Программное обеспечение", job_Finance: "Финансы / Банковское дело", job_Academic: "Наука / Исследования", job_Marketing: "Маркетинг / Бизнес", job_Cinema: "Кино / Сериалы",
+                    tone_Default: "По умолчанию", tone_Formal: "Формальный", tone_Informal: "Неформальный", tone_Poetic: "Поэтический", tone_Technical: "Технический", tone_Simplify: "Простой / Легко читаемый", tone_Custom: "Пользовательский..."
+                }
+            };
+            const HOW_TO_USE_CONTENT = {
+                en: `<div class="space-y-6 text-slate-700 dark:text-slate-300">
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">1. Initial Setup (API Key)</h3>
+                            <p class="mb-2">Before you can translate, you need a Google AI API Key.</p>
+                            <ol class="list-decimal list-inside space-y-2 pl-4">
+                                <li>Go to <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="text-sky-500 underline">Google AI Studio</a> and sign in.</li>
+                                <li>Click <strong>"Get API key"</strong>, then <strong>"Create API key in new project"</strong>.</li>
+                                <li>Copy the generated key.</li>
+                                <li>In Fluentify, click <strong>"Advanced Settings"</strong>.</li>
+                                <li>Paste your key into the <strong>"Google AI API Key(s)"</strong> field.</li>
+                                <li>(Recommended) Check the <strong>"Save all settings in this browser"</strong> box to store your key securely for future use.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">2. Translating Content</h3>
+                            <p class="mb-3">Select your desired input type from the top menu: <strong>Text, Image, PDF, or Subtitle</strong>.</p>
+                            <div class="space-y-4 pl-4 border-l-2 dark:border-slate-600">
+                                <div>
+                                    <h4 class="font-semibold">📝 Text Translation</h4>
+                                    <p>Select the source and target languages, enter your text, and click <strong>Translate</strong>. Use the <strong>Refine</strong> and <strong>Change Style</strong> buttons to enhance the output.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">🖼️ Image Translation</h4>
+                                    <p>Select the <strong>Image</strong> tab, choose your target language, and drop an image file. The app will perform OCR to extract the text and then translate it.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">📄 PDF Translation</h4>
+                                    <p>Upload a PDF. Click on the pages you want to translate. For scanned PDFs, enable <strong>"Use OCR for scanned PDF pages"</strong> in Advanced Settings. Click <strong>Translate</strong>.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">🎬 Subtitle Translation</h4>
+                                    <p class="mb-2">Either upload a subtitle file (SRT, VTT, etc.) or paste a YouTube URL and click <strong>Fetch</strong> to load subtitles into the editor.</p>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>Translate All:</strong> Click to translate all lines in batches.</li>
+                                        <li><strong>Edit:</strong> Click directly on any translated text to edit it manually.</li>
+                                        <li><strong>Tools:</strong> Use the Find & Replace and Break Long Lines tools for advanced editing.</li>
+                                        <li><strong>Export:</strong> Click the export button in the editor's header to download your translated file.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
+                fa: `<div class="space-y-6 text-slate-700 dark:text-slate-300 text-right">
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">۱. راه‌اندازی اولیه (کلید API)</h3>
+                            <p class="mb-2">قبل از شروع ترجمه، به یک کلید API از Google AI نیاز دارید.</p>
+                            <ol class="list-decimal list-inside space-y-2 pr-4">
+                                <li>به <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="text-sky-500 underline">Google AI Studio</a> بروید و وارد شوید.</li>
+                                <li>روی <strong>"Get API key"</strong> و سپس <strong>"Create API key in new project"</strong> کلیک کنید.</li>
+                                <li>کلید تولید شده را کپی کنید.</li>
+                                <li>در Fluentify، روی <strong>"تنظیمات پیشرفته"</strong> کلیک کنید.</li>
+                                <li>کلید خود را در فیلد <strong>"کلید(های) API گوگل"</strong> الصاق کنید.</li>
+                                <li>(توصیه‌شده) تیک گزینه <strong>"ذخیره تمام تنظیمات در این مرورگر"</strong> را بزنید تا کلید شما برای استفاده‌های بعدی ذخیره شود.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">۲. ترجمه محتوا</h3>
+                            <p class="mb-3">نوع ورودی مورد نظر خود را از منوی بالا انتخاب کنید: <strong>متن، تصویر، PDF یا زیرنویس</strong>.</p>
+                            <div class="space-y-4 pr-4 border-r-2 dark:border-slate-600">
+                                <div>
+                                    <h4 class="font-semibold">📝 ترجمه متن</h4>
+                                    <p>زبان مبدأ و مقصد را انتخاب کنید، متن خود را وارد کرده و روی <strong>ترجمه</strong> کلیک کنید. از دکمه‌های <strong>اصلاح</strong> و <strong>تغییر سبک</strong> برای بهبود خروجی استفاده کنید.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">🖼️ ترجمه تصویر</h4>
+                                    <p>تب <strong>تصویر</strong> را انتخاب کنید، زبان مقصد خود را برگزینید و یک فایل تصویر را رها کنید. برنامه متن را با OCR استخراج کرده و سپس آن را ترجمه می‌کند.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">📄 ترجمه PDF</h4>
+                                    <p>یک فایل PDF آپلود کنید. روی صفحاتی که می‌خواهید ترجمه شوند کلیک کنید. برای PDFهای اسکن شده، گزینه <strong>"استفاده از OCR"</strong> را در تنظیمات پیشرفته فعال کنید. روی <strong>ترجمه</strong> کلیک کنید.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">🎬 ترجمه زیرنویس</h4>
+                                    <p class="mb-2">می‌توانید یک فایل زیرنویس (SRT, VTT, و غیره) آپلود کنید یا یک آدرس یوتیوب را وارد کرده و روی <strong>دریافت</strong> کلیک کنید تا زیرنویس‌ها در ویرایشگر بارگذاری شوند.</p>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>ترجمه همه:</strong> برای ترجمه تمام خطوط به صورت دسته‌ای کلیک کنید.</li>
+                                        <li><strong>ویرایش:</strong> برای ویرایش دستی، مستقیماً روی متن ترجمه شده کلیک کنید.</li>
+                                        <li><strong>ابزارها:</strong> از ابزارهای جستجو و جایگزینی و شکستن خطوط طولانی برای ویرایش پیشرفته استفاده کنید.</li>
+                                        <li><strong>خروجی:</strong> برای دانلود فایل ترجمه شده، روی دکمه خروجی در هدر ویرایشگر کلیک کنید.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
+                ru: `<div class="space-y-6 text-slate-700 dark:text-slate-300">
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">1. Начальная настройка (API-ключ)</h3>
+                            <p class="mb-2">Перед началом работы вам понадобится API-ключ от Google AI.</p>
+                            <ol class="list-decimal list-inside space-y-2 pl-4">
+                                <li>Перейдите в <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="text-sky-500 underline">Google AI Studio</a> и войдите в систему.</li>
+                                <li>Нажмите <strong>"Get API key"</strong>, затем <strong>"Create API key in new project"</strong>.</li>
+                                <li>Скопируйте сгенерированный ключ.</li>
+                                <li>В Fluentify нажмите <strong>"Расширенные настройки"</strong>.</li>
+                                <li>Вставьте ваш ключ в поле <strong>"Ключ(и) API Google AI"</strong>.</li>
+                                <li>(Рекомендуется) Установите флажок <strong>"Сохранить все настройки в этом браузере"</strong>, чтобы безопасно сохранить ваш ключ для будущего использования.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">2. Перевод контента</h3>
+                            <p class="mb-3">Выберите желаемый тип ввода в верхнем меню: <strong>Текст, Изображение, PDF или Субтитры</strong>.</p>
+                            <div class="space-y-4 pl-4 border-l-2 dark:border-slate-600">
+                                <div>
+                                    <h4 class="font-semibold">📝 Перевод текста</h4>
+                                    <p>Выберите исходный и целевой языки, введите текст и нажмите <strong>Перевести</strong>. Используйте кнопки <strong>Улучшить</strong> и <strong>Изменить стиль</strong> для доработки результата.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">🖼️ Перевод изображений</h4>
+                                    <p>Выберите вкладку <strong>Изображение</strong>, укажите целевой язык и перетащите файл изображения. Приложение выполнит OCR для извлечения текста, а затем переведет его.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">📄 Перевод PDF</h4>
+                                    <p>Загрузите PDF. Нажмите на страницы, которые вы хотите перевести. Для сканированных PDF включите опцию <strong>"Использовать OCR"</strong> в Расширенных настройках. Нажмите <strong>Перевести</strong>.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">🎬 Перевод субтитров</h4>
+                                    <p class="mb-2">Вы можете загрузить файл субтитров (SRT, VTT и т.д.) или вставить URL-адрес YouTube и нажать <strong>Получить</strong>, чтобы загрузить субтитры в редактор.</p>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li><strong>Перевести все:</strong> Нажмите, чтобы перевести все строки пакетами.</li>
+                                        <li><strong>Редактировать:</strong> Нажмите прямо на переведенный текст, чтобы отредактировать его вручную.</li>
+                                        <li><strong>Инструменты:</strong> Используйте инструменты "Найти и заменить" и "Разбить длинные строки" для расширенного редактирования.</li>
+                                        <li><strong>Экспорт:</strong> Нажмите кнопку экспорта в заголовке редактора, чтобы скачать переведенный файл.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+            };
+            // --- END: CONFIGURATION & I18N ---
         
             // --- START: DOM Element Selection ---
             const dom = {
@@ -522,9 +696,6 @@
                 temperatureValue: document.getElementById('temperature-value'),
                 requestDelayInput: document.getElementById('request_delay'),
                 apiKeyInput: document.getElementById('api_key'),
-                toggleApiKeyBtn: document.getElementById('toggle-api-key-visibility'),
-                eyeOpenIcon: document.getElementById('eye-open-icon'),
-                eyeClosedIcon: document.getElementById('eye-closed-icon'),
                 saveSettingsCheckbox: document.getElementById('save-settings-checkbox'),
                 themeToggleBtn: document.getElementById('theme-toggle'),
                 themeIconLight: document.getElementById('theme-icon-light'),
@@ -559,15 +730,95 @@
                 replaceAllBtn: document.getElementById('replace-all-btn'),
                 breakLinesMaxChars: document.getElementById('break-lines-max-chars'),
                 breakLinesApplyBtn: document.getElementById('break-lines-apply-btn'),
+                // New Progress Saving elements
+                savedProgressNotification: document.getElementById('saved-progress-notification'),
+                loadProgressBtn: document.getElementById('load-progress-btn'),
+                clearProgressBtn: document.getElementById('clear-progress-btn'),
+                // I18N and How-to-use elements
+                languageSwitcher: document.getElementById('language-switcher'),
+                howToUseBtn: document.getElementById('how-to-use-btn'),
+                howToUseModal: document.getElementById('how-to-use-modal'),
+                howToUseContent: document.getElementById('how-to-use-content'),
+                howToUseTitle: document.getElementById('how-to-use-title'),
+                howToUseCloseBtn: document.getElementById('how-to-use-close-btn'),
             };
             
             // --- START: State Management ---
             let pdfDoc = null;
             let selectedPages = new Set();
             let currentFile = null;
+            let currentFileHash = null;
             let subtitleData = null; // To store parsed subtitle data
             let translationAbortController = null;
+            let activeApiKeys = [];
+            let currentLanguage = 'en';
+            let subtitleTranslationState = {
+                startChunkIndex: 0,
+                allChunks: [],
+            };
             // --- END: State Management ---
+        
+            // --- START: I18N & Language Switching ---
+            function setLanguage(lang) {
+                currentLanguage = lang;
+                const translations = TRANSLATIONS[lang];
+                if (!translations) {
+                    console.error(`No translations found for language: ${lang}`);
+                    return;
+                }
+            
+                // Set page direction and language
+                dom.html.lang = lang;
+                dom.html.dir = lang === 'fa' ? 'rtl' : 'ltr';
+            
+                // Update title
+                document.title = translations.pageTitle;
+            
+                // Update text content
+                document.querySelectorAll('[data-i18n-key]').forEach(el => {
+                    const key = el.dataset.i18nKey;
+                    const translation = translations[key];
+                    if (translation) {
+                         if ('i18nHtml' in el.dataset) {
+                            el.innerHTML = translation;
+                        } else {
+                            el.textContent = translation;
+                        }
+                    }
+                });
+            
+                // Update placeholders
+                document.querySelectorAll('[data-i18n-placeholder-key]').forEach(el => {
+                    const key = el.dataset.i18nPlaceholderKey;
+                    if (translations[key]) {
+                        el.placeholder = translations[key];
+                    }
+                });
+
+                // Update titles/tooltips
+                document.querySelectorAll('[data-i18n-title-key]').forEach(el => {
+                    const key = el.dataset.i18nTitleKey;
+                    if (translations[key]) {
+                        el.title = translations[key];
+                        el.setAttribute('aria-label', translations[key]);
+                    }
+                });
+            
+                // Repopulate selects
+                populateSelect(dom.sourceLangSelect, LANGUAGES, dom.sourceLangSelect.value);
+                populateSelect(dom.targetLangSelect, LANGUAGES, dom.targetLangSelect.value, opt => opt.value !== 'auto');
+                populateSelect(dom.jobFieldSelect, JOB_FIELDS, dom.jobFieldSelect.value);
+                populateSelect(dom.translationToneSelect, TONES, dom.translationToneSelect.value);
+            
+                // Update How-to-use modal content
+                dom.howToUseContent.innerHTML = HOW_TO_USE_CONTENT[lang] || '';
+
+                // Specific UI updates
+                updatePageSelectionCounter();
+                updateCharCounter();
+                localStorage.setItem('fluentify_language_v1', lang);
+                validateForm();
+            }
         
             // --- START: Logging ---
             function log(message, type = 'info') {
@@ -1067,7 +1318,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                             <td>${timestamp}</td>
                             <td>${line.text.replace(/\n/g, '<br>')}</td>
                             <td class="translated-text" contenteditable="true">${preservedTranslations ? (preservedTranslations[index] || '') : ''}</td>
-                            <td><button type="button" data-index="${index}" class="translate-sub-row-btn w-full px-2 py-1 text-xs rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">Translate</button></td>
+                            <td><button type="button" data-index="${index}" class="translate-sub-row-btn w-full px-2 py-1 text-xs rounded-md bg-white dark:bg-slate-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700" data-i18n-key="subtitleTranslateRowBtn">Translate</button></td>
                         `;
                         fragment.appendChild(row);
                     });
@@ -1089,20 +1340,43 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 }
             }
             async function renderSubtitleEditor(file) {
+                currentFile = file;
                 const fileContent = await fileToString(file);
+                currentFileHash = await calculateFileHash(file);
+                
+                const savedProgressRaw = localStorage.getItem(`fluentify_progress_${currentFileHash}`);
+                dom.savedProgressNotification.classList.add('hidden');
+                if (savedProgressRaw) {
+                    try {
+                        const savedProgress = JSON.parse(savedProgressRaw);
+                        if (savedProgress && savedProgress.translations) {
+                            dom.savedProgressNotification.classList.remove('hidden');
+                        }
+                    } catch (e) {
+                        log('Could not parse saved progress.', 'warn');
+                        localStorage.removeItem(`fluentify_progress_${currentFileHash}`);
+                    }
+                }
+                
                 processAndDisplaySubtitles(fileContent, file.name);
             }
             
             // --- START: UI and Event Handlers ---
-            function populateSelect(selectElement, options, defaultValue, filter = () => true) { selectElement.innerHTML = options.filter(filter).map(opt => `<option value="${opt.value}" ${opt.value === defaultValue ? 'selected' : ''}>${opt.text}</option>`).join(''); }
-            function handleInputTypeChange() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; const isTextMode = selectedType === 'text'; const isImageMode = selectedType === 'image'; const isPdfMode = selectedType === 'pdf'; const isSubtitleMode = selectedType === 'subtitle'; dom.textInputContainer.classList.toggle('hidden', !isTextMode); dom.fileInputSection.classList.toggle('hidden', !isImageMode && !isPdfMode && !isSubtitleMode); dom.youtubeInputSection.classList.toggle('hidden', !isSubtitleMode); dom.pdfViewerSection.classList.toggle('hidden', !isPdfMode); dom.subtitleEditorSection.classList.toggle('hidden', !isSubtitleMode); dom.mainOutputSection.classList.toggle('hidden', isSubtitleMode); dom.sourceLangSelect.disabled = !isTextMode; if (!isTextMode) dom.sourceLangSelect.value = 'auto'; if (isImageMode) { dom.fileUpload.accept = "image/png, image/jpeg, image/webp, image/gif"; dom.fileUploadHint.textContent = "PNG, JPG, WEBP, GIF (MAX. 20MB)"; } else if (isPdfMode) { dom.fileUpload.accept = "application/pdf"; dom.fileUploadHint.textContent = "PDF (MAX. 20MB)"; } else if (isSubtitleMode) { dom.fileUpload.accept = ".srt,.vtt,.ssa,.ass"; dom.fileUploadHint.textContent = "SRT, VTT, SSA, ASS (MAX. 20MB)"; } resetFileInput(); }
-            function resetFileInput() { dom.fileUpload.value = ''; dom.dropzonePrompt.classList.remove('hidden'); dom.filePreviewContainer.classList.add('hidden'); dom.imagePreview.src = ''; dom.subtitlePreview.classList.add('hidden'); dom.subtitleFilename.textContent = ''; dom.youtubeUrlInput.value = ''; currentFile = null; dom.pdfViewerSection.classList.add('hidden'); dom.pdfPageViewer.innerHTML = ''; pdfDoc = null; selectedPages.clear(); dom.subtitleEditorSection.classList.add('hidden'); dom.subtitleTableBody.innerHTML = ''; subtitleData = null; updatePageSelectionCounter(); validateForm(); clearOutput(); }
+            function populateSelect(selectElement, options, defaultValue, filter = () => true) { 
+                const translations = TRANSLATIONS[currentLanguage];
+                selectElement.innerHTML = options
+                    .filter(filter)
+                    .map(opt => `<option value="${opt.value}" ${opt.value === defaultValue ? 'selected' : ''}>${translations[opt.i18nKey] || opt.text}</option>`)
+                    .join(''); 
+            }
+            function handleInputTypeChange() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; const isTextMode = selectedType === 'text'; const isImageMode = selectedType === 'image'; const isPdfMode = selectedType === 'pdf'; const isSubtitleMode = selectedType === 'subtitle'; dom.textInputContainer.classList.toggle('hidden', !isTextMode); dom.fileInputSection.classList.toggle('hidden', !isImageMode && !isPdfMode && !isSubtitleMode); dom.youtubeInputSection.classList.toggle('hidden', !isSubtitleMode); dom.pdfViewerSection.classList.toggle('hidden', !isPdfMode); dom.subtitleEditorSection.classList.toggle('hidden', !isSubtitleMode); dom.mainOutputSection.classList.toggle('hidden', isSubtitleMode); dom.sourceLangSelect.disabled = !isTextMode; if (!isTextMode) dom.sourceLangSelect.value = 'auto'; if (isImageMode) { dom.fileUpload.accept = "image/png, image/jpeg, image/webp, image/gif"; dom.fileUploadHint.textContent = TRANSLATIONS[currentLanguage].fileHintImage; } else if (isPdfMode) { dom.fileUpload.accept = "application/pdf"; dom.fileUploadHint.textContent = TRANSLATIONS[currentLanguage].fileHintPDF; } else if (isSubtitleMode) { dom.fileUpload.accept = ".srt,.vtt,.ssa,.ass"; dom.fileUploadHint.textContent = TRANSLATIONS[currentLanguage].fileHintSubtitle; } resetFileInput(); }
+            function resetFileInput() { dom.fileUpload.value = ''; dom.dropzonePrompt.classList.remove('hidden'); dom.filePreviewContainer.classList.add('hidden'); dom.imagePreview.src = ''; dom.subtitlePreview.classList.add('hidden'); dom.subtitleFilename.textContent = ''; dom.youtubeUrlInput.value = ''; currentFile = null; currentFileHash = null; dom.pdfViewerSection.classList.add('hidden'); dom.pdfPageViewer.innerHTML = ''; pdfDoc = null; selectedPages.clear(); dom.subtitleEditorSection.classList.add('hidden'); dom.subtitleTableBody.innerHTML = ''; subtitleData = null; dom.savedProgressNotification.classList.add('hidden'); subtitleTranslationState = { startChunkIndex: 0, allChunks: [] }; dom.translateAllSubsBtn.textContent = 'Translate All'; updatePageSelectionCounter(); validateForm(); clearOutput(); }
             function swapLanguages() { const sourceVal = dom.sourceLangSelect.value; const targetVal = dom.targetLangSelect.value; if (sourceVal === 'auto') return; dom.sourceLangSelect.value = targetVal; dom.targetLangSelect.value = sourceVal; validateForm(); if(dom.output.value) dom.output.dir = RTL_LANGUAGES.has(dom.targetLangSelect.value) ? 'rtl' : 'ltr'; }
             function validateForm() { const selectedType = document.querySelector('input[name="input_type"]:checked').value; let hasInput = false; if (selectedType === 'text') { hasInput = dom.textInput.value.trim().length > 0 && dom.textInput.value.length <= 5000; } else if (selectedType === 'image') { hasInput = currentFile !== null; } else if (selectedType === 'pdf') { hasInput = selectedPages.size > 0; } else if (selectedType === 'subtitle') { const hasSubs = subtitleData !== null && (subtitleData.lines?.length > 0 || subtitleData.events?.lines.length > 0); hasInput = hasSubs; dom.exportBtn.disabled = !hasSubs; dom.findReplaceToggleBtn.disabled = !hasSubs; dom.breakLinesToggleBtn.disabled = !hasSubs || subtitleData.type === 'ass'; } const isApiKeyValid = dom.apiKeyInput.value.trim().length > 0; dom.translateBtn.disabled = !hasInput || !isApiKeyValid || selectedType === 'subtitle'; dom.swapBtn.disabled = dom.sourceLangSelect.value === 'auto' || selectedType !== 'text'; }
             function updateCharCounter() { const isTextMode = document.querySelector('input[name="input_type"]:checked').value === 'text'; if (isTextMode) { const len = dom.textInput.value.length; dom.charCounter.textContent = `${len} / 5000`; dom.charCounter.classList.toggle('text-red-500', len > 5000); dom.charCounter.classList.toggle('dark:text-red-400', len > 5000); } else { dom.charCounter.textContent = ''; } }
             function showError(message) { dom.errorDisplay.textContent = message; }
             function clearOutput() { dom.output.value = ''; dom.copyBtn.disabled = true; dom.exportTextBtn.disabled = true; dom.enhancementsToolbar.classList.add('hidden', 'opacity-0', '-translate-y-2'); showError(''); }
-            async function handleFileChange(event) { const file = event.target.files[0]; if (!file) { resetFileInput(); return; } currentFile = file; log(`File selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`); const selectedType = document.querySelector('input[name="input_type"]:checked').value; if (file.size > 20 * 1024 * 1024) { showError("File size exceeds 20MB limit."); log("File size exceeds 20MB limit.", 'error'); resetFileInput(); return; } if (selectedType === 'image') { dom.dropzonePrompt.classList.add('hidden'); dom.filePreviewContainer.classList.remove('hidden'); dom.subtitlePreview.classList.add('hidden'); dom.imagePreview.classList.remove('hidden'); dom.imagePreview.src = URL.createObjectURL(file); } else if (selectedType === 'pdf') { dom.filePreviewContainer.classList.add('hidden'); dom.pdfViewerSection.classList.remove('hidden'); await renderPdf(file); } else if (selectedType === 'subtitle') { await renderSubtitleEditor(file); } validateForm(); }
+            async function handleFileChange(event) { const file = event.target.files[0]; if (!file) { resetFileInput(); return; } log(`File selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`); const selectedType = document.querySelector('input[name="input_type"]:checked').value; if (file.size > 20 * 1024 * 1024) { showError("File size exceeds 20MB limit."); log("File size exceeds 20MB limit.", 'error'); resetFileInput(); return; } if (selectedType === 'image') { currentFile = file; dom.dropzonePrompt.classList.add('hidden'); dom.filePreviewContainer.classList.remove('hidden'); dom.subtitlePreview.classList.add('hidden'); dom.imagePreview.classList.remove('hidden'); dom.imagePreview.src = URL.createObjectURL(file); } else if (selectedType === 'pdf') { currentFile = file; dom.filePreviewContainer.classList.add('hidden'); dom.pdfViewerSection.classList.remove('hidden'); await renderPdf(file); } else if (selectedType === 'subtitle') { await renderSubtitleEditor(file); } validateForm(); }
             async function renderPdf(file) {
                 try {
                     log('Loading PDF...');
@@ -1153,7 +1427,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 pageContainer.title = `Page ${pageNum}`;
                 if (selectedPages.has(pageNum)) pageContainer.classList.add('selected');
                 const pageNumberLabel = document.createElement('div');
-                pageNumberLabel.className = "absolute bottom-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded";
+                pageNumberLabel.className = "absolute bottom-2 left-2 rtl:left-auto rtl:right-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded";
                 pageNumberLabel.textContent = `Page ${pageNum}`;
                 pageContainer.appendChild(canvas);
                 pageContainer.appendChild(pageNumberLabel);
@@ -1161,7 +1435,15 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 return pageContainer;
             }
             function togglePageSelection(pageNumber) { const thumbElement = dom.pdfPageViewer.querySelector(`.pdf-page-item[data-page-number="${pageNumber}"]`); if (selectedPages.has(pageNumber)) { selectedPages.delete(pageNumber); thumbElement?.classList.remove('selected'); } else { selectedPages.add(pageNumber); thumbElement?.classList.add('selected'); } updatePageSelectionCounter(); validateForm(); }
-            function updatePageSelectionCounter() { const delay = parseFloat(dom.requestDelayInput.value) || 2; const timeEstimate = Math.round(selectedPages.size * delay); dom.pageSelectionCounter.textContent = `${selectedPages.size} pages selected`; dom.batchWarning.textContent = selectedPages.size > 1 && !dom.combinePagesCheckbox.checked ? `Translation may take up to ${timeEstimate} seconds to complete.` : ''; }
+            function updatePageSelectionCounter() { 
+                const translations = TRANSLATIONS[currentLanguage];
+                const count = selectedPages.size;
+                dom.pageSelectionCounter.textContent = translations.pdfPageCounter.replace('{count}', count);
+
+                const delay = parseFloat(dom.requestDelayInput.value) || 2; 
+                const timeEstimate = Math.round(count * delay); 
+                dom.batchWarning.textContent = count > 1 && !dom.combinePagesCheckbox.checked ? translations.pdfBatchWarning.replace('{seconds}', timeEstimate) : ''; 
+            }
             
             async function handleFormSubmit(event) {
                 event.preventDefault();
@@ -1174,7 +1456,14 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 translationAbortController = new AbortController();
                 const { signal } = translationAbortController;
                 const formData = new FormData(dom.form);
-                const apiKey = formData.get('api_key').trim();
+                const apiKey = dom.apiKeyInput.value.split('\n').map(k => k.trim()).filter(Boolean)[0];
+                if (!apiKey) {
+                    showError("An API Key is required.");
+                    dom.translateBtnText.classList.remove('hidden');
+                    dom.translateBtnSpinner.classList.add('hidden');
+                    dom.translateBtn.disabled = false;
+                    return;
+                }
                 const model = formData.get('model');
                 const targetLang = formData.get('target_lang');
                 const sourceLang = formData.get('source_lang');
@@ -1189,7 +1478,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                     if (inputType === 'pdf') {
                         const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
                         log(`Starting translation for ${sortedPages.length} PDF pages.`);
-                        showProgress(`Translating ${sortedPages.length} pages...`);
+                        showProgress(`${TRANSLATIONS[currentLanguage].progressLabelTranslating} ${sortedPages.length} pages...`);
                         dom.output.value = `Extracting text from ${sortedPages.length} pages...`;
                         const pageData = [];
                         const usePdfOcr = dom.pdfOcrCheckbox.checked;
@@ -1232,7 +1521,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                             }
                         }
                         
-                        dom.output.value = 'Translating...';
+                        dom.output.value = TRANSLATIONS[currentLanguage].progressLabelTranslating;
                         const translatedText = await translateText(textToTranslate, sourceLang, targetLang, jobField, apiKey, model, useProxy, customProxyUrl, signal, dom.customPromptInput.value, temperature);
                         dom.output.value = translatedText;
                     }
@@ -1269,7 +1558,8 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                     }
                 });
                 translationAbortController = new AbortController();
-                const apiKey = dom.apiKeyInput.value.trim();
+                const apiKey = dom.apiKeyInput.value.split('\n').map(k => k.trim()).filter(Boolean)[0];
+                 if (!apiKey) { showError("An API Key is required."); return; }
                 const model = dom.modelSelect.value;
                 const useProxy = dom.useProxyCheckbox.checked;
                 const customProxyUrl = dom.customProxyInput.value;
@@ -1293,8 +1583,8 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
             
             // --- START: Local Storage and Settings ---
             const LS_SETTINGS_KEY = 'fluentify_settings_v7';
-            function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value, useCustomPrompt: dom.useCustomPromptCheckbox.checked, customPrompt: dom.customPromptInput.value, temperature: dom.temperatureSlider.value, requestDelay: dom.requestDelayInput.value, translationTone: dom.translationToneSelect.value, customTone: dom.customToneInput.value, pdfOcr: dom.pdfOcrCheckbox.checked }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
-            function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; dom.translationToneSelect.value = settings.translationTone || 'Default'; dom.customToneInput.value = settings.customTone || ''; dom.customToneContainer.classList.toggle('hidden', dom.translationToneSelect.value !== 'Custom'); applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.useCustomPromptCheckbox.checked = settings.useCustomPrompt || false; dom.customPromptInput.value = settings.customPrompt || ''; dom.temperatureSlider.value = settings.temperature || 0.7; dom.temperatureValue.textContent = settings.temperature || 0.7; dom.requestDelayInput.value = settings.requestDelay || 4; dom.pdfOcrCheckbox.checked = settings.pdfOcr || false; dom.saveSettingsCheckbox.checked = true; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
+            function saveSettings() { if (!dom.saveSettingsCheckbox.checked) { localStorage.removeItem(LS_SETTINGS_KEY); return; } const settings = { apiKey: dom.apiKeyInput.value, model: dom.modelSelect.value, targetLang: dom.targetLangSelect.value, jobField: dom.jobFieldSelect.value, theme: dom.html.classList.contains('dark') ? 'dark' : 'light', useProxy: dom.useProxyCheckbox.checked, customProxyUrl: dom.customProxyInput.value, useCustomPrompt: dom.useCustomPromptCheckbox.checked, customPrompt: dom.customPromptInput.value, temperature: dom.temperatureSlider.value, requestDelay: dom.requestDelayInput.value, translationTone: dom.translationToneSelect.value, customTone: dom.customToneInput.value, pdfOcr: dom.pdfOcrCheckbox.checked, language: currentLanguage }; localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(settings)); }
+            function loadSettings() { try { const savedSettings = localStorage.getItem(LS_SETTINGS_KEY); if (savedSettings) { const settings = JSON.parse(savedSettings); dom.apiKeyInput.value = settings.apiKey || ''; dom.modelSelect.value = settings.model || DEFAULT_WEB_MODEL; dom.targetLangSelect.value = settings.targetLang || 'English'; dom.jobFieldSelect.value = settings.jobField || 'None'; dom.translationToneSelect.value = settings.translationTone || 'Default'; dom.customToneInput.value = settings.customTone || ''; dom.customToneContainer.classList.toggle('hidden', dom.translationToneSelect.value !== 'Custom'); applyTheme(settings.theme || 'dark'); dom.useProxyCheckbox.checked = settings.useProxy || false; dom.customProxyInput.value = settings.customProxyUrl || DEFAULT_PROXY_URL; dom.useCustomPromptCheckbox.checked = settings.useCustomPrompt || false; dom.customPromptInput.value = settings.customPrompt || ''; dom.temperatureSlider.value = settings.temperature || 0.7; dom.temperatureValue.textContent = settings.temperature || 0.7; dom.requestDelayInput.value = settings.requestDelay || 4; dom.pdfOcrCheckbox.checked = settings.pdfOcr || false; dom.saveSettingsCheckbox.checked = true; currentLanguage = settings.language || 'en'; } else { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(prefersDark ? 'dark' : 'light'); dom.customProxyInput.value = DEFAULT_PROXY_URL; currentLanguage = navigator.language.startsWith('fa') ? 'fa' : (navigator.language.startsWith('ru') ? 'ru' : 'en'); } } catch (e) { console.error("Failed to load settings", e); localStorage.removeItem(LS_SETTINGS_KEY); } }
             
             // --- START: Theme Management ---
             function applyTheme(theme) { dom.html.classList.toggle('dark', theme === 'dark'); dom.themeIconLight.classList.toggle('hidden', theme === 'dark'); dom.themeIconDark.classList.toggle('hidden', theme !== 'dark'); }
@@ -1303,6 +1593,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
             // --- START: Helper Functions ---
             function fileToString(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsText(file); reader.onload = () => resolve(reader.result); reader.onerror = (error) => reject(error); }); }
             function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = (error) => reject(error); }); }
+            async function calculateFileHash(file) { const buffer = await file.arrayBuffer(); const hashBuffer = await crypto.subtle.digest('SHA-256', buffer); const hashArray = Array.from(new Uint8Array(hashBuffer)); return hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); }
             function copyToClipboard() { if (!dom.output.value) return; navigator.clipboard.writeText(dom.output.value).then(() => { dom.copyIconDefault.classList.add('hidden'); dom.copyIconSuccess.classList.remove('hidden'); setTimeout(() => { dom.copyIconDefault.classList.remove('hidden'); dom.copyIconSuccess.classList.add('hidden'); }, 2000); }).catch(err => { console.error('Failed to copy text:', err); showError('Could not copy text.'); }); }
             function exportOutput() {
                 const inputType = document.querySelector('input[name="input_type"]:checked').value;
@@ -1377,10 +1668,9 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                     const srtContent = generateSrtFromYT(details.subtitles);
                     const fileName = `${details.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.srt`;
                     
-                    // Create a mock file object for the exporter
-                    currentFile = { name: fileName };
-
-                    processAndDisplaySubtitles(srtContent, fileName);
+                    // Create a mock file object and render the editor
+                    const mockFile = new File([srtContent], fileName, { type: 'text/plain' });
+                    await renderSubtitleEditor(mockFile);
 
                 } catch (error) {
                     let errorMessage = error.message;
@@ -1433,6 +1723,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 log(`Replaced ${replacements} instance(s).`, 'success');
                 dom.findInput.value = ''; // Clear find input to remove highlights
                 highlightMatchesInSubtitles();
+                saveCurrentSubtitleProgress();
             }
 
             function timeToMs(time) { const parts = time.split(/[:,.]/); return parseInt(parts[0], 10) * 3600000 + parseInt(parts[1], 10) * 60000 + parseInt(parts[2], 10) * 1000 + parseInt(parts[3], 10); }
@@ -1517,8 +1808,19 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
 
                 log(`Split complete. Total lines are now ${newLines.length}. Re-rendering table.`);
                 processAndDisplaySubtitles(null, null, newTranslations);
+                saveCurrentSubtitleProgress();
             }
 
+            function saveCurrentSubtitleProgress() {
+                if (!currentFileHash || !subtitleData) return;
+                const translatedLines = Array.from(dom.subtitleTableBody.querySelectorAll('tr')).map(row => row.cells[3].textContent);
+                const progress = {
+                    originalFileName: currentFile.name,
+                    translations: translatedLines,
+                };
+                localStorage.setItem(`fluentify_progress_${currentFileHash}`, JSON.stringify(progress));
+                log('Translation progress saved.', 'info');
+            }
             
             // --- START: Initialization ---
             function initialize() {
@@ -1530,12 +1832,11 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                     });
                 }
                 
-                populateSelect(dom.sourceLangSelect, LANGUAGES, 'auto');
-                populateSelect(dom.targetLangSelect, LANGUAGES, 'English', opt => opt.value !== 'auto');
-                populateSelect(dom.modelSelect, MODELS.map(m => ({ value: m, text: m })), DEFAULT_WEB_MODEL);
-                populateSelect(dom.jobFieldSelect, JOB_FIELDS, 'None');
-                populateSelect(dom.translationToneSelect, TONES, 'Default');
                 loadSettings();
+                dom.languageSwitcher.value = currentLanguage;
+                setLanguage(currentLanguage);
+
+                populateSelect(dom.modelSelect, MODELS.map(m => ({ value: m, text: m, i18nKey: null })), DEFAULT_WEB_MODEL);
                 handleInputTypeChange();
                 dom.customProxyContainer.classList.toggle('hidden', !dom.useProxyCheckbox.checked);
                 dom.customPromptContainer.classList.toggle('hidden', !dom.useCustomPromptCheckbox.checked);
@@ -1563,7 +1864,6 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 [dom.textInput, dom.apiKeyInput, dom.sourceLangSelect, dom.targetLangSelect, dom.customProxyInput].forEach(el => el.addEventListener('input', validateForm));
                 dom.textInput.addEventListener('input', updateCharCounter);
                 dom.settingsToggleBtn.addEventListener('click', () => dom.settingsPanel.classList.toggle('hidden'));
-                dom.toggleApiKeyBtn.addEventListener('click', () => { const isPassword = dom.apiKeyInput.type === 'password'; dom.apiKeyInput.type = isPassword ? 'text' : 'password'; dom.eyeOpenIcon.classList.toggle('hidden', isPassword); dom.eyeClosedIcon.classList.toggle('hidden', !isPassword); });
                 dom.useProxyCheckbox.addEventListener('change', (e) => dom.customProxyContainer.classList.toggle('hidden', !e.target.checked));
                 dom.useCustomPromptCheckbox.addEventListener('change', (e) => dom.customPromptContainer.classList.toggle('hidden', !e.target.checked));
                 dom.translationToneSelect.addEventListener('change', (e) => dom.customToneContainer.classList.toggle('hidden', e.target.value !== 'Custom'));
@@ -1571,6 +1871,16 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 dom.cancelTranslationBtn.addEventListener('click', cancelTranslation);
                 dom.temperatureSlider.addEventListener('input', (e) => { dom.temperatureValue.textContent = e.target.value; });
                 dom.requestDelayInput.addEventListener('input', updatePageSelectionCounter);
+
+                // I18N and How-to-use Listeners
+                dom.languageSwitcher.addEventListener('change', (e) => setLanguage(e.target.value));
+                dom.howToUseBtn.addEventListener('click', () => dom.howToUseModal.classList.remove('hidden'));
+                dom.howToUseCloseBtn.addEventListener('click', () => dom.howToUseModal.classList.add('hidden'));
+                dom.howToUseModal.addEventListener('click', (e) => {
+                    if (e.target === dom.howToUseModal) { // Close on overlay click
+                        dom.howToUseModal.classList.add('hidden');
+                    }
+                });
         
                 // Subtitle editor event delegation
                 dom.subtitleTableBody.addEventListener('click', async (e) => {
@@ -1583,89 +1893,115 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                         btn.disabled = true;
                         btn.innerHTML = `<svg class="spinner w-3 h-3 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 R>0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
                         try {
-                            const apiKey = dom.apiKeyInput.value.trim();
+                             const apiKey = dom.apiKeyInput.value.split('\n').map(k => k.trim()).filter(Boolean)[0];
                             if (!apiKey) throw new Error("API Key is required.");
                             const translated = await translateText(originalText, 'auto', dom.targetLangSelect.value, dom.jobFieldSelect.value, apiKey, dom.modelSelect.value, dom.useProxyCheckbox.checked, dom.customProxyInput.value, null, dom.customPromptInput.value, dom.temperatureSlider.value);
                             targetCell.textContent = translated;
+                            saveCurrentSubtitleProgress();
                         } catch(err) {
                             showError(err.message);
                             targetCell.textContent = 'Error!';
                         } finally {
                             btn.disabled = false;
-                            btn.textContent = 'Translate';
+                            btn.textContent = TRANSLATIONS[currentLanguage].subtitleTranslateRowBtn;
                         }
                     }
                 });
+                dom.subtitleTableBody.addEventListener('blur', (e) => {
+                    if (currentFileHash && e.target.isContentEditable) {
+                        saveCurrentSubtitleProgress();
+                    }
+                }, true); // Use capture to ensure it fires
                 
                 dom.translateAllSubsBtn.addEventListener('click', async () => {
-                    const apiKey = dom.apiKeyInput.value.trim();
-                    if (!apiKey) { showError("API Key is required."); return; }
+                    const allKeys = dom.apiKeyInput.value.split('\n').map(k => k.trim()).filter(Boolean);
+                    if (allKeys.length === 0) { showError("At least one API Key is required."); return; }
+                    
+                    const isResuming = subtitleTranslationState.startChunkIndex > 0;
+                    if (!isResuming) {
+                        activeApiKeys = [...allKeys];
+                        const allRows = Array.from(dom.subtitleTableBody.querySelectorAll('tr'))
+                            .map((row, index) => ({
+                                row: row,
+                                targetCell: row.cells[3],
+                                originalText: (subtitleData.lines || subtitleData.events.lines)[index].text,
+                                originalIndex: index
+                            }));
 
-                    const allRows = Array.from(dom.subtitleTableBody.querySelectorAll('tr'))
-                        .map((row, index) => ({
-                            row: row,
-                            btn: row.querySelector('.translate-sub-row-btn'),
-                            targetCell: row.cells[3],
-                            originalText: (subtitleData.lines || subtitleData.events.lines)[index].text,
-                            originalIndex: index
-                        }));
+                        const rowsToTranslate = allRows.filter(item => !item.targetCell.textContent.trim());
+                        const totalToTranslate = rowsToTranslate.length;
+                        if (totalToTranslate === 0) { log('All subtitles are already translated.', 'info'); return; }
 
-                    const rowsToTranslate = allRows.filter(item => !item.targetCell.textContent.trim());
-                    const totalToTranslate = rowsToTranslate.length;
+                        const batchSize = parseInt(dom.subtitleBatchSizeInput.value, 10) || 250;
+                        subtitleTranslationState.allChunks = [];
+                        for (let i = 0; i < totalToTranslate; i += batchSize) {
+                            subtitleTranslationState.allChunks.push(rowsToTranslate.slice(i, i + batchSize));
+                        }
+                    }
 
-                    if (totalToTranslate === 0) {
-                        log('All subtitles are already translated.', 'info');
+                    if (activeApiKeys.length === 0) {
+                        showError("All API keys failed. Please add a valid key.");
                         return;
                     }
-                    
+
                     translationAbortController = new AbortController();
                     const { signal } = translationAbortController;
-                    showProgress(`Translating ${totalToTranslate} subtitle lines...`);
+                    const totalChunks = subtitleTranslationState.allChunks.length;
+                    const totalLines = subtitleTranslationState.allChunks.flat().length;
+                    showProgress(`${TRANSLATIONS[currentLanguage].progressLabelTranslating} ${totalLines} subtitle lines...`);
                     dom.translateAllSubsBtn.disabled = true;
-                    rowsToTranslate.forEach(item => item.btn.disabled = true);
+                    dom.translateAllSubsBtn.textContent = isResuming ? 'Resuming...' : TRANSLATIONS[currentLanguage].progressLabelTranslating;
+
+                    let translatedInSession = 0;
 
                     try {
-                        const batchSize = parseInt(dom.subtitleBatchSizeInput.value, 10) || 250;
-                        const chunks = [];
-                        for (let i = 0; i < totalToTranslate; i += batchSize) {
-                            chunks.push(rowsToTranslate.slice(i, i + batchSize));
-                        }
-                        
-                        let translatedCount = 0;
-                        updateProgress(translatedCount, totalToTranslate);
-
-                        for (let i = 0; i < chunks.length; i++) {
-                            const chunk = chunks[i];
+                        for (let i = subtitleTranslationState.startChunkIndex; i < totalChunks; i++) {
+                            const chunk = subtitleTranslationState.allChunks[i];
                             if (signal.aborted) throw new Error("Translation was cancelled.");
                             
-                            log(`Translating batch ${i + 1} of ${chunks.length} (${chunk.length} lines)...`);
-                            const itemsToTranslate = chunk.map(item => ({
-                                id: item.originalIndex,
-                                original: item.originalText
-                            }));
+                            log(`Translating batch ${i + 1} of ${totalChunks} (${chunk.length} lines)...`);
+                            const itemsToTranslate = chunk.map(item => ({ id: item.originalIndex, original: item.originalText }));
                             
-                            const translatedObjects = await callGoogleAIBatch(
-                                itemsToTranslate, 'auto', dom.targetLangSelect.value, dom.jobFieldSelect.value, apiKey, dom.modelSelect.value,
-                                dom.useProxyCheckbox.checked, dom.customProxyInput.value, signal, dom.temperatureSlider.value
-                            );
+                            let translatedObjects = null;
+                            let success = false;
+                            while(!success && activeApiKeys.length > 0) {
+                                const currentApiKey = activeApiKeys[0];
+                                try {
+                                    translatedObjects = await callGoogleAIBatch(
+                                        itemsToTranslate, 'auto', dom.targetLangSelect.value, dom.jobFieldSelect.value, currentApiKey, dom.modelSelect.value,
+                                        dom.useProxyCheckbox.checked, dom.customProxyInput.value, signal, dom.temperatureSlider.value
+                                    );
+                                    success = true;
+                                } catch (err) {
+                                    if (err.message.includes("API key not valid")) {
+                                        log(`API Key starting with "${currentApiKey.substring(0, 4)}..." failed. Removing from pool.`, 'warn');
+                                        activeApiKeys.shift();
+                                        if(activeApiKeys.length === 0) {
+                                            throw new Error("All available API keys are invalid.");
+                                        }
+                                    } else {
+                                        throw err; // Re-throw other errors
+                                    }
+                                }
+                            }
                             
                             if (signal.aborted) throw new Error("Translation was cancelled.");
+                            if (!translatedObjects) throw new Error("Translation failed for a batch.");
 
                             const translationMap = new Map(translatedObjects.map(item => [item.id, item.translation]));
-
                             chunk.forEach(item => {
                                 const translatedText = translationMap.get(item.originalIndex);
                                 if (translatedText !== null && translatedText !== undefined) {
                                     item.targetCell.textContent = translatedText;
-                                } else {
-                                    item.targetCell.textContent = '(Translation failed)';
-                                }
+                                } else { item.targetCell.textContent = '(Translation failed)'; }
                             });
                             
-                            translatedCount += chunk.length;
-                            updateProgress(translatedCount, totalToTranslate);
+                            translatedInSession += chunk.length;
+                            const totalTranslated = (subtitleTranslationState.allChunks.slice(0, i).flat().length) + translatedInSession;
+                            updateProgress(totalTranslated, totalLines);
+                            saveCurrentSubtitleProgress();
 
-                            if (i < chunks.length - 1) {
+                            if (i < totalChunks - 1) {
                                 const delay = parseFloat(dom.requestDelayInput.value) * 1000 || 2000;
                                 log(`Waiting for ${delay}ms before next batch...`);
                                 await new Promise(resolve => setTimeout(resolve, delay));
@@ -1673,13 +2009,18 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                             }
                         }
                         log('Batch translation complete.', 'success');
+                        subtitleTranslationState = { startChunkIndex: 0, allChunks: [] }; // Reset on success
                     } catch (err) {
-                        showError(err.message + " You can adjust settings and click 'Translate All' again to resume.");
+                        subtitleTranslationState.startChunkIndex = Array.from(dom.subtitleTableBody.querySelectorAll('tr')).filter(r => r.cells[3].textContent.trim() === '').length > 0 ? subtitleTranslationState.startChunkIndex : 0;
+                        showError(err.message);
+                        dom.translateAllSubsBtn.textContent = 'Resume Translation';
                     } finally {
                         hideProgress();
                         translationAbortController = null;
                         dom.translateAllSubsBtn.disabled = false;
-                        dom.subtitleTableBody.querySelectorAll('.translate-sub-row-btn').forEach(btn => btn.disabled = false);
+                        if (subtitleTranslationState.startChunkIndex === 0) {
+                             dom.translateAllSubsBtn.textContent = TRANSLATIONS[currentLanguage].subtitleTranslateAll;
+                        }
                     }
                 });
         
@@ -1694,7 +2035,7 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
         ---
         ${currentPrompt}
         ---`;
-                        const apiKey = dom.apiKeyInput.value.trim();
+                        const apiKey = dom.apiKeyInput.value.split('\n').map(k => k.trim()).filter(Boolean)[0];
                         if (!apiKey) throw new Error("API Key is required to optimize prompt.");
                         const optimizedPrompt = await callGoogleAI(metaPrompt, apiKey, dom.modelSelect.value, dom.useProxyCheckbox.checked, dom.customProxyInput.value, null, 0.5); // Use lower temp for optimization
                         dom.customPromptInput.value = optimizedPrompt;
@@ -1715,10 +2056,27 @@ ${JSON.stringify(itemsToTranslate)}`.trim();
                 dom.findCaseSensitive.addEventListener('change', highlightMatchesInSubtitles);
                 dom.replaceAllBtn.addEventListener('click', handleReplaceAllInSubtitles);
                 dom.breakLinesApplyBtn.addEventListener('click', handleBreakLongLines);
+                
+                dom.loadProgressBtn.addEventListener('click', () => {
+                     const savedProgressRaw = localStorage.getItem(`fluentify_progress_${currentFileHash}`);
+                     if(savedProgressRaw) {
+                         const savedProgress = JSON.parse(savedProgressRaw);
+                         processAndDisplaySubtitles(null, null, savedProgress.translations);
+                         dom.savedProgressNotification.classList.add('hidden');
+                         log('Loaded saved progress.', 'success');
+                     }
+                });
+                dom.clearProgressBtn.addEventListener('click', () => {
+                     if (confirm('Are you sure you want to delete the saved progress for this file?')) {
+                         localStorage.removeItem(`fluentify_progress_${currentFileHash}`);
+                         dom.savedProgressNotification.classList.add('hidden');
+                         log('Cleared saved progress.', 'info');
+                     }
+                });
 
                 // Settings persistence
-                [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput, dom.useCustomPromptCheckbox, dom.customPromptInput, dom.temperatureSlider, dom.requestDelayInput, dom.translationToneSelect, dom.customToneInput, dom.pdfOcrCheckbox].forEach(el => {
-                    const event = el.type === 'checkbox' || el.type === 'range' ? 'change' : 'input';
+                [dom.apiKeyInput, dom.modelSelect, dom.targetLangSelect, dom.jobFieldSelect, dom.saveSettingsCheckbox, dom.useProxyCheckbox, dom.customProxyInput, dom.useCustomPromptCheckbox, dom.customPromptInput, dom.temperatureSlider, dom.requestDelayInput, dom.translationToneSelect, dom.customToneInput, dom.pdfOcrCheckbox, dom.languageSwitcher].forEach(el => {
+                    const event = el.type === 'checkbox' || el.tagName === 'SELECT' || el.type === 'range' ? 'change' : 'input';
                     el.addEventListener(event, saveSettings);
                 });
         
