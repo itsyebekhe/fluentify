@@ -1,10 +1,9 @@
 // --- START: CONFIGURATION & I1N ---
-// FIX: Update default model and model list to be compliant with guidelines.
 const DEFAULT_WEB_MODEL = "gemini-2.5-flash";
 const DEFAULT_PROXY_URL = "https://middleman.yebekhe.workers.dev";
 const MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
 const LANGUAGES = [{ value: "auto", text: "Auto-detect Language", i18nKey: "lang_auto" }, { value: "Afrikaans", text: "Afrikaans", i18nKey: "lang_af" }, { value: "Albanian", text: "Albanian", i18nKey: "lang_sq" }, { value: "Amharic", text: "Amharic", i18nKey: "lang_am" }, { value: "Arabic", text: "Arabic", i18nKey: "lang_ar" }, { value: "Armenian", text: "Armenian", i18nKey: "lang_hy" }, { value: "Assamese", text: "Assamese", i18nKey: "lang_as" }, { value: "Aymara", text: "Aymara", i18nKey: "lang_ay" }, { value: "Azerbaijani", text: "Azerbaijani", i18nKey: "lang_az" }, { value: "Bambara", text: "Bambara", i18nKey: "lang_bm" }, { value: "Basque", text: "Basque", i18nKey: "lang_eu" }, { value: "Belarusian", text: "Belarusian", i18nKey: "lang_be" }, { value: "Bengali", text: "Bengali", i18nKey: "lang_bn" }, { value: "Bhojpuri", text: "Bhojpuri", i18nKey: "lang_bho" }, { value: "Bosnian", text: "Bosnian", i18nKey: "lang_bs" }, { value: "Bulgarian", text: "Bulgarian", i18nKey: "lang_bg" }, { value: "Catalan", text: "Catalan", i18nKey: "lang_ca" }, { value: "Cebuano", text: "Cebuano", i18nKey: "lang_ceb" }, { value: "Chichewa", text: "Chichewa (Nyanja)", i18nKey: "lang_ny" }, { value: "Chinese (Simplified)", text: "Chinese (Simplified)", i18nKey: "lang_zh-CN" }, { value: "Chinese (Traditional)", text: "Chinese (Traditional)", i18nKey: "lang_zh-TW" }, { value: "Corsican", text: "Corsican", i18nKey: "lang_co" }, { value: "Croatian", text: "Croatian", i18nKey: "lang_hr" }, { value: "Czech", text: "Czech", i18nKey: "lang_cs" }, { value: "Danish", text: "Danish", i18nKey: "lang_da" }, { value: "Dhivehi", text: "Dhivehi", i18nKey: "lang_dv" }, { value: "Dogri", text: "Dogri", i18nKey: "lang_doi" }, { value: "Dutch", text: "Dutch", i18nKey: "lang_nl" }, { value: "English", text: "English", i18nKey: "lang_en" }, { value: "Esperanto", text: "Esperanto", i18nKey: "lang_eo" }, { value: "Estonian", text: "Estonian", i18nKey: "lang_et" }, { value: "Ewe", text: "Ewe", i18nKey: "lang_ee" }, { value: "Filipino", text: "Filipino (Tagalog)", i18nKey: "lang_tl" }, { value: "Finnish", text: "Finnish", i18nKey: "lang_fi" }, { value: "French", text: "French", i18nKey: "lang_fr" }, { value: "Frisian", text: "Frisian", i18nKey: "lang_fy" }, { value: "Galician", text: "Galician", i18nKey: "lang_gl" }, { value: "Georgian", text: "Georgian", i18nKey: "lang_ka" }, { value: "German", text: "German", i18nKey: "lang_de" }, { value: "Greek", text: "Greek", i18nKey: "lang_el" }, { value: "Guarani", text: "Guarani", i18nKey: "lang_gn" }, { value: "Gujarati", text: "Gujarati", i18nKey: "lang_gu" }, { value: "Haitian Creole", text: "Haitian Creole", i18nKey: "lang_ht" }, { value: "Hausa", text: "Hausa", i18nKey: "lang_ha" }, { value: "Hawaiian", text: "Hawaiian", i18nKey: "lang_haw" }, { value: "Hebrew", text: "Hebrew", i18nKey: "lang_iw" }, { value: "Hindi", text: "Hindi", i18nKey: "lang_hi" }, { value: "Hmong", text: "Hmong", i18nKey: "lang_hmn" }, { value: "Hungarian", text: "Hungarian", i18nKey: "lang_hu" }, { value: "Icelandic", text: "Icelandic", i18nKey: "lang_is" }, { value: "Igbo", text: "Igbo", i18nKey: "lang_ig" }, { value: "Ilocano", text: "Ilocano", i18nKey: "lang_ilo" }, { value: "Indonesian", text: "Indonesian", i18nKey: "lang_id" }, { value: "Irish", text: "Irish", i18nKey: "lang_ga" }, { value: "Italian", text: "Italian", i18nKey: "lang_it" }, { value: "Japanese", text: "Japanese", i18nKey: "lang_ja" }, { value: "Javanese", text: "Javanese", i18nKey: "lang_jw" }, { value: "Kannada", text: "Kannada", i18nKey: "lang_kn" }, { value: "Kazakh", text: "Kazakh", i18nKey: "lang_kk" }, { value: "Khmer", text: "Khmer", i18nKey: "lang_km" }, { value: "Kinyarwanda", text: "Kinyarwanda", i18nKey: "lang_rw" }, { value: "Konkani", text: "Konkani", i18nKey: "lang_gom" }, { value: "Korean", text: "Korean", i18nKey: "lang_ko" }, { value: "Krio", text: "Krio", i18nKey: "lang_kri" }, { value: "Kurdish (Kurmanji)", text: "Kurdish (Kurmanji)", i18nKey: "lang_ku" }, { value: "Kurdish (Sorani)", text: "Kurdish (Sorani)", i18nKey: "lang_ckb" }, { value: "Kyrgyz", text: "Kyrgyz", i18nKey: "lang_ky" }, { value: "Lao", text: "Lao", i18nKey: "lang_lo" }, { value: "Latin", text: "Latin", i18nKey: "lang_la" }, { value: "Latvian", text: "Latvian", i18nKey: "lang_lv" }, { value: "Lingala", text: "Lingala", i18nKey: "lang_ln" }, { value: "Lithuanian", text: "Lithuanian", i18nKey: "lang_lt" }, { value: "Luganda", text: "Luganda", i18nKey: "lang_lg" }, { value: "Luxembourgish", text: "Luxembourgish", i18nKey: "lang_lb" }, { value: "Macedonian", text: "Macedonian", i18nKey: "lang_mk" }, { value: "Maithili", text: "Maithili", i18nKey: "lang_mai" }, { value: "Malagasy", text: "Malagasy", i18nKey: "lang_mg" }, { value: "Malay", text: "Malay", i18nKey: "lang_ms" }, { value: "Malayalam", text: "Malayalam", i18nKey: "lang_ml" }, { value: "Maltese", text: "Maltese", i18nKey: "lang_mt" }, { value: "Maori", text: "Maori", i18nKey: "lang_mi" }, { value: "Marathi", text: "Marathi", i18nKey: "lang_mr" }, { value: "Meiteilon (Manipuri)", text: "Meiteilon (Manipuri)", i18nKey: "lang_mni-Mtei" }, { value: "Mizo", text: "Mizo", i18nKey: "lang_lus" }, { value: "Mongolian", text: "Mongolian", i18nKey: "lang_mn" }, { value: "Myanmar (Burmese)", text: "Myanmar (Burmese)", i18nKey: "lang_my" }, { value: "Nepali", text: "Nepali", i18nKey: "lang_ne" }, { value: "Norwegian", text: "Norwegian", i18nKey: "lang_no" }, { value: "Odia (Oriya)", text: "Odia (Oriya)", i18nKey: "lang_or" }, { value: "Oromo", text: "Oromo", i18nKey: "lang_om" }, { value: "Pashto", text: "Pashto", i18nKey: "lang_ps" }, { value: "Persian", text: "Persian (Farsi)", i18nKey: "lang_fa" }, { value: "Polish", text: "Polish", i18nKey: "lang_pl" }, { value: "Portuguese", text: "Portuguese", i18nKey: "lang_pt" }, { value: "Punjabi", text: "Punjabi", i18nKey: "lang_pa" }, { value: "Quechua", text: "Quechua", i18nKey: "lang_qu" }, { value: "Romanian", text: "Romanian", i18nKey: "lang_ro" }, { value: "Russian", text: "Russian", i18nKey: "lang_ru" }, { value: "Samoan", text: "Samoan", i18nKey: "lang_sm" }, { value: "Sanskrit", text: "Sanskrit", i18nKey: "lang_sa" }, { value: "Scots Gaelic", text: "Scots Gaelic", i18nKey: "lang_gd" }, { value: "Sepedi", text: "Sepedi", i18nKey: "lang_nso" }, { value: "Serbian", text: "Serbian", i18nKey: "lang_sr" }, { value: "Sesotho", text: "Sesotho", i18nKey: "lang_st" }, { value: "Shona", text: "Shona", i18nKey: "lang_sn" }, { value: "Sindhi", text: "Sindhi", i18nKey: "lang_sd" }, { value: "Sinhala", text: "Sinhala", i18nKey: "lang_si" }, { value: "Slovak", text: "Slovak", i18nKey: "lang_sk" }, { value: "Slovenian", text: "Slovenian", i18nKey: "lang_sl" }, { value: "Somali", text: "Somali", i18nKey: "lang_so" }, { value: "Spanish", text: "Spanish", i18nKey: "lang_es" }, { value: "Sundanese", text: "Sundanese", i18nKey: "lang_su" }, { value: "Swahili", text: "Swahili", i18nKey: "lang_sw" }, { value: "Swedish", text: "Swedish", i18nKey: "lang_sv" }, { value: "Tajik", text: "Tajik", i18nKey: "lang_tg" }, { value: "Tamil", text: "Tamil", i18nKey: "lang_ta" }, { value: "Tatar", text: "Tatar", i18nKey: "lang_tt" }, { value: "Telugu", text: "Telugu", i18nKey: "lang_te" }, { value: "Thai", text: "Thai", i18nKey: "lang_th" }, { value: "Tigrinya", text: "Tigrinya", i18nKey: "lang_ti" }, { value: "Tsonga", text: "Tsonga", i18nKey: "lang_ts" }, { value: "Turkish", text: "Turkish", i18nKey: "lang_tr" }, { value: "Turkmen", text: "Turkmen", i18nKey: "lang_tk" }, { value: "Twi", text: "Twi (Akan)", i18nKey: "lang_ak" }, { value: "Ukrainian", text: "Ukrainian", i18nKey: "lang_uk" }, { value: "Urdu", text: "Urdu", i18nKey: "lang_ur" }, { value: "Uyghur", text: "Uyghur", i18nKey: "lang_ug" }, { value: "Uzbek", text: "Uzbek", i18nKey: "lang_uz" }, { value: "Vietnamese", text: "Vietnamese", i18nKey: "lang_vi" }, { value: "Welsh", text: "Welsh", i18nKey: "lang_cy" }, { value: "Xhosa", text: "Xhosa", i18nKey: "lang_xh" }, { value: "Yiddish", text: "Yiddish", i18nKey: "lang_yi" }, { value: "Yoruba", text: "Yoruba", i18nKey: "lang_yo" }, { value: "Zulu", text: "Zulu", i18nKey: "lang_zu" }];
-const JOB_FIELDS = [{ value: "None", text: "None (General)", i18nKey: "job_None" }, { value: "Medical", text: "Medical / Healthcare", i18nKey: "job_Medical" }, { value: "Legal", text: "Legal / Law", i18nKey: "job_Legal" }, { value: "Engineering", text: "Engineering (General)", i18nKey: "job_Engineering" }, { value: "IT", text: "Information Technology / Software", i18nKey: "job_IT" }, { value: "Finance", text: "Finance / Banking", i18nKey: "job_Finance" }, { value: "Academic", text: "Academic / Research", i18nKey: "job_Academic" }, { value: "Marketing", text: "Marketing / Business", i18nKey: "job_Marketing" }, { value: "Cinema", text: "Cinema / TV Series", i18nKey: "job_Cinema" }];
+const JOB_FIELDS = [{ value: "None", text: "None (General)", i18nKey: "job_None" }, { value: "Medical", text: "Medical / Healthcare", i18nKey: "job_Medical" }, { value: "Legal", text: "Legal / Law", i18nKey: "job_Legal" }, { value: "Engineering", text: "Engineering (General)", i18nKey: "job_Engineering" }, { value: "IT", text: "Information Technology / Software", i18nKey: "job_IT" }, { value: "Finance", text: "Finance / Banking", i18nKey: "job_Finance" }, { value: "Academic", text: "Academic / Research", i18nKey: "job_Academic" }, { value: "Marketing", text: "Marketing / Business", i18nKey: "job_Cinema" }, { value: "Cinema", text: "Cinema / TV Series", i18nKey: "job_Cinema" }];
 const TONES = [{ value: "Default", text: "Default", i18nKey: "tone_Default" }, { value: "Formal", text: "Formal", i18nKey: "tone_Formal" }, { value: "Informal", text: "Informal", i18nKey: "tone_Informal" }, { value: "Poetic", text: "Poetic", i18nKey: "tone_Poetic" }, { value: "Technical", text: "Technical", i18nKey: "tone_Technical" }, { value: "Simplify", text: "Simple / Easy to read", i18nKey: "tone_Simplify" }, { value: "Custom", text: "Custom...", i18nKey: "tone_Custom" }];
 const RTL_LANGUAGES = new Set(['Arabic', 'Hebrew', 'Persian', 'Urdu', 'Yiddish', 'Dhivehi', 'Sindhi', 'Pashto', 'Uyghur', 'Kurdish (Sorani)']);
 const TRANSLATIONS = {
@@ -27,7 +26,6 @@ const HOW_TO_USE_CONTENT = {
     ru: `<div class="space-y-6 text-slate-700 dark:text-slate-300"><div><h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">1. Начальная настройка (API-ключ)</h3><p class="mb-2">Перед началом работы вам понадобится API-ключ от Google AI.</p><ol class="list-decimal list-inside space-y-2 pl-4"><li>Перейдите в <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" class="text-sky-500 underline">Google AI Studio</a> и войдите в систему.</li><li>Нажмите <strong>"Get API key"</strong>, затем <strong>"Create API key in new project"</strong>.</li><li>Скопируйте сгенерированный ключ.</li><li>В Fluentify перейдите на страницу <strong>Настройки</strong>, используя иконку шестеренки (<i class="fas fa-cog inline-block"></i>) в правом верхнем углу (настольная версия) или на нижней панели (мобильная версия).</li><li>Вставьте ваш ключ в поле <strong>"Ключ(и) API Google AI"</strong>.</li><li>(Рекомендуется) Установите флажок <strong>"Сохранить все настройки в этом браузере"</strong>, чтобы безопасно сохранить ваш ключ для будущего использования.</li></ol></div><div><h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">2. Перевод контента</h3><p class="mb-3">Выберите желаемый тип ввода на вкладках навигации.</p><div class="space-y-4 pl-4 border-l-2 dark:border-slate-600"><div><h4 class="font-semibold">📝 Перевод текста</h4><p>Выберите вкладку <strong>Текст</strong>, выберите языки, введите текст и нажмите <strong>Перевести</strong>. Используйте кнопки <strong>Улучшить</strong> и <strong>Изменить стиль</strong> для доработки результата.</p></div><div><h4 class="font-semibold">🖼️ Перевод изображений</h4><p>Выберите вкладку <strong>Изображение</strong>, укажите целевой язык и перетащите файл изображения. Приложение выполнит OCR для извлечения текста, а затем переведет его.</p></div><div><h4 class="font-semibold">📄 Перевод PDF</h4><p>Загрузите PDF. Нажмите на страницы, которые вы хотите перевести. Для сканированных PDF включите опцию <strong>"Использовать OCR"</strong> в Настройках. Нажмите <strong>Перевести</strong>.</p></div><div><h4 class="font-semibold">🎬 Перевод субтитров</h4><p class="mb-2">Вы можете загрузить файл субтитров (SRT, VTT и т.д.) или вставить URL-адрес YouTube и нажать <strong>Получить</strong>, чтобы загрузить субтитры в редактор.</p><ul class="list-disc list-inside space-y-1"><li><strong>Перевести:</strong> Нажмите главную кнопку «Перевести», чтобы перевести все непереведенные строки пакетами.</li><li><strong>Редактировать:</strong> Нажмите прямо на переведенный текст, чтобы отредактировать его вручную.</li><li><strong>Инструменты:</strong> Используйте инструменты "Найти и заменить" и "Разбить длинные строки" для расширенного редактирования.</li><li><strong>Экспорт:</strong> Нажмите кнопку экспорта в заголовке редактора, чтобы скачать переведенный файл.</li></ul></div></div></div></div>`
 };
 // --- START: DOM Element Selection ---
-// FIX: Add specific types to DOM elements to enable type-safe property access.
 const dom = {
     html: document.documentElement,
     form: document.getElementById('translate-form'),
@@ -138,7 +136,6 @@ const dom = {
 };
 // --- START: State Management ---
 let pdfDoc = null;
-// FIX: Explicitly type `selectedPages` as a Set of numbers.
 let selectedPages = new Set();
 let currentFile = null;
 let currentFileHash = null;
@@ -275,7 +272,6 @@ function setLanguage(lang) {
     dom.html.dir = lang === 'fa' || lang === 'ar' ? 'rtl' : 'ltr'; // Basic RTL for Persian/Arabic
     document.title = translations.pageTitle;
     document.querySelectorAll('[data-i18n-key]').forEach(el => {
-        // FIX: Cast el to HTMLElement to access dataset property.
         const htmlEl = el;
         const key = htmlEl.dataset.i18nKey;
         const translation = translations[key];
@@ -289,14 +285,12 @@ function setLanguage(lang) {
         }
     });
     document.querySelectorAll('[data-i18n-placeholder-key]').forEach(el => {
-        // FIX: Cast el to HTMLElement and HTMLInputElement to access dataset and placeholder properties.
         const htmlEl = el;
         const key = htmlEl.dataset.i18nPlaceholderKey;
         if (translations[key])
             el.placeholder = translations[key];
     });
     document.querySelectorAll('[data-i18n-title-key]').forEach(el => {
-        // FIX: Cast el to HTMLElement to access dataset and title properties.
         const htmlEl = el;
         const key = htmlEl.dataset.i18nTitleKey;
         if (translations[key]) {
@@ -868,7 +862,6 @@ async function renderPdf(file) {
     catch (error) {
         console.error("Error rendering PDF:", error);
         showError("Could not load or render the PDF file.");
-        // FIX: Safely access error message from unknown type, addressing error on line 631.
         log(`Failed to render PDF: ${error instanceof Error ? error.message : String(error)}`, 'error');
         dom.pdfPageViewer.innerHTML = '<p class="text-center text-red-500 col-span-full">Failed to load PDF</p>';
     }
@@ -883,7 +876,6 @@ async function createPdfPageView(pageNum) {
     await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
     const pageContainer = document.createElement('div');
     pageContainer.className = "pdf-page-item relative cursor-pointer border-2 border-slate-400 dark:border-slate-600 rounded-lg overflow-hidden bg-white";
-    // FIX: Convert pageNum to string for dataset property.
     pageContainer.dataset.pageNumber = String(pageNum);
     pageContainer.title = `Page ${pageNum}`;
     if (selectedPages.has(pageNum))
@@ -896,7 +888,6 @@ async function createPdfPageView(pageNum) {
     pageContainer.addEventListener('click', () => togglePageSelection(pageNum));
     return pageContainer;
 }
-// FIX: Add explicit type `number` to the pageNumber parameter to ensure type safety.
 function togglePageSelection(pageNumber) { const thumbElement = dom.pdfPageViewer.querySelector(`.pdf-page-item[data-page-number="${pageNumber}"]`); if (selectedPages.has(pageNumber)) {
     selectedPages.delete(pageNumber);
     thumbElement?.classList.remove('selected');
@@ -963,7 +954,6 @@ async function handleFormSubmit(event) {
                     throw new Error("Please select an image file.");
                 dom.output.value = 'Extracting text from image...';
                 const base64Image = await fileToBase64(currentFile);
-                // FIX: Safely access error message from unknown type, addressing error on line 784.
                 textToTranslate = await performOcr(base64Image, currentFile.type, model, useProxy, customProxyUrl, signal);
                 if (!textToTranslate) {
                     dom.output.value = "(No text detected)";
@@ -1326,6 +1316,11 @@ const dom_video = {
     subtitleOutput: document.getElementById('video-gen-subtitle-output'),
     copyBtn: document.getElementById('video-gen-copy-btn'),
     downloadBtn: document.getElementById('video-gen-download-btn'),
+    exportVideoBtn: document.getElementById('video-gen-export-video-btn'),
+    exportProgressContainer: document.getElementById('video-gen-export-progress-container'),
+    exportProgressBar: document.getElementById('video-gen-export-progress-bar'),
+    exportProgressPercentage: document.getElementById('video-gen-export-progress-percentage'),
+    exportCancelBtn: document.getElementById('video-gen-export-cancel-btn'),
     retryBtn: document.getElementById('video-gen-retry-btn'),
     editBtn: document.getElementById('video-gen-edit-btn'),
     timestampBtn: document.getElementById('video-gen-timestamp-btn'),
@@ -1360,6 +1355,7 @@ const dom_video = {
 };
 let videoGen_finalSubtitleContent = '';
 let videoGen_abortController = null;
+let videoGen_exportAbortController = null;
 let videoGen_player = null; // For YT duration check
 let videoGen_isYTAPILoaded = false;
 let videoGen_parsedSubtitles = [];
@@ -1390,6 +1386,12 @@ function videoGen_setupEventListeners() {
     });
     dom_video.copyBtn.addEventListener('click', videoGen_copyToClipboard);
     dom_video.downloadBtn.addEventListener('click', videoGen_downloadSubtitleFile);
+    dom_video.exportVideoBtn.addEventListener('click', videoGen_startVideoExport);
+    dom_video.exportCancelBtn.addEventListener('click', () => {
+        if (videoGen_exportAbortController) {
+            videoGen_exportAbortController.abort('User cancelled export.');
+        }
+    });
     dom_video.retryBtn.addEventListener('click', videoGen_handleGeneration);
     dom_video.editBtn.addEventListener('click', videoGen_toggleEditMode);
     dom_video.timestampBtn.addEventListener('click', () => dom_video.timestampModal.classList.remove('hidden'));
@@ -1404,11 +1406,12 @@ function videoGen_setupEventListeners() {
     dom_video.localPlayer.addEventListener('seeked', () => { videoGen_updateSubtitles(dom_video.localPlayer.currentTime); });
     dom_video.localPlayer.addEventListener('play', videoGen_onPlayerReady);
 }
-// FIX: Reworked the status display to correctly apply styles to the container.
-function videoGen_showStatus(message, type = 'info') {
+function videoGen_showStatus(message, type = 'info', isTransient = false) {
     dom_video.outputContainer.classList.remove('hidden');
     dom_video.statusContainer.classList.remove('hidden');
-    dom_video.resultsWrapper.classList.add('hidden');
+    if (!isTransient) {
+        dom_video.resultsWrapper.classList.add('hidden');
+    }
     dom_video.statusMessage.textContent = message;
     const classes = {
         success: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700',
@@ -1417,6 +1420,13 @@ function videoGen_showStatus(message, type = 'info') {
         warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700'
     };
     dom_video.statusContainer.className = `text-center p-4 rounded-lg mb-4 ${classes[type] || classes.info}`;
+    if (isTransient) {
+        setTimeout(() => {
+            if (dom_video.statusMessage.textContent === message) {
+                dom_video.statusContainer.classList.add('hidden');
+            }
+        }, 3000);
+    }
 }
 function videoGen_toggleLoading(isLoading) {
     dom_video.generateBtn.disabled = isLoading;
@@ -1435,7 +1445,7 @@ function videoGen_copyToClipboard() {
     if (!dom_video.subtitleOutput.value)
         return;
     navigator.clipboard.writeText(dom_video.subtitleOutput.value).then(() => {
-        videoGen_showStatus('Copied to clipboard!', 'success');
+        videoGen_showStatus('Copied to clipboard!', 'success', true);
     }).catch(err => {
         console.error('Failed to copy text:', err);
         videoGen_showStatus('Could not copy text.', 'error');
@@ -1461,7 +1471,6 @@ function videoGen_downloadSubtitleFile() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
-// FIX: Added necessary helper functions for subtitle processing.
 function videoGen_normalizeTimestamp(ts, format = 'srt') {
     const sep = format === 'vtt' ? '.' : ',';
     if (!ts || typeof ts !== 'string')
@@ -1483,27 +1492,25 @@ function videoGen_normalizeTimestamp(ts, format = 'srt') {
     return `${String(nH).padStart(2, '0')}:${String(nM).padStart(2, '0')}:${String(nS).padStart(2, '0')}${sep}${String(totalMs % 1000).padStart(3, '0')}`;
 }
 function videoGen_filterAndValidateSubtitles(data) {
-    if (!Array.isArray(data))
+    if (!Array.isArray(data)) {
         return [];
-    let lastEndTimeMs = -1;
-    const timeToMs = (ts) => {
-        if (!ts)
-            return 0;
-        const sep = ts.includes(',') ? ',' : '.';
-        const [time, msStr] = ts.split(sep);
-        const [h, m, s] = time.split(':').map(Number);
-        return (h * 3600 + m * 60 + s) * 1000 + Number(msStr || 0);
-    };
-    return data.filter(item => {
-        if (!item || typeof item.text !== 'string' || !item.startTime || !item.endTime)
+    }
+    // Filter for basic structural validity and positive duration
+    const validItems = data.filter(item => {
+        if (!item || typeof item.text !== 'string' || !item.startTime || !item.endTime) {
             return false;
-        const startTimeMs = timeToMs(videoGen_normalizeTimestamp(item.startTime));
-        const endTimeMs = timeToMs(videoGen_normalizeTimestamp(item.endTime));
-        if (endTimeMs <= startTimeMs || startTimeMs < lastEndTimeMs - 100)
-            return false; // allow 100ms overlap
-        lastEndTimeMs = endTimeMs;
-        return true;
+        }
+        const startTimeSec = videoGen_timeStringToSeconds(item.startTime);
+        const endTimeSec = videoGen_timeStringToSeconds(item.endTime);
+        return endTimeSec > startTimeSec;
     });
+    // Sort by start time to correct any model-induced ordering issues
+    validItems.sort((a, b) => {
+        const aStart = videoGen_timeStringToSeconds(a.startTime);
+        const bStart = videoGen_timeStringToSeconds(b.startTime);
+        return aStart - bStart;
+    });
+    return validItems;
 }
 function videoGen_formatSubtitlesFromJSON(data, format) {
     if (!Array.isArray(data))
@@ -1515,7 +1522,6 @@ function videoGen_formatSubtitlesFromJSON(data, format) {
         default: return "Unsupported format";
     }
 }
-// FIX: Re-implemented the entire video generation logic to support streaming, URL inputs, and proper JSON schema handling.
 async function videoGen_handleGeneration() {
     apiKeyManager.loadKeys();
     if (apiKeyManager.keys.length === 0) {
@@ -1559,6 +1565,9 @@ async function videoGen_handleGeneration() {
     dom_video.retryBtn.classList.add('hidden');
     dom_video.subtitleOutput.value = '';
     videoGen_finalSubtitleContent = '';
+    videoGen_parsedSubtitles = [];
+    dom_video.exportVideoBtn.disabled = true;
+    dom_video.exportVideoBtn.title = 'Generate subtitles first to enable export.';
     videoGen_toggleLoading(true);
     dom_video.progressContainer.classList.remove('hidden');
     dom_video.progressBar.style.width = `0%`;
@@ -1609,7 +1618,6 @@ async function videoGen_handleGeneration() {
         dom_video.progressStatus.textContent = 'Receiving response...';
         dom_video.progressBar.style.width = '20%';
         dom_video.progressPercentage.textContent = '20%';
-        dom_video.resultsWrapper.classList.remove('hidden');
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '', finalSubtitleJsonString = '';
@@ -1649,13 +1657,15 @@ async function videoGen_handleGeneration() {
             videoGen_finalSubtitleContent = videoGen_formatSubtitlesFromJSON(subtitleData, dom_video.outputFormatSelect.value);
             dom_video.subtitleOutput.value = videoGen_finalSubtitleContent;
             videoGen_parsedSubtitles = videoGen_parseSubtitlesForPlayback(videoGen_finalSubtitleContent);
-            if (!dom_video.videoPreview.classList.contains('hidden') && videoGen_parsedSubtitles.length > 0) {
-                dom_video.subtitleOverlay.classList.remove('hidden');
+            if (videoGen_currentInputMode === 'upload' && videoGen_parsedSubtitles.length > 0) {
+                dom_video.exportVideoBtn.disabled = false;
+                dom_video.exportVideoBtn.title = 'Export video with burned-in subtitles';
             }
             dom_video.progressStatus.textContent = 'Complete!';
             dom_video.progressBar.style.width = '100%';
             dom_video.progressPercentage.textContent = '100%';
-            videoGen_showStatus('Subtitle generation complete!', 'success');
+            dom_video.resultsWrapper.classList.remove('hidden');
+            videoGen_showStatus('Subtitle generation complete!', 'success', true);
         }
         catch (jsonError) {
             videoGen_showStatus(`Failed to parse final response. Error: ${jsonError.message}`, 'error');
@@ -1683,6 +1693,8 @@ function videoGen_switchTab(mode) {
         dom_video.tabContents[key].classList.toggle('hidden', key !== mode);
     });
     dom_video.previewBtn.disabled = !(mode === 'youtube' || mode === 'upload');
+    dom_video.exportVideoBtn.disabled = true;
+    dom_video.exportVideoBtn.title = 'Video export is only available for uploaded files.';
     videoGen_destroyPlayers();
     dom_video.durationContainer.classList.add('hidden');
     if (mode === 'youtube' && dom_video.youtubeUrlInput.value)
@@ -1912,8 +1924,11 @@ function videoGen_updateSubtitles(currentTime) {
         dom_video.subtitleText.innerHTML = newHtml;
 }
 function videoGen_onPlayerReady() {
-    if (videoGen_parsedSubtitles.length > 0)
+    if (videoGen_parsedSubtitles && videoGen_parsedSubtitles.length > 0) {
         dom_video.subtitleOverlay.classList.remove('hidden');
+    } else {
+        dom_video.subtitleOverlay.classList.add('hidden');
+    }
     const selectedLanguage = dom_video.outputLanguageSelect.value;
     if (RTL_LANGUAGES.has(selectedLanguage)) {
         dom_video.subtitleOverlay.classList.add('text-right');
@@ -1956,7 +1971,7 @@ function videoGen_toggleEditMode() {
     else {
         videoGen_finalSubtitleContent = dom_video.subtitleOutput.value;
         videoGen_parsedSubtitles = videoGen_parseSubtitlesForPlayback(videoGen_finalSubtitleContent);
-        videoGen_showStatus('Subtitles updated locally', 'success');
+        videoGen_showStatus('Subtitles updated locally', 'success', true);
     }
 }
 function videoGen_adjustTimestamps() {
@@ -1967,11 +1982,10 @@ function videoGen_adjustTimestamps() {
         dom_video.subtitleOutput.value = adjusted;
         videoGen_finalSubtitleContent = adjusted;
         videoGen_parsedSubtitles = videoGen_parseSubtitlesForPlayback(videoGen_finalSubtitleContent);
-        videoGen_showStatus('Timestamps adjusted successfully', 'success');
+        videoGen_showStatus('Timestamps adjusted successfully', 'success', true);
     }
     dom_video.timestampModal.classList.add('hidden');
 }
-// FIX: Complete the truncated function for adjusting subtitle timestamps.
 function videoGen_adjustTimestampsInContent(content, offset, scale) {
     if (dom_video.outputFormatSelect.value === 'txt')
         return content;
@@ -2011,6 +2025,174 @@ function videoGen_adjustTimestampsInContent(content, offset, scale) {
         return line;
     }).join('\n');
 }
+
+async function videoGen_startVideoExport() {
+    if (!videoGen_uploadedFile.fileObject) {
+        videoGen_showStatus('No local video file found for export.', 'error');
+        return;
+    }
+    if (videoGen_parsedSubtitles.length === 0) {
+        videoGen_showStatus('No subtitles available to export.', 'error');
+        return;
+    }
+
+    videoGen_exportAbortController = new AbortController();
+    const signal = videoGen_exportAbortController.signal;
+
+    dom_video.exportProgressContainer.classList.remove('hidden');
+    dom_video.resultsWrapper.classList.add('hidden'); // Hide the main results buttons
+    
+    const updateExportProgress = (percentage) => {
+        const p = Math.min(100, Math.max(0, Math.round(percentage)));
+        dom_video.exportProgressBar.style.width = `${p}%`;
+        dom_video.exportProgressPercentage.textContent = `${p}%`;
+    };
+    updateExportProgress(0);
+
+    const video = document.createElement('video');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let mediaRecorder;
+    const recordedChunks = [];
+    
+    const cleanup = () => {
+        video.pause();
+        video.src = '';
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+        dom_video.exportProgressContainer.classList.add('hidden');
+        dom_video.resultsWrapper.classList.remove('hidden');
+    };
+    
+    signal.addEventListener('abort', () => {
+        log(`Video export cancelled by user.`, 'warn');
+        videoGen_showStatus('Video export cancelled.', 'info');
+        cleanup();
+    });
+
+    try {
+        log('Starting video export process...');
+        video.src = URL.createObjectURL(videoGen_uploadedFile.fileObject);
+        await new Promise((resolve, reject) => {
+            video.onloadedmetadata = resolve;
+            video.onerror = () => reject(new Error('Failed to load video metadata.'));
+            if (signal.aborted) reject(new Error(signal.reason));
+        });
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        const canvasStream = canvas.captureStream(30);
+
+        // Use Web Audio API for robust audio capture
+        const audioContext = new AudioContext();
+        const sourceNode = audioContext.createMediaElementSource(video);
+        const destinationNode = audioContext.createMediaStreamDestination();
+        sourceNode.connect(destinationNode);
+        
+        const finalStream = new MediaStream([
+            ...canvasStream.getVideoTracks(),
+            ...destinationNode.stream.getAudioTracks()
+        ]);
+        
+        const MimeTypes = [
+            'video/webm; codecs=vp9,opus',
+            'video/webm; codecs=vp8,opus',
+            'video/webm',
+        ];
+        const supportedType = MimeTypes.find(type => MediaRecorder.isTypeSupported(type));
+
+        if (!supportedType) {
+            throw new Error('Your browser does not support the required MediaRecorder codecs for video export with audio.');
+        }
+
+        log(`Using supported MIME type for recording: ${supportedType}`);
+        mediaRecorder = new MediaRecorder(finalStream, { mimeType: supportedType });
+        
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.onstop = () => {
+            if (signal.aborted) return;
+            log('MediaRecorder stopped. Creating final video file.');
+            const blob = new Blob(recordedChunks, { type: supportedType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const originalName = videoGen_uploadedFile.name.substring(0, videoGen_uploadedFile.name.lastIndexOf('.'));
+            a.download = `${originalName}_subtitled.webm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            videoGen_showStatus('Video export successful!', 'success');
+            cleanup();
+        };
+        
+        video.volume = 0; // Use volume=0 instead of muted=true to ensure audio is captured
+        await video.play();
+        mediaRecorder.start();
+
+        let lastTime = -1;
+        const renderFrame = (now) => {
+            if (signal.aborted || video.ended || video.paused) {
+                if (!video.ended && !signal.aborted) {
+                    video.play().catch(e => console.error("Could not resume video", e));
+                }
+                if (video.ended) {
+                   cleanup();
+                }
+                return;
+            }
+
+            if (video.currentTime !== lastTime) {
+                lastTime = video.currentTime;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const currentSub = videoGen_parsedSubtitles.find(s => video.currentTime >= s.start && video.currentTime <= s.end);
+                if (currentSub) {
+                    const fontSize = Math.max(20, canvas.height * 0.04);
+                    ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    const textLines = currentSub.text.split('<br>');
+                    const padding = fontSize * 0.4;
+                    
+                    textLines.forEach((line, index) => {
+                        const y = canvas.height - ((textLines.length - 1 - index) * (fontSize + padding)) - padding * 2;
+                        
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                        const textMetrics = ctx.measureText(line);
+                        ctx.fillRect(
+                            canvas.width / 2 - textMetrics.width / 2 - padding,
+                            y - fontSize - padding / 2,
+                            textMetrics.width + padding * 2,
+                            fontSize + padding
+                        );
+
+                        ctx.fillStyle = 'white';
+                        ctx.fillText(line, canvas.width / 2, y);
+                    });
+                }
+                updateExportProgress((video.currentTime / video.duration) * 100);
+            }
+            requestAnimationFrame(renderFrame);
+        };
+        requestAnimationFrame(renderFrame);
+        
+    } catch (error) {
+        if (!signal.aborted) {
+            log(`Video export failed: ${error.message}`, 'error');
+            videoGen_showStatus(`Video export failed: ${error.message}`, 'error');
+        }
+        cleanup();
+    }
+}
+
 // --- START: App Initialization ---
 function init() {
     // Populate static dropdowns first
@@ -2050,7 +2232,6 @@ function init() {
     dom.exportTextBtn.addEventListener('click', exportOutput);
     dom.cancelTranslationBtn.addEventListener('click', cancelTranslation);
     dom.enhancementsToolbar.querySelectorAll('.enhancement-btn').forEach(btn => btn.addEventListener('click', () => handleEnhancement(btn.dataset.action)));
-    // FIX: Correct typo from dom.themeToggle to dom.themeToggleBtn.
     dom.themeToggleBtn.addEventListener('click', toggleTheme);
     dom.apiKeyInput.addEventListener('input', validateForm);
     dom.languageSearch.addEventListener('input', filterAndRepopulateLanguages);
