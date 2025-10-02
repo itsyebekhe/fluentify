@@ -476,10 +476,23 @@
                                         <button id="video-gen-download-btn" class="flex-1 bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500/50 transition-colors flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-download"></i> Download Subtitle File
                                         </button>
+                                        <button id="video-gen-export-video-btn" class="flex-1 bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-colors flex items-center justify-center gap-2" disabled title="Generate subtitles first to enable export.">
+                                            <i class="fa-solid fa-film"></i> Export Video
+                                        </button>
                                         <button id="video-gen-retry-btn" class="flex-1 bg-slate-600 text-slate-200 font-semibold px-6 py-3 rounded-lg hover:bg-slate-500 focus:outline-none focus:ring-4 focus:ring-slate-500/50 transition-colors flex items-center justify-center gap-2 hidden">
                                             <i class="fa-solid fa-redo"></i> Retry
                                         </button>
                                     </div>
+                                </div>
+                                <div id="video-gen-export-progress-container" class="mt-4 hidden">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span id="video-gen-export-progress-label" class="text-sm font-medium text-slate-700 dark:text-slate-300">Exporting video...</span>
+                                        <span id="video-gen-export-progress-percentage" class="text-sm font-bold text-sky-600 dark:text-sky-400">0%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-2.5 dark:bg-slate-700">
+                                        <div id="video-gen-export-progress-bar" class="bg-sky-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <button type="button" id="video-gen-export-cancel-btn" class="w-full mt-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">Cancel Export</button>
                                 </div>
                             </div>
                         </div>
