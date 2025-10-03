@@ -1704,7 +1704,10 @@ function videoGen_switchTab(mode) {
 }
 function videoGen_validateYouTubeUrl() {
     const url = dom_video.youtubeUrlInput.value.trim();
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}/;
+
+    // Regex to match YouTube videos, shorts, live, playlists, clips, embeds, and youtu.be links
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|shorts\/|live\/|playlist\?list=|clip\/)|youtu\.be\/)[\w-]{11,}/;
+
     const isValid = url && youtubeRegex.test(url);
     dom_video.urlError.classList.toggle('hidden', isValid || !url);
     return isValid;
